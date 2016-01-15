@@ -107,10 +107,11 @@ void QSyncableTests::diffRunner_data()
     QList<QSChange> changes;
     QSChange c1;
 
-    QVariantMap a,b,c;
+    QVariantMap a,b,c,d;
     a["id"] = "a";
     b["id"] = "b";
     c["id"] = "c";
+    d["id"] = "d";
 
     previous << a << b << c;
     current << a << b << c;
@@ -138,18 +139,31 @@ void QSyncableTests::diffRunner_data()
     changes << c1;
     QTest::newRow("Remove all element") << previous << current << "id" << changes;
 
+    /* Add new element to end */
 
-    /* Reorder from last to first */
+    previous.clear();current.clear();changes.clear();
+    previous << a << b << c;
+    current << a << b << c << d;
+    changes << QSChange(QSChange::Insert, 3, 3, 1, d);
+    QTest::newRow("Add new element to end") << previous << current << "id" << changes;
+
+    /* Move from last to first */
     previous.clear();
     previous << a << b << c;
     current.clear();
     current << c << a << b;
     changes.clear();
-    c1 = QSChange();
-    c1.setType(QSChange::Move);
-    c1.setFrom(2);
-    c1.setTo(0);
-    changes << c1;
+    changes << QSChange(QSChange::Move,2,0,1);
+
+    QTest::newRow("Move from last to first") << previous << current << "id" << changes;
+
+    /* Move 2 from first to last */
+    previous.clear();
+    previous << a << b << c;
+    current.clear();
+    current << c << a << b;
+    changes.clear();
+    changes << QSChange(QSChange::Move,2,0,1);
 
     QTest::newRow("Reorder from last to first") << previous << current << "id" << changes;
 

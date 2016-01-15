@@ -22,12 +22,13 @@ QSChange::QSChange() : d(new QSChangeData)
 
 }
 
-QSChange::QSChange(QSChange::Type type, int from, int to, int count) : d(new QSChangeData)
+QSChange::QSChange(QSChange::Type type, int from, int to, int count, QVariantMap data) : d(new QSChangeData)
 {
     d->type = type;
     d->from = from;
     d->to = to;
     d->count = count;
+    d->data = data;
 }
 
 QSChange::QSChange(const QSChange &rhs) : d(rhs.d)
@@ -72,7 +73,8 @@ bool QSChange::operator==(const QSChange &rhs) const
     if (d->type != rhs.d->type ||
         d->data != rhs.data() ||
         d->from != rhs.from() ||
-        d->to != rhs.to()) {
+        d->to != rhs.to() ||
+        d->count != rhs.count()) {
         return false;
     }
 

@@ -19,7 +19,7 @@ public:
     };
 
     QSChange();
-    QSChange(Type type,int from = 0, int to = 0, int count = 0);
+    QSChange(Type type,int from = 0, int to = 0, int count = 0, QVariantMap data = QVariantMap());
     QSChange(const QSChange &);
     QSChange &operator=(const QSChange &);
     ~QSChange();

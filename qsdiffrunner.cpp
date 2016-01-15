@@ -2,7 +2,7 @@
 #include <QDebug>
 #include "qsdiffrunner.h"
 
-static QList<QSChange> minifyRemoveChange(const QList<QSChange> list) {
+static QList<QSChange> merge(const QList<QSChange> list) {
 
     if (list.size() <= 1) {
         return list;
@@ -20,8 +20,8 @@ static QList<QSChange> minifyRemoveChange(const QList<QSChange> list) {
             continue;
         }
 
-        if (prev.from() == current.to() + 1) {
-            prev.setFrom(current.to());
+        if (prev.canMerge(current)) {
+            prev = prev.merge(current);
         }
     }
 
@@ -91,9 +91,29 @@ QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVaria
         }
     }
 
-    res = minifyRemoveChange(res);
+    /* Step 2 - Find Insertion */
+    for (int i = 0 ; i < prevList.size() ; i++) {
+        item = prevList.at(i).toMap();
+        QString key = item[m_keyField].toString();
 
-    /* Step 2 - Compare to find move,insert and update */
+        prevHashTable[key] = i;
+    }
+
+    for (int i = 0; i < current.size() ; i++) {
+        item = current.at(i).toMap();
+        QString key = item[m_keyField].toString();
+        if (!prevHashTable.contains(key)) {
+            // New item
+            prevList.insert(i, item);
+            QSChange change(QSChange::Insert, i,i,1);
+            change.setData(item);
+            res << change;
+        }
+    }
+
+    prevHashTable.clear();
+
+    /* Step 3 - Compare to find move and update */
 
     for (int i = 0 ; i < prevList.size() ; i++) {
         item = prevList.at(i).toMap();
@@ -119,10 +139,7 @@ QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVaria
 
             if (prevPos != i) {
                 // It is moved.
-                QSChange change;
-                change.setType(QSChange::Move);
-                change.setFrom(prevPos);
-                change.setTo(i);
+                QSChange change(QSChange::Move, prevPos, i, 1);
                 res << change;
 
                 if (prevPos > i) {
@@ -136,7 +153,6 @@ QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVaria
 
     //@TODO handle update changes
     //@TODO minify move changes.
-
-    return res;
+    return merge(res);
 }
 
