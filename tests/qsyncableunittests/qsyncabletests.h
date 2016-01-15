@@ -15,6 +15,7 @@ public slots:
 
 private slots:
     void change();
+    void changeMerge();
 
     void diffRunner();
     void diffRunner_data();

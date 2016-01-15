@@ -19,6 +19,7 @@ public:
     };
 
     QSChange();
+    QSChange(Type type,int from = 0, int to = 0, int count = 0);
     QSChange(const QSChange &);
     QSChange &operator=(const QSChange &);
     ~QSChange();
@@ -39,6 +40,13 @@ public:
     void setTo(int to);
 
     bool isNull() const;
+
+    int count() const;
+    void setCount(int count);
+
+    bool canMerge(const QSChange& other) const;
+
+    QSChange merge(const QSChange &other) const;
 
 signals:
 

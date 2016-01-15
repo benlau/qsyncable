@@ -29,6 +29,37 @@ void QSyncableTests::change()
     QCOMPARE(c1 == c2, false);
 }
 
+void QSyncableTests::changeMerge()
+{
+    QSChange c1,c2,c3,c4;
+
+    c1 = QSChange(QSChange::Move);
+    c2 = QSChange(QSChange::Insert);
+
+    QVERIFY(!c1.canMerge(c2));
+
+    c1 = QSChange(QSChange::Remove,0,0);
+    c2 = QSChange(QSChange::Remove,1,1);
+
+    QVERIFY(c1.canMerge(c2));
+    QVERIFY(c2.canMerge(c1));
+
+    c3 = c1.merge(c2);
+    c4 = c2.merge(c1);
+
+    QCOMPARE(c3.type(), QSChange::Remove);
+    QCOMPARE(c3.from(), 0);
+    QCOMPARE(c3.to(), 1);
+
+    QVERIFY(c3 == c4);
+
+    c2 = QSChange(QSChange::Remove,2,2);
+
+    QVERIFY(!c1.canMerge(c2));
+    QVERIFY(!c2.canMerge(c1));
+
+}
+
 void QSyncableTests::diffRunner()
 {
     QFETCH(QVariantList, previous);
