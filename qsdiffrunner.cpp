@@ -1,4 +1,36 @@
+#include <QHash>
+#include <QDebug>
 #include "qsdiffrunner.h"
+
+QList<QSChange> minifyRemoveChange(const QList<QSChange> list) {
+
+    if (list.size() <= 1) {
+        return list;
+    }
+
+    QList<QSChange> res;
+
+    QSChange prev;
+
+    for (int i = 0 ; i < list.size() ; i++) {
+        QSChange current = list.at(i);
+
+        if (prev.isNull()) {
+            prev = current;
+            continue;
+        }
+
+        if (prev.from() == current.to() + 1) {
+            prev.setFrom(current.to());
+        }
+    }
+
+    if (!prev.isNull()) {
+        res << prev;
+    }
+
+    return res;
+}
 
 QSDiffRunner::QSDiffRunner()
 {
@@ -22,9 +54,79 @@ void QSDiffRunner::setKeyField(const QString &keyField)
     the minimum number of steps. It uses an algorithm with O(n) runtime.
  */
 
-QList<QSChange> QSDiffRunner::run(const QVariantList &previous, const QVariantList &current)
+QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVariantList &current)
 {
     QList<QSChange> res;
+    QList<QSChange> updates;
+    QVariantList prevList;
+    QVariantList tmp;
+
+    QHash<QString, int> currentHashTable;
+    QHash<QString, int> prevHashTable;
+    QVariantMap item;
+    int offset = 0;
+
+    /* Step 1 - Check Removal */
+    for (int i = 0 ; i < current.size() ; i++) {
+        item = current.at(i).toMap();
+        QString key = item[m_keyField].toString();
+        currentHashTable[key] = i;
+    }
+
+    prevList = previous;
+
+    tmp.clear();
+    for (int i = prevList.size() - 1 ; i >= 0 ; i--) {
+        item = prevList.at(i).toMap();
+        QString key = item[m_keyField].toString();
+
+        if (!currentHashTable.contains(key)) {
+            // The item is removed.
+            QSChange change;
+            change.setType(QSChange::Remove);
+            change.setFrom(i);
+            change.setTo(i);
+            res << change;
+            prevList.removeAt(i); //@FIXME
+        }
+    }
+
+    res = minifyRemoveChange(res);
+
+    /* Step 2 - Compare to find move,insert and update */
+
+    for (int i = 0 ; i < prevList.size() ; i++) {
+        item = prevList.at(i).toMap();
+        QString key = item[m_keyField].toString();
+
+        prevHashTable[key] = i;
+    }
+
+    for (int i = 0 ; i < current.size() ; i++) {
+        item = current.at(i).toMap();
+        QString key = item[m_keyField].toString();
+
+        // @TODO - Check Update
+
+        if (!prevHashTable.contains(key)) {
+            QSChange change;
+            change.setType(QSChange::Insert);
+            change.setData(item);
+            offset++;
+            res << change;
+        } else {
+            int prevPos = prevHashTable[key] + offset;
+
+            if (prevPos != i) {
+                // It is moved.
+                qDebug() << prevPos << i;
+                QSChange change;
+                change.setType(QSChange::Move);
+                res << change;
+            }
+        }
+    }
+
 
     return res;
 }

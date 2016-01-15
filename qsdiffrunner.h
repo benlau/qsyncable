@@ -12,8 +12,8 @@ public:
 
     void setKeyField(const QString &keyField);
 
-    QList<QSChange> run(const QVariantList& previous,
-                        const QVariantList& current);
+    QList<QSChange> compare(const QVariantList& previous,
+                            const QVariantList& current);
 
 signals:
 

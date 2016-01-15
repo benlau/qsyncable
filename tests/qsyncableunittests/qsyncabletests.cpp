@@ -36,16 +36,28 @@ void QSyncableTests::diffRunner()
     QFETCH(QString, keyField);
     QFETCH(QList<QSChange>, changes);
 
+    QList<QSChange> expectedChanges = changes;
+
     QSDiffRunner runner;
     runner.setKeyField(keyField);
 
-    QList<QSChange> result = runner.run(previous, current);
+    QList<QSChange> result = runner.compare(previous, current);
 
-    QCOMPARE(changes.size(), result.size());
+    if (changes.size() != result.size()) {
+        for (int i = 0 ; i < result.size() ; i++) {
+            qDebug() << result.at(i);
+        }
+    }
+
+    QCOMPARE(expectedChanges.size(), result.size());
 
     for (int i = 0; i < changes.size(); i++) {
         QSChange expected = changes.at(i);
         QSChange real = result.at(i);
+        if (!(expected == real))  {
+            qDebug() << expected;
+            qDebug() << real;
+        }
         QVERIFY(expected == real);
     }
 
@@ -62,6 +74,7 @@ void QSyncableTests::diffRunner_data()
     QVariantList current;
     QVariantList keyField;
     QList<QSChange> changes;
+    QSChange c1;
 
     QVariantMap a,b,c;
     a["id"] = "a";
@@ -72,5 +85,39 @@ void QSyncableTests::diffRunner_data()
     current << a << b << c;
 
     QTest::newRow("No Changes") << previous << current << "id" << changes;
+
+    /* Remove first element */
+    previous.clear();current.clear();changes.clear();
+    c1 = QSChange();
+    previous << a << b << c;
+    current << b << c;
+    c1.setType(QSChange::Remove);
+    c1.setFrom(0);
+    c1.setTo(0);
+    changes << c1;
+    QTest::newRow("Remove first element") << previous << current << "id" << changes;
+
+    /* Remove all element */
+    previous.clear();current.clear();changes.clear();
+    c1 = QSChange();
+    previous << a << b << c;
+    c1.setType(QSChange::Remove);
+    c1.setFrom(0);
+    c1.setTo(2);
+    changes << c1;
+    QTest::newRow("Remove all element") << previous << current << "id" << changes;
+
+
+    /* Reorder from last to first */
+    previous.clear();
+    previous << a << b << c;
+    current.clear();
+    current << c << b << a;
+    changes.clear();
+    c1.setType(QSChange::Move);
+    changes << c1;
+
+    QTest::newRow("Reorder from last to first") << previous << current << "id" << changes;
+
 }
 

@@ -1,6 +1,7 @@
 #ifndef QSCHANGE_H
 #define QSCHANGE_H
 
+#include <QtCore>
 #include <QSharedDataPointer>
 #include <QVariantMap>
 
@@ -10,6 +11,7 @@ class QSChange
 {
 public:
     enum Type {
+        Null,
         Insert,
         Remove,
         Update,
@@ -30,14 +32,23 @@ public:
 
     bool operator==(const QSChange& rhs) const;
 
+    int from() const;
+    void setFrom(int from);
+
+    int to() const;
+    void setTo(int to);
+
+    bool isNull() const;
+
 signals:
 
 public slots:
 
 private:
     QSharedDataPointer<QSChangeData> d;
-
 };
+
+QDebug operator<<(QDebug dbg, const QSChange& change);
 
 Q_DECLARE_METATYPE(QSChange)
 
