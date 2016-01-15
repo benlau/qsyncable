@@ -2,7 +2,7 @@
 #include <QDebug>
 #include "qsdiffrunner.h"
 
-QList<QSChange> minifyRemoveChange(const QList<QSChange> list) {
+static QList<QSChange> minifyRemoveChange(const QList<QSChange> list) {
 
     if (list.size() <= 1) {
         return list;
@@ -119,14 +119,23 @@ QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVaria
 
             if (prevPos != i) {
                 // It is moved.
-                qDebug() << prevPos << i;
                 QSChange change;
                 change.setType(QSChange::Move);
+                change.setFrom(prevPos);
+                change.setTo(i);
                 res << change;
+
+                if (prevPos > i) {
+                    offset++;
+                } else {
+                    offset--;
+                }
             }
         }
     }
 
+    //@TODO handle update changes
+    //@TODO minify move changes.
 
     return res;
 }

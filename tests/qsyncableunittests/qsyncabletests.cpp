@@ -112,9 +112,12 @@ void QSyncableTests::diffRunner_data()
     previous.clear();
     previous << a << b << c;
     current.clear();
-    current << c << b << a;
+    current << c << a << b;
     changes.clear();
+    c1 = QSChange();
     c1.setType(QSChange::Move);
+    c1.setFrom(2);
+    c1.setTo(0);
     changes << c1;
 
     QTest::newRow("Reorder from last to first") << previous << current << "id" << changes;
