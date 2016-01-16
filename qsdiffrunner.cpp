@@ -91,30 +91,9 @@ QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVaria
         }
     }
 
-    /* Step 2 - Find Insertion */
-    for (int i = 0 ; i < prevList.size() ; i++) {
-        item = prevList.at(i).toMap();
-        QString key = item[m_keyField].toString();
+    /* Step 2 - Compare to find move and update */
 
-        prevHashTable[key] = i;
-    }
-
-    for (int i = 0; i < current.size() ; i++) {
-        item = current.at(i).toMap();
-        QString key = item[m_keyField].toString();
-        if (!prevHashTable.contains(key)) {
-            // New item
-            prevList.insert(i, item);
-            QSChange change(QSChange::Insert, i,i,1);
-            change.setData(item);
-            res << change;
-        }
-    }
-
-    prevHashTable.clear();
-
-    /* Step 3 - Compare to find move and update */
-
+    // Build index table
     for (int i = 0 ; i < prevList.size() ; i++) {
         item = prevList.at(i).toMap();
         QString key = item[m_keyField].toString();
@@ -126,33 +105,23 @@ QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVaria
         item = current.at(i).toMap();
         QString key = item[m_keyField].toString();
 
-        // @TODO - Check Update
-
         if (!prevHashTable.contains(key)) {
-            QSChange change;
-            change.setType(QSChange::Insert);
-            change.setData(item);
             offset++;
-            res << change;
+            res << QSChange(QSChange::Insert, i, i, 1, item);
         } else {
-            int prevPos = prevHashTable[key] + offset;
+            int prevPos = prevHashTable[key];
+            int expectedPos = prevPos + offset;
 
-            if (prevPos != i) {
-                // It is moved.
+            if (expectedPos != i) {
                 QSChange change(QSChange::Move, prevPos, i, 1);
                 res << change;
 
-                if (prevPos > i) {
-                    offset++;
-                } else {
-                    offset--;
-                }
+                offset++;
             }
         }
     }
 
     //@TODO handle update changes
-    //@TODO minify move changes.
     return merge(res);
 }
 

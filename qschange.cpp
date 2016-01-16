@@ -129,6 +129,11 @@ bool QSChange::canMerge(const QSChange &other) const
             d->to == other.from() - 1) {
             res = true;
         }
+    } else if (d->type == QSChange::Move) {
+        if (d->from + d->count == other.from()  &&
+            d->to + d->count == other.to() ) {
+            res = true;
+        }
     }
 
     return res;
@@ -145,6 +150,9 @@ QSChange QSChange::merge(const QSChange &other) const
         int from = qMin(d->from, other.from());
         int to = qMax(d->to, other.to());
         res = QSChange(QSChange::Remove, from, to);
+    } else if (d->type == QSChange::Move) {
+        res = *this;
+        res.setCount(res.count() + other.count());
     }
 
     return res;
@@ -158,7 +166,7 @@ QDebug operator<<(QDebug dbg, const QSChange& change){
         break;
 
     case QSChange::Move:
-        dbg.noquote() << QString("Move from %1 to %2").arg(change.from()).arg(change.to());
+        dbg.noquote() << QString("Move from %1 to %2 with %3").arg(change.from()).arg(change.to()).arg(change.count());
         break;
 
     case QSChange::Insert:

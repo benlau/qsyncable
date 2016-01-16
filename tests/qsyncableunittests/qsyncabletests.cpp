@@ -58,6 +58,23 @@ void QSyncableTests::changeMerge()
     QVERIFY(!c1.canMerge(c2));
     QVERIFY(!c2.canMerge(c1));
 
+    /* Merge move */
+
+    c1 = QSChange(QSChange::Move, 1, 0, 1);
+    c2 = QSChange(QSChange::Move, 2, 1, 1);
+    QVERIFY(c1.canMerge(c2));
+    QVERIFY(!c2.canMerge(c1));
+
+    c3 = c1.merge(c2);
+    c4 = c2.merge(c1);
+
+    QCOMPARE(c3.type(), QSChange::Move);
+    QCOMPARE(c3.from(), 1);
+    QCOMPARE(c3.to(), 0);
+    QCOMPARE(c3.count(), 2);
+
+    QCOMPARE(c4.type(), QSChange::Null);
+
 }
 
 void QSyncableTests::diffRunner()
@@ -165,7 +182,18 @@ void QSyncableTests::diffRunner_data()
     changes.clear();
     changes << QSChange(QSChange::Move,2,0,1);
 
-    QTest::newRow("Reorder from last to first") << previous << current << "id" << changes;
+    QTest::newRow("Move 2 from first to last") << previous << current << "id" << changes;
+
+
+    /* Move 2 from last to first */
+    previous.clear();
+    previous << a << b << c;
+    current.clear();
+    current << b << c << a;
+    changes.clear();
+    changes << QSChange(QSChange::Move,1,0,2);
+
+    QTest::newRow("Move 2 from last to first") << previous << current << "id" << changes;
 
 }
 
