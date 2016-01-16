@@ -27,6 +27,9 @@ static QList<QSChange> merge(const QList<QSChange> list) {
 
         if (prev.canMerge(current)) {
             prev = prev.merge(current);
+        } else {
+            res << prev;
+            prev = current;
         }
     }
 
@@ -35,6 +38,26 @@ static QList<QSChange> merge(const QList<QSChange> list) {
     }
 
     return res;
+}
+
+static QVariantMap compareMap(const QVariantMap& prev, const QVariantMap &current) {
+    // To make this function faster, it won't track removed fields from prev.
+    // Clear a field to null value should set it explicitly.
+
+    QVariantMap diff;
+
+    QMap<QString, QVariant>::const_iterator iter = current.begin();
+
+    while (iter != current.end()) {
+        QString key = iter.key();
+        if (!prev.contains(key) ||
+             prev[key] != iter.value()) {
+            diff[key] = iter.value();
+        }
+        iter++;
+    }
+
+    return diff;
 }
 
 QSDiffRunner::QSDiffRunner()
@@ -123,10 +146,22 @@ QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVaria
 
                 offset++;
             }
+
+            QVariantMap before = prevList.at(prevPos).toMap();
+            QVariantMap after = current.at(i).toMap();
+            QVariantMap diff = compareMap(before, after);
+            if (diff.size() > 0) {
+                updates << QSChange(QSChange::Update, i, i, 1, diff);
+            }
         }
     }
 
-    //@TODO handle update changes
-    return merge(res);
+    res = merge(res);
+
+    if (updates.size() > 0) {
+        res.append(updates);
+    }
+
+    return res;
 }
 

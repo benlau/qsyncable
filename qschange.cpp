@@ -179,7 +179,8 @@ QDebug operator<<(QDebug dbg, const QSChange& change){
         break;
 
     case QSChange::Update:
-        dbg << "Update";
+        dbg << QString("Update %12").arg(change.from());
+        dbg << change.data();
         break;
 
     default:

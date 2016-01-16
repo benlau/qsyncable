@@ -126,6 +126,8 @@ void QSyncableTests::diffRunner_data()
     QSChange c1;
 
     QVariantMap a,b,c,d;
+    QVariantMap tmp;
+
     a["id"] = "a";
     b["id"] = "b";
     c["id"] = "c";
@@ -195,5 +197,26 @@ void QSyncableTests::diffRunner_data()
     changes << QSChange(QSChange::Move,1,0,2);
 
     QTest::newRow("Move 2 from last to first") << previous << current << "id" << changes;
+
+
+    /* Update 2 elements*/
+    previous.clear();
+    previous << a << b << c;
+    a["value"] = "a";
+    b["value"] = "b";
+    current.clear();
+    current << a << b << c;
+
+    tmp.clear();
+    tmp["value"] = "a";
+
+    changes.clear();
+    changes << QSChange(QSChange::Update,0,0,1,tmp);
+
+    tmp["value"] = "b";
+    changes  << QSChange(QSChange::Update,1,1,1,tmp);
+
+    QTest::newRow("Update 2 elements") << previous << current << "id" << changes;
+
 }
 
