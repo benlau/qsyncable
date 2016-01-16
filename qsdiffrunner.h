@@ -1,3 +1,9 @@
+/* QSyncable Project
+   Author: Ben Lau
+   License: Apache-2.0
+   Web: https://github.com/benlau/qsyncable
+*/
+
 #ifndef QSDIFFRUNNER_H
 #define QSDIFFRUNNER_H
 

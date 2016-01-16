@@ -2,6 +2,7 @@
 #include <QTest>
 #include "qsdiffrunner.h"
 #include "qsyncabletests.h"
+#include "qsvariantlistmodel.h"
 
 QSyncableTests::QSyncableTests(QObject *parent) : QObject(parent)
 {
@@ -194,6 +195,5 @@ void QSyncableTests::diffRunner_data()
     changes << QSChange(QSChange::Move,1,0,2);
 
     QTest::newRow("Move 2 from last to first") << previous << current << "id" << changes;
-
 }
 

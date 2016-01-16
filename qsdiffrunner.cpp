@@ -1,3 +1,8 @@
+/* QSyncable Project
+   Author: Ben Lau
+   License: Apache-2.0
+   Web: https://github.com/benlau/qsyncable
+*/
 #include <QHash>
 #include <QDebug>
 #include "qsdiffrunner.h"
