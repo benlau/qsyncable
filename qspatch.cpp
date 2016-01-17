@@ -3,31 +3,31 @@
    License: Apache-2.0
    Web: https://github.com/benlau/qsyncable
 */
-#include "qschange.h"
+#include "qspatch.h"
 
-class QSChangeData : public QSharedData
+class QSPatchPriv : public QSharedData
 {
 public:
-    QSChangeData() {
+    QSPatchPriv() {
         from = 0;
         to = 0;
-        type = QSChange::Null;
+        type = QSPatch::Null;
         count = 0;
     }
 
-    QSChange::Type type;
+    QSPatch::Type type;
     QVariantMap data;
     int from;
     int to;
     int count;
 };
 
-QSChange::QSChange() : d(new QSChangeData)
+QSPatch::QSPatch() : d(new QSPatchPriv)
 {
 
 }
 
-QSChange::QSChange(QSChange::Type type, int from, int to, int count, QVariantMap data) : d(new QSChangeData)
+QSPatch::QSPatch(QSPatch::Type type, int from, int to, int count, QVariantMap data) : d(new QSPatchPriv)
 {
     d->type = type;
     d->from = from;
@@ -36,44 +36,44 @@ QSChange::QSChange(QSChange::Type type, int from, int to, int count, QVariantMap
     d->data = data;
 }
 
-QSChange::QSChange(const QSChange &rhs) : d(rhs.d)
+QSPatch::QSPatch(const QSPatch &rhs) : d(rhs.d)
 {
 
 }
 
-QSChange &QSChange::operator=(const QSChange &rhs)
+QSPatch &QSPatch::operator=(const QSPatch &rhs)
 {
     if (this != &rhs)
         d.operator=(rhs.d);
     return *this;
 }
 
-QSChange::~QSChange()
+QSPatch::~QSPatch()
 {
 
 }
 
-QSChange::Type QSChange::type() const
+QSPatch::Type QSPatch::type() const
 {
     return d->type;
 }
 
-void QSChange::setType(const QSChange::Type &type)
+void QSPatch::setType(const QSPatch::Type &type)
 {
     d->type = type;
 }
 
-QVariantMap QSChange::data() const
+QVariantMap QSPatch::data() const
 {
     return d->data;
 }
 
-void QSChange::setData(const QVariantMap &data)
+void QSPatch::setData(const QVariantMap &data)
 {
     d->data = data;
 }
 
-bool QSChange::operator==(const QSChange &rhs) const
+bool QSPatch::operator==(const QSPatch &rhs) const
 {
     if (d->type != rhs.d->type ||
         d->data != rhs.data() ||
@@ -86,42 +86,42 @@ bool QSChange::operator==(const QSChange &rhs) const
     return true;
 }
 
-int QSChange::from() const
+int QSPatch::from() const
 {
     return d->from;
 }
 
-void QSChange::setFrom(int from)
+void QSPatch::setFrom(int from)
 {
     d->from = from;
 }
 
-int QSChange::to() const
+int QSPatch::to() const
 {
     return d->to;
 }
 
-void QSChange::setTo(int to)
+void QSPatch::setTo(int to)
 {
     d->to = to;
 }
 
-bool QSChange::isNull() const
+bool QSPatch::isNull() const
 {
-    return d->type == QSChange::Null;
+    return d->type == QSPatch::Null;
 }
 
-int QSChange::count() const
+int QSPatch::count() const
 {
     return d->count;
 }
 
-void QSChange::setCount(int count)
+void QSPatch::setCount(int count)
 {
     d->count = count;
 }
 
-bool QSChange::canMerge(const QSChange &other) const
+bool QSPatch::canMerge(const QSPatch &other) const
 {
     bool res = false;
 
@@ -129,12 +129,12 @@ bool QSChange::canMerge(const QSChange &other) const
         return false;
     }
 
-    if (d->type == QSChange::Remove) {
+    if (d->type == QSPatch::Remove) {
         if (d->from == other.to() + 1 ||
             d->to == other.from() - 1) {
             res = true;
         }
-    } else if (d->type == QSChange::Move) {
+    } else if (d->type == QSPatch::Move) {
         if (d->from + d->count == other.from()  &&
             d->to + d->count == other.to() ) {
             res = true;
@@ -144,18 +144,18 @@ bool QSChange::canMerge(const QSChange &other) const
     return res;
 }
 
-QSChange QSChange::merge(const QSChange &other) const
+QSPatch QSPatch::merge(const QSPatch &other) const
 {
     if (!canMerge(other))
-        return QSChange();
+        return QSPatch();
 
-    QSChange res;
+    QSPatch res;
 
-    if (d->type == QSChange::Remove) {
+    if (d->type == QSPatch::Remove) {
         int from = qMin(d->from, other.from());
         int to = qMax(d->to, other.to());
-        res = QSChange(QSChange::Remove, from, to);
-    } else if (d->type == QSChange::Move) {
+        res = QSPatch(QSPatch::Remove, from, to);
+    } else if (d->type == QSPatch::Move) {
         res = *this;
         res.setCount(res.count() + other.count());
     }
@@ -163,22 +163,22 @@ QSChange QSChange::merge(const QSChange &other) const
     return res;
 }
 
-QDebug operator<<(QDebug dbg, const QSChange& change){
+QDebug operator<<(QDebug dbg, const QSPatch& change){
     switch (change.type()) {
 
-    case QSChange::Remove:
+    case QSPatch::Remove:
         dbg.noquote() << QString("Remove from %1 to %2").arg(change.from()).arg(change.to());
         break;
 
-    case QSChange::Move:
+    case QSPatch::Move:
         dbg.noquote() << QString("Move from %1 to %2 with %3").arg(change.from()).arg(change.to()).arg(change.count());
         break;
 
-    case QSChange::Insert:
+    case QSPatch::Insert:
         dbg << "Insert";
         break;
 
-    case QSChange::Update:
+    case QSPatch::Update:
         dbg << QString("Update %12").arg(change.from());
         dbg << change.data();
         break;

@@ -7,18 +7,18 @@
 #include <QDebug>
 #include "qsdiffrunner.h"
 
-static QList<QSChange> merge(const QList<QSChange> list) {
+static QList<QSPatch> merge(const QList<QSPatch> list) {
 
     if (list.size() <= 1) {
         return list;
     }
 
-    QList<QSChange> res;
+    QList<QSPatch> res;
 
-    QSChange prev;
+    QSPatch prev;
 
     for (int i = 0 ; i < list.size() ; i++) {
-        QSChange current = list.at(i);
+        QSPatch current = list.at(i);
 
         if (prev.isNull()) {
             prev = current;
@@ -82,10 +82,10 @@ void QSDiffRunner::setKeyField(const QString &keyField)
     the minimum number of steps. It uses an algorithm with O(n) runtime.
  */
 
-QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVariantList &current)
+QList<QSPatch> QSDiffRunner::compare(const QVariantList &previous, const QVariantList &current)
 {
-    QList<QSChange> res;
-    QList<QSChange> updates;
+    QList<QSPatch> res;
+    QList<QSPatch> updates;
     QVariantList prevList;
     QVariantList tmp;
 
@@ -110,8 +110,8 @@ QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVaria
 
         if (!currentHashTable.contains(key)) {
             // The item is removed.
-            QSChange change;
-            change.setType(QSChange::Remove);
+            QSPatch change;
+            change.setType(QSPatch::Remove);
             change.setFrom(i);
             change.setTo(i);
             res << change;
@@ -135,13 +135,13 @@ QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVaria
 
         if (!prevHashTable.contains(key)) {
             offset++;
-            res << QSChange(QSChange::Insert, i, i, 1, item);
+            res << QSPatch(QSPatch::Insert, i, i, 1, item);
         } else {
             int prevPos = prevHashTable[key];
             int expectedPos = prevPos + offset;
 
             if (expectedPos != i) {
-                QSChange change(QSChange::Move, prevPos, i, 1);
+                QSPatch change(QSPatch::Move, prevPos, i, 1);
                 res << change;
 
                 offset++;
@@ -151,7 +151,7 @@ QList<QSChange> QSDiffRunner::compare(const QVariantList &previous, const QVaria
             QVariantMap after = current.at(i).toMap();
             QVariantMap diff = compareMap(before, after);
             if (diff.size() > 0) {
-                updates << QSChange(QSChange::Update, i, i, 1, diff);
+                updates << QSPatch(QSPatch::Update, i, i, 1, diff);
             }
         }
     }

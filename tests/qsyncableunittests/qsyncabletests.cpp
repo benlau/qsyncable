@@ -9,16 +9,16 @@ QSyncableTests::QSyncableTests(QObject *parent) : QObject(parent)
 
 }
 
-void QSyncableTests::change()
+void QSyncableTests::patch()
 {
-    QSChange c1,c2;
+    QSPatch c1,c2;
 
-    c1.setType(QSChange::Insert);
-    c2.setType(QSChange::Move);
+    c1.setType(QSPatch::Insert);
+    c2.setType(QSPatch::Move);
 
     QCOMPARE(c1 == c2, false);
 
-    c1.setType(QSChange::Move);
+    c1.setType(QSPatch::Move);
 
     QCOMPARE(c1 == c2, true);
 
@@ -30,17 +30,17 @@ void QSyncableTests::change()
     QCOMPARE(c1 == c2, false);
 }
 
-void QSyncableTests::changeMerge()
+void QSyncableTests::patch_merge()
 {
-    QSChange c1,c2,c3,c4;
+    QSPatch c1,c2,c3,c4;
 
-    c1 = QSChange(QSChange::Move);
-    c2 = QSChange(QSChange::Insert);
+    c1 = QSPatch(QSPatch::Move);
+    c2 = QSPatch(QSPatch::Insert);
 
     QVERIFY(!c1.canMerge(c2));
 
-    c1 = QSChange(QSChange::Remove,0,0);
-    c2 = QSChange(QSChange::Remove,1,1);
+    c1 = QSPatch(QSPatch::Remove,0,0);
+    c2 = QSPatch(QSPatch::Remove,1,1);
 
     QVERIFY(c1.canMerge(c2));
     QVERIFY(c2.canMerge(c1));
@@ -48,33 +48,33 @@ void QSyncableTests::changeMerge()
     c3 = c1.merge(c2);
     c4 = c2.merge(c1);
 
-    QCOMPARE(c3.type(), QSChange::Remove);
+    QCOMPARE(c3.type(), QSPatch::Remove);
     QCOMPARE(c3.from(), 0);
     QCOMPARE(c3.to(), 1);
 
     QVERIFY(c3 == c4);
 
-    c2 = QSChange(QSChange::Remove,2,2);
+    c2 = QSPatch(QSPatch::Remove,2,2);
 
     QVERIFY(!c1.canMerge(c2));
     QVERIFY(!c2.canMerge(c1));
 
     /* Merge move */
 
-    c1 = QSChange(QSChange::Move, 1, 0, 1);
-    c2 = QSChange(QSChange::Move, 2, 1, 1);
+    c1 = QSPatch(QSPatch::Move, 1, 0, 1);
+    c2 = QSPatch(QSPatch::Move, 2, 1, 1);
     QVERIFY(c1.canMerge(c2));
     QVERIFY(!c2.canMerge(c1));
 
     c3 = c1.merge(c2);
     c4 = c2.merge(c1);
 
-    QCOMPARE(c3.type(), QSChange::Move);
+    QCOMPARE(c3.type(), QSPatch::Move);
     QCOMPARE(c3.from(), 1);
     QCOMPARE(c3.to(), 0);
     QCOMPARE(c3.count(), 2);
 
-    QCOMPARE(c4.type(), QSChange::Null);
+    QCOMPARE(c4.type(), QSPatch::Null);
 
 }
 
@@ -83,14 +83,14 @@ void QSyncableTests::diffRunner()
     QFETCH(QVariantList, previous);
     QFETCH(QVariantList, current);
     QFETCH(QString, keyField);
-    QFETCH(QList<QSChange>, changes);
+    QFETCH(QList<QSPatch>, changes);
 
-    QList<QSChange> expectedChanges = changes;
+    QList<QSPatch> expectedChanges = changes;
 
     QSDiffRunner runner;
     runner.setKeyField(keyField);
 
-    QList<QSChange> result = runner.compare(previous, current);
+    QList<QSPatch> result = runner.compare(previous, current);
 
     if (changes.size() != result.size()) {
         for (int i = 0 ; i < result.size() ; i++) {
@@ -101,8 +101,8 @@ void QSyncableTests::diffRunner()
     QCOMPARE(expectedChanges.size(), result.size());
 
     for (int i = 0; i < changes.size(); i++) {
-        QSChange expected = changes.at(i);
-        QSChange real = result.at(i);
+        QSPatch expected = changes.at(i);
+        QSPatch real = result.at(i);
         if (!(expected == real))  {
             qDebug() << expected;
             qDebug() << real;
@@ -117,13 +117,13 @@ void QSyncableTests::diffRunner_data()
     QTest::addColumn<QVariantList>("previous");
     QTest::addColumn<QVariantList>("current");
     QTest::addColumn<QString>("keyField");
-    QTest::addColumn<QList<QSChange> >("changes");
+    QTest::addColumn<QList<QSPatch> >("changes");
 
     QVariantList previous;
     QVariantList current;
     QVariantList keyField;
-    QList<QSChange> changes;
-    QSChange c1;
+    QList<QSPatch> changes;
+    QSPatch c1;
 
     QVariantMap a,b,c,d;
     QVariantMap tmp;
@@ -140,10 +140,10 @@ void QSyncableTests::diffRunner_data()
 
     /* Remove first element */
     previous.clear();current.clear();changes.clear();
-    c1 = QSChange();
+    c1 = QSPatch();
     previous << a << b << c;
     current << b << c;
-    c1.setType(QSChange::Remove);
+    c1.setType(QSPatch::Remove);
     c1.setFrom(0);
     c1.setTo(0);
     changes << c1;
@@ -151,9 +151,9 @@ void QSyncableTests::diffRunner_data()
 
     /* Remove all element */
     previous.clear();current.clear();changes.clear();
-    c1 = QSChange();
+    c1 = QSPatch();
     previous << a << b << c;
-    c1.setType(QSChange::Remove);
+    c1.setType(QSPatch::Remove);
     c1.setFrom(0);
     c1.setTo(2);
     changes << c1;
@@ -164,8 +164,17 @@ void QSyncableTests::diffRunner_data()
     previous.clear();current.clear();changes.clear();
     previous << a << b << c;
     current << a << b << c << d;
-    changes << QSChange(QSChange::Insert, 3, 3, 1, d);
+    changes << QSPatch(QSPatch::Insert, 3, 3, 1, d);
     QTest::newRow("Add new element to end") << previous << current << "id" << changes;
+
+    /* Add 2 elements to middle */
+
+    previous.clear();current.clear();changes.clear();
+    previous << a << b;
+    current << a << c << d << b;
+    changes << QSPatch(QSPatch::Insert, 1, 1, 1, c)
+            << QSPatch(QSPatch::Insert, 2, 2, 1, d);
+    QTest::newRow("Add 2 elements to middle") << previous << current << "id" << changes;
 
     /* Move from last to first */
     previous.clear();
@@ -173,7 +182,7 @@ void QSyncableTests::diffRunner_data()
     current.clear();
     current << c << a << b;
     changes.clear();
-    changes << QSChange(QSChange::Move,2,0,1);
+    changes << QSPatch(QSPatch::Move,2,0,1);
 
     QTest::newRow("Move from last to first") << previous << current << "id" << changes;
 
@@ -183,7 +192,7 @@ void QSyncableTests::diffRunner_data()
     current.clear();
     current << c << a << b;
     changes.clear();
-    changes << QSChange(QSChange::Move,2,0,1);
+    changes << QSPatch(QSPatch::Move,2,0,1);
 
     QTest::newRow("Move 2 from first to last") << previous << current << "id" << changes;
 
@@ -194,7 +203,7 @@ void QSyncableTests::diffRunner_data()
     current.clear();
     current << b << c << a;
     changes.clear();
-    changes << QSChange(QSChange::Move,1,0,2);
+    changes << QSPatch(QSPatch::Move,1,0,2);
 
     QTest::newRow("Move 2 from last to first") << previous << current << "id" << changes;
 
@@ -211,10 +220,10 @@ void QSyncableTests::diffRunner_data()
     tmp["value"] = "a";
 
     changes.clear();
-    changes << QSChange(QSChange::Update,0,0,1,tmp);
+    changes << QSPatch(QSPatch::Update,0,0,1,tmp);
 
     tmp["value"] = "b";
-    changes  << QSChange(QSChange::Update,1,1,1,tmp);
+    changes  << QSPatch(QSPatch::Update,1,1,1,tmp);
 
     QTest::newRow("Update 2 elements") << previous << current << "id" << changes;
 

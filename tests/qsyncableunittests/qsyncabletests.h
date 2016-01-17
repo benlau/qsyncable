@@ -14,8 +14,8 @@ signals:
 public slots:
 
 private slots:
-    void change();
-    void changeMerge();
+    void patch();
+    void patch_merge();
 
     void diffRunner();
     void diffRunner_data();
