@@ -154,7 +154,7 @@ QSPatch QSPatch::merge(const QSPatch &other) const
     if (d->type == QSPatch::Remove) {
         int from = qMin(d->from, other.from());
         int to = qMax(d->to, other.to());
-        res = QSPatch(QSPatch::Remove, from, to);
+        res = QSPatch(QSPatch::Remove, from, to, to - from + 1);
     } else if (d->type == QSPatch::Move) {
         res = *this;
         res.setCount(res.count() + other.count());

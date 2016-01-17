@@ -121,7 +121,6 @@ void QSyncableTests::diffRunner_data()
 
     QVariantList previous;
     QVariantList current;
-    QVariantList keyField;
     QList<QSPatch> changes;
     QSPatch c1;
 
@@ -140,23 +139,16 @@ void QSyncableTests::diffRunner_data()
 
     /* Remove first element */
     previous.clear();current.clear();changes.clear();
-    c1 = QSPatch();
     previous << a << b << c;
     current << b << c;
-    c1.setType(QSPatch::Remove);
-    c1.setFrom(0);
-    c1.setTo(0);
-    changes << c1;
+    changes << QSPatch(QSPatch::Remove, 0, 0, 1);
     QTest::newRow("Remove first element") << previous << current << "id" << changes;
 
     /* Remove all element */
     previous.clear();current.clear();changes.clear();
     c1 = QSPatch();
     previous << a << b << c;
-    c1.setType(QSPatch::Remove);
-    c1.setFrom(0);
-    c1.setTo(2);
-    changes << c1;
+    changes << QSPatch(QSPatch::Remove, 0, 2, 3);
     QTest::newRow("Remove all element") << previous << current << "id" << changes;
 
     /* Add new element to end */

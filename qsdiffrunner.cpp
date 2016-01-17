@@ -109,12 +109,8 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &previous, const QVarian
         QString key = item[m_keyField].toString();
 
         if (!currentHashTable.contains(key)) {
-            // The item is removed.
-            QSPatch change;
-            change.setType(QSPatch::Remove);
-            change.setFrom(i);
-            change.setTo(i);
-            res << change;
+            res << QSPatch(QSPatch::Remove,
+                           i, i, 1);
             prevList.removeAt(i); //@FIXME
         }
     }
