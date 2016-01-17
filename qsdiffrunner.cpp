@@ -77,8 +77,8 @@ void QSDiffRunner::setKeyField(const QString &keyField)
 
 /*! \fn QList<QSChange> QSDiffRunner::run(const QVariantList &previous, const QVariantList &current)
 
-    Call this function to compare previous and current list, then return a
-    list of changes required to transform from previous to current with
+    Call this function to compare two list, then return a
+    list of patches required to transform from previous to current with
     the minimum number of steps. It uses an algorithm with O(n) runtime.
  */
 
@@ -93,6 +93,9 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &previous, const QVarian
     QHash<QString, int> prevHashTable;
     QVariantMap item;
     int offset = 0;
+
+    currentHashTable.reserve(current.size() + 10);
+    prevHashTable.reserve(previous.size() + 10);
 
     /* Step 1 - Check Removal */
     for (int i = 0 ; i < current.size() ; i++) {

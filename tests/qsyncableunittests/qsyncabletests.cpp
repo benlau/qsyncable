@@ -199,6 +199,16 @@ void QSyncableTests::diffRunner_data()
 
     QTest::newRow("Move 2 from last to first") << previous << current << "id" << changes;
 
+    /* Move 2 from last to middle */
+    previous.clear();
+    previous << a << b << c << d;
+    current.clear();
+    current << a << c << d << b;
+    changes.clear();
+    changes << QSPatch(QSPatch::Move,2,1,2);
+
+    QTest::newRow("Move 2 from last to middle") << previous << current << "id" << changes;
+
 
     /* Update 2 elements*/
     previous.clear();

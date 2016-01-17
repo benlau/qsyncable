@@ -10,8 +10,9 @@
 #include <QAbstractListModel>
 #include <QPointer>
 #include <QSharedPointer>
+#include "qspatchable.h"
 
-class QSVariantListModel : public QAbstractListModel
+class QSVariantListModel : public QAbstractListModel, QSPatchable
 {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)

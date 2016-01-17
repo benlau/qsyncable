@@ -8,6 +8,7 @@
 #define QSDIFFRUNNER_H
 
 #include "qspatch.h"
+#include "qspatchable.h"
 
 class QSDiffRunner
 {
@@ -19,7 +20,7 @@ public:
     void setKeyField(const QString &keyField);
 
     QList<QSPatch> compare(const QVariantList& previous,
-                            const QVariantList& current);
+                           const QVariantList& current);
 
 signals:
 
