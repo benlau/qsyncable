@@ -23,6 +23,7 @@ private slots:
     void diffRunner_noKeyField();
     void diffRunner_noKeyField_data();
 
+    void diffRunner_invalidKey();
 
     void listModel();
 

@@ -7,6 +7,8 @@
 #include <QDebug>
 #include "qsdiffrunner.h"
 
+#define MISSING_KEY_WARNING "QSDiffRunner.compare() - Duplicated or missing key."
+
 static QList<QSPatch> merge(const QList<QSPatch> list) {
 
     if (list.size() <= 1) {
@@ -126,6 +128,12 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     for (int i = 0 ; i < to.size() ; i++) {
         item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
+
+        if (toHashTable.contains(key)) {
+            qWarning() << MISSING_KEY_WARNING;
+            return compareWithoutKey(from, to);
+        }
+
         toHashTable[key] = i;
     }
 
@@ -141,6 +149,12 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
                            i, i, 1);
         } else {
             fromList << item;
+
+            if (fromHashTable.contains(key)) {
+                qWarning() << MISSING_KEY_WARNING;
+                return compareWithoutKey(from, to);
+            }
+
             fromHashTable[key] = fromList.count() - 1;
         }
     }

@@ -331,6 +331,32 @@ void QSyncableTests::diffRunner_noKeyField_data()
            << (QVariantList() << a << b << c << d << e);
 }
 
+void QSyncableTests::diffRunner_invalidKey()
+{
+    QVariantMap a,b,c,d,e;
+
+    a["id"] = "a";
+    b["id"] = "b";
+    c["id"] = "c";
+    d["id"] = "d";
+    e["id"] = "e";
+
+    QVariantList from,to;
+    from << a << b << c << d;
+    to << d << b << c << a;
+
+    QSDiffRunner runner;
+    runner.setKeyField("uuid"); // Set a wrong key field
+    QList<QSPatch> patches = runner.compare(from, to);
+    QCOMPARE(patches.size() , 2);
+
+    QSListModel listModel;
+    listModel.setStorage(from);
+    runner.patch(&listModel, patches);
+
+    QVERIFY(listModel.storage() == to);
+}
+
 void QSyncableTests::listModel()
 {
     QSListModel* model = new QSListModel();
