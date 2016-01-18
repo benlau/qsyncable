@@ -19,13 +19,13 @@ int QSVariantListModel::rowCount(const QModelIndex &parent) const
 
 QVariant QSVariantListModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() < 0 || index.row() >= m_data.size())
+    if (index.row() < 0 || index.row() >= m_storage.size())
         return QVariant();
 
     QVariant v;
 
     if (m_roles.contains(role)) {
-        QVariantMap item = m_data.at(index.row()).toMap();
+        QVariantMap item = m_storage.at(index.row()).toMap();
         v = item[m_roles[role]];
     }
 
@@ -34,8 +34,8 @@ QVariant QSVariantListModel::data(const QModelIndex &index, int role) const
 
 void QSVariantListModel::append(const QVariantMap &value)
 {
-    beginInsertRows(QModelIndex(),m_data.size(),m_data.size());
-    m_data.append(value);
+    beginInsertRows(QModelIndex(),m_storage.size(),m_storage.size());
+    m_storage.append(value);
     endInsertRows();
     emit countChanged();
 }
@@ -43,7 +43,7 @@ void QSVariantListModel::append(const QVariantMap &value)
 void QSVariantListModel::insert(int index, const QVariantMap &value)
 {
     beginInsertRows(QModelIndex(), index, index);
-    m_data.insert(index, value);
+    m_storage.insert(index, value);
     endInsertRows();
     emit countChanged();
 }
@@ -62,8 +62,8 @@ void QSVariantListModel::move(int from, int to, int count)
 
     if (count <= 0 ||
         from == to ||
-        from + count > m_data.count() ||
-        to + count > m_data.count() ||
+        from + count > m_storage.count() ||
+        to + count > m_storage.count() ||
         from < 0 ||
         to < 0) {
         return;
@@ -77,17 +77,17 @@ void QSVariantListModel::move(int from, int to, int count)
 
     // Move "to" block
     for (int i=0 ; i < (to - from) ; i++) {
-        tmp.append(m_data[from + count + i]);
+        tmp.append(m_storage[from + count + i]);
     }
 
     // Move "from" block
     for (int i = 0 ; i < count ; i++) {
-        tmp.append(m_data[from + i]);
+        tmp.append(m_storage[from + i]);
     }
 
     // Replace
     for (int i=0 ; i < tmp.count() ; ++i) {
-        m_data[from + i] = tmp[i];
+        m_storage[from + i] = tmp[i];
     }
 
     endMoveRows();
@@ -95,11 +95,11 @@ void QSVariantListModel::move(int from, int to, int count)
 
 void QSVariantListModel::clear()
 {
-    if (m_data.isEmpty())
+    if (m_storage.isEmpty())
         return;
 
-    beginRemoveRows(QModelIndex(), 0, m_data.count() - 1);
-    m_data.clear();
+    beginRemoveRows(QModelIndex(), 0, m_storage.count() - 1);
+    m_storage.clear();
     endRemoveRows();
     emit countChanged();
 
@@ -109,21 +109,21 @@ void QSVariantListModel::remove(int i, int count)
 {
     beginRemoveRows(QModelIndex(), i, i + count - 1);
     for (int j = 0; j < count; ++j)
-        m_data.removeAt(i);
+        m_storage.removeAt(i);
     endRemoveRows();
     emit countChanged();
 }
 
 int QSVariantListModel::count() const
 {
-    return m_data.size();
+    return m_storage.size();
 }
 
 QVariantMap QSVariantListModel::get(int i) const
 {
     QVariantMap map;
-    if (i >=0 && i < m_data.size()) {
-        map = m_data.at(i).toMap();
+    if (i >=0 && i < m_storage.size()) {
+        map = m_storage.at(i).toMap();
     }
     return map;
 
@@ -131,7 +131,7 @@ QVariantMap QSVariantListModel::get(int i) const
 
 void QSVariantListModel::setProperty(int idx, QString property, QVariant value)
 {
-    if (idx < 0 || idx >= m_data.size())
+    if (idx < 0 || idx >= m_storage.size())
         return;
     QVector<int> roles;
     QVariantMap item = get(idx);
@@ -147,7 +147,7 @@ void QSVariantListModel::setProperty(int idx, QString property, QVariant value)
 
     item[property] = value;
 
-    m_data[idx] = item;
+    m_storage[idx] = item;
 
     emit dataChanged(index(idx,0),
                      index(idx,0),
@@ -156,7 +156,7 @@ void QSVariantListModel::setProperty(int idx, QString property, QVariant value)
 
 void QSVariantListModel::set(int idx, QVariantMap data)
 {
-    if (idx < 0 || idx >= m_data.size())
+    if (idx < 0 || idx >= m_storage.size())
         return;
 
     QVector<int> roles;
@@ -165,7 +165,7 @@ void QSVariantListModel::set(int idx, QVariantMap data)
         i.next();
         roles << i.key();
     }
-    m_data[idx] = data;
+    m_storage[idx] = data;
 
     emit dataChanged(index(idx,0),
                      index(idx,0),
@@ -216,27 +216,27 @@ void QSVariantListModel::setRoleNames(const QStringList& list)
     }
 }
 
-void QSVariantListModel::setList(const QVariantList &value)
+void QSVariantListModel::setStorage(const QVariantList &value)
 {
-    int oldCount = m_data.count();
+    int oldCount = m_storage.count();
     beginResetModel();
-    m_data = value;
+    m_storage = value;
     endResetModel();
-    if (oldCount != m_data.size()) {
+    if (oldCount != m_storage.size()) {
         emit countChanged();
     }
 }
 
-QVariantList QSVariantListModel::list() const
+QVariantList QSVariantListModel::storage() const
 {
-    return m_data;
+    return m_storage;
 }
 
 int QSVariantListModel::indexOf(QString field, QVariant value) const
 {
     int res = -1;
-    for (int i = 0 ; i < m_data.count();i++) {
-        QVariantMap item = m_data.at(i).toMap();
+    for (int i = 0 ; i < m_storage.count();i++) {
+        QVariantMap item = m_storage.at(i).toMap();
         if (item.contains(field) && item[field] == value) {
             res = i;
             break;

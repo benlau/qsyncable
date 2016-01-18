@@ -51,11 +51,9 @@ public:
 
     void setRoleNames(const QStringList& value);
 
-    void setList(const QList<QVariantMap>& value);
-    void setList(const QVariantList& value);
+    void setStorage(const QVariantList& value);
 
-
-    QVariantList list() const;
+    QVariantList storage() const;
 
     /* Extra API */
 
@@ -70,5 +68,5 @@ private:
 
     QHash<int, QByteArray> m_roles;
 
-    QVariantList m_data;
+    QVariantList m_storage;
 };

@@ -4,8 +4,10 @@ env:
 compiler:
   - gcc
 before_install:
+    - echo "deb http://efever-oss.s3-website-us-west-1.amazonaws.com/deb/ amd64/" | sudo tee -a /etc/apt/sources.list
     - sudo add-apt-repository "deb http://efever-oss.s3-website-us-west-1.amazonaws.com/deb/ amd64/"
     - sudo add-apt-repository --yes ppa:beineri/opt-qt532
+    - cat /etc/apt/sources.list
     - sudo apt-get update -qq
     - apt-cache search qt5
     - sudo apt-get install -qq qt53quickcontrols  qt53declarative qt53script qt53graphicaleffects qpm

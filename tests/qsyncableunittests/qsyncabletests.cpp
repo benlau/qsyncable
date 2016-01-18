@@ -112,9 +112,9 @@ void QSyncableTests::diffRunner()
 
     QSVariantListModel* model = new QSVariantListModel();
 
-    model->setList(previous);
+    model->setStorage(previous);
     QVERIFY(runner.patch(model, result));
-    QVariantList modelList = model->list();;
+    QVariantList modelList = model->storage();;
 
     QVERIFY(modelList == current);
 
