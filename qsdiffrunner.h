@@ -17,10 +17,10 @@ public:
 
     QString keyField() const;
 
-    void setKeyField(const QString &keyField);
+    void setKeyField(const QString &value);
 
-    QList<QSPatch> compare(const QVariantList& previous,
-                           const QVariantList& current);
+    QList<QSPatch> compare(const QVariantList& from,
+                           const QVariantList& to);
 
     bool patch(QSPatchable* patchable, const QList<QSPatch>& patches) const;
 

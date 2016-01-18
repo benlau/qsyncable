@@ -78,65 +78,65 @@ void QSDiffRunner::setKeyField(const QString &keyField)
 /*! \fn QList<QSChange> QSDiffRunner::run(const QVariantList &previous, const QVariantList &current)
 
     Call this function to compare two list, then return a
-    list of patches required to transform from previous to current with
+    list of patches required to transform from a list to other with
     the minimum number of steps. It uses an algorithm with O(n) runtime.
  */
 
-QList<QSPatch> QSDiffRunner::compare(const QVariantList &previous, const QVariantList &current)
+QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantList &to)
 {
     QList<QSPatch> res;
     QList<QSPatch> updates;
-    QVariantList prevList;
+    QVariantList fromList;
     QVariantList tmp;
 
-    QHash<QString, int> currentHashTable;
-    QHash<QString, int> prevHashTable;
+    QHash<QString, int> toHashTable;
+    QHash<QString, int> fromHashTable;
     QVariantMap item;
     int offset = 0;
 
-    currentHashTable.reserve(current.size() + 10);
-    prevHashTable.reserve(previous.size() + 10);
+    toHashTable.reserve(to.size() + 10);
+    fromHashTable.reserve(from.size() + 10);
 
     /* Step 1 - Check Removal */
-    for (int i = 0 ; i < current.size() ; i++) {
-        item = current.at(i).toMap();
+    for (int i = 0 ; i < to.size() ; i++) {
+        item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
-        currentHashTable[key] = i;
+        toHashTable[key] = i;
     }
 
-    prevList = previous;
+    fromList = from;
 
     tmp.clear();
-    for (int i = prevList.size() - 1 ; i >= 0 ; i--) {
-        item = prevList.at(i).toMap();
+    for (int i = fromList.size() - 1 ; i >= 0 ; i--) {
+        item = fromList.at(i).toMap();
         QString key = item[m_keyField].toString();
 
-        if (!currentHashTable.contains(key)) {
+        if (!toHashTable.contains(key)) {
             res << QSPatch(QSPatch::Remove,
                            i, i, 1);
-            prevList.removeAt(i); //@FIXME
+            fromList.removeAt(i); //@FIXME
         }
     }
 
     /* Step 2 - Compare to find move and update */
 
     // Build index table
-    for (int i = 0 ; i < prevList.size() ; i++) {
-        item = prevList.at(i).toMap();
+    for (int i = 0 ; i < fromList.size() ; i++) {
+        item = fromList.at(i).toMap();
         QString key = item[m_keyField].toString();
 
-        prevHashTable[key] = i;
+        fromHashTable[key] = i;
     }
 
-    for (int i = 0 ; i < current.size() ; i++) {
-        item = current.at(i).toMap();
+    for (int i = 0 ; i < to.size() ; i++) {
+        item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
 
-        if (!prevHashTable.contains(key)) {
+        if (!fromHashTable.contains(key)) {
             offset++;
             res << QSPatch(QSPatch::Insert, i, i, 1, item);
         } else {
-            int prevPos = prevHashTable[key];
+            int prevPos = fromHashTable[key];
             int expectedPos = prevPos + offset;
 
             if (expectedPos != i) {
@@ -146,8 +146,8 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &previous, const QVarian
                 offset++;
             }
 
-            QVariantMap before = prevList.at(prevPos).toMap();
-            QVariantMap after = current.at(i).toMap();
+            QVariantMap before = fromList.at(prevPos).toMap();
+            QVariantMap after = to.at(i).toMap();
             QVariantMap diff = compareMap(before, after);
             if (diff.size() > 0) {
                 updates << QSPatch(QSPatch::Update, i, i, 1, diff);
