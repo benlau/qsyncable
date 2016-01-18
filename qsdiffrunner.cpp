@@ -60,6 +60,28 @@ static QVariantMap compareMap(const QVariantMap& prev, const QVariantMap &curren
     return diff;
 }
 
+static QList<QSPatch> compareWithoutKey(const QVariantList& from, const QVariantList& to) {
+
+    QList<QSPatch> patches;
+
+    int max = qMax(from.size(), to.size());
+
+    for (int i = 0 ; i < max ; i++) {
+        if (i >= from.size()) {
+            patches << QSPatch(QSPatch::Insert, i, i, 1, to[i].toMap());
+        } else if (i >= to.size() ) {
+            patches << QSPatch(QSPatch::Remove, i, i, 1);
+        } else {
+            QVariantMap diff = compareMap(from[i].toMap(), to[i].toMap());
+            if (diff.size()) {
+                patches << QSPatch(QSPatch::Update, i, i, 1, diff);
+            }
+        }
+    }
+
+    return merge(patches);
+}
+
 QSDiffRunner::QSDiffRunner()
 {
 
@@ -84,6 +106,10 @@ void QSDiffRunner::setKeyField(const QString &keyField)
 
 QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantList &to)
 {
+    if (m_keyField.isEmpty()) {
+        return compareWithoutKey(from, to);
+    }
+
     QList<QSPatch> res;
     QList<QSPatch> updates;
     QVariantList fromList;

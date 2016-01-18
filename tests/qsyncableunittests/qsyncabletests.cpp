@@ -173,13 +173,14 @@ void QSyncableTests::diffRunner_data()
     QList<QSPatch> changes;
     QSPatch c1;
 
-    QVariantMap a,b,c,d;
+    QVariantMap a,b,c,d,e;
     QVariantMap tmp;
 
     a["id"] = "a";
     b["id"] = "b";
     c["id"] = "c";
     d["id"] = "d";
+    e["id"] = "e";
 
     previous << a << b << c;
     current << a << b << c;
@@ -215,6 +216,15 @@ void QSyncableTests::diffRunner_data()
     current << a << c << d << b;
     changes << QSPatch(QSPatch::Insert, 1, 2, 2, QVariantList() << c << d);
     QTest::newRow("Add 2 elements to middle") << previous << current << "id" << changes;
+
+    /* Add 2 elements to differnt block */
+
+    previous.clear();current.clear();changes.clear();
+    previous << a << b << c;
+    current << a << d << b << e << c;
+    changes << QSPatch(QSPatch::Insert, 1, 1, 1, d)
+            << QSPatch(QSPatch::Insert, 3, 3, 1, e);
+    QTest::newRow("Add 2 elements to differnt block") << previous << current << "id" << changes;
 
     /* Move from last to first */
     previous.clear();
@@ -277,6 +287,48 @@ void QSyncableTests::diffRunner_data()
 
     QTest::newRow("Update 2 elements") << previous << current << "id" << changes;
 
+}
+
+void QSyncableTests::diffRunner_noKeyField()
+{
+    QFETCH(QVariantList, from);
+    QFETCH(QVariantList, to);
+
+    QSDiffRunner runner;
+    QList<QSPatch> patches = runner.compare(from, to);
+
+
+    QSListModel listModel;
+    listModel.setStorage(from);
+    runner.patch(&listModel, patches);
+
+    QVERIFY(listModel.storage() == to);
+}
+
+void QSyncableTests::diffRunner_noKeyField_data()
+{
+    QTest::addColumn<QVariantList>("from");
+    QTest::addColumn<QVariantList>("to");
+
+    QVariantMap a,b,c,d,e;
+
+    a["id"] = "a";
+    b["id"] = "b";
+    c["id"] = "c";
+    d["id"] = "d";
+    e["id"] = "e";
+
+    QTest::newRow("Shifted")
+           << (QVariantList() << a << b << c << d)
+           << (QVariantList() << b << c << d << a);
+
+    QTest::newRow("Remove")
+           << (QVariantList() << a << b << c << d)
+           << (QVariantList() << a << b << c);
+
+    QTest::newRow("Add")
+           << (QVariantList() << a << b << c << d)
+           << (QVariantList() << a << b << c << d << e);
 }
 
 void QSyncableTests::listModel()
