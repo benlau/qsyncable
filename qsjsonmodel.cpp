@@ -4,7 +4,7 @@
 
 QSJsonModel::QSJsonModel(QObject *parent) : QSListModel(parent)
 {
-
+    componentCompleted = false;
 }
 
 QString QSJsonModel::keyField() const
@@ -27,16 +27,12 @@ void QSJsonModel::setSource(const QVariantList &source)
 {
     m_source = source;
 
-    QSDiffRunner runner;
-    runner.setKeyField(m_keyField);
-
-    QList<QSPatch> patches = runner.compare(storage(), source);
-
-    if (patches.size() > 0) {
-        runner.patch(this, patches);
+    if (componentCompleted) {
+        sync();
     }
 
     emit sourceChanged();
+
 }
 
 QStringList QSJsonModel::fieldNames() const
@@ -49,6 +45,32 @@ void QSJsonModel::setFieldNames(const QStringList &roleNames)
     m_fieldNames = roleNames;
     setRoleNames(roleNames);
     emit fieldNamesChanged();
+}
+
+void QSJsonModel::classBegin()
+{
+
+}
+
+void QSJsonModel::componentComplete()
+{
+    componentCompleted = true;
+
+    if (!m_source.isEmpty()) {
+        sync();
+    }
+}
+
+void QSJsonModel::sync()
+{
+    QSDiffRunner runner;
+    runner.setKeyField(m_keyField);
+
+    QList<QSPatch> patches = runner.compare(storage(), m_source);
+
+    if (patches.size() > 0) {
+        runner.patch(this, patches);
+    }
 }
 
 class QSJsonModelRegistionHelper {

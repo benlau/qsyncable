@@ -5,7 +5,7 @@
 #include <QQmlParserStatus>
 #include "qslistmodel.h"
 
-class QSJsonModel : public QSListModel
+class QSJsonModel : public QSListModel, public QQmlParserStatus
 {
     Q_OBJECT
     Q_PROPERTY(QString keyField READ keyField WRITE setKeyField NOTIFY keyFieldChanged)
@@ -37,12 +37,20 @@ signals:
 
 public slots:
 
+protected:
+    virtual void classBegin();
+    virtual void componentComplete();
+
 private:
+    void sync();
+
     QString m_keyField;
 
     QVariantList m_source;
 
     QStringList m_fieldNames;
+
+    bool componentCompleted;
 };
 
 #endif // QSJSONMODEL_H

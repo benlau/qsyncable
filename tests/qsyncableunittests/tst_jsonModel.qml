@@ -48,6 +48,41 @@ Item {
             item = repeater1.itemAt(1);
             compare(item.value, 3);
         }
+
+        Component {
+            id: jsonModelCreator2
+            JsonModel {
+                keyField: "id"
+
+                source: [
+                    { "id": "a", "field1": 1, "field2": 2}
+                ]
+
+                fieldNames: [
+                    "id", "field1"
+                ]
+            }
+        }
+
+        Repeater {
+            id: repeater2
+
+            delegate: Item {
+                property var field1: model.field1
+                property var field2: model.field2
+            }
+        }
+
+        function test_source() {
+            var jsonModel = jsonModelCreator2.createObject();
+            repeater2.model = jsonModel;
+
+            compare(repeater2.count, 1);
+            var item = repeater2.itemAt(0);
+            compare(item.field1, 1);
+            compare(item.field2, undefined);
+
+        }
     }
 }
 
