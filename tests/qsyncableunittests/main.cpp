@@ -9,6 +9,7 @@ int main(int argc, char* argv[]) {
     TestRunner runner;
 
     runner.add<QSyncableTests>();
+    runner.add(QString(SRCDIR));
 
     bool error = runner.exec(app.arguments());
 

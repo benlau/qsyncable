@@ -1,3 +1,4 @@
+#include <QtQml>
 #include "qsdiffrunner.h"
 #include "qsjsonmodel.h"
 
@@ -46,6 +47,16 @@ QStringList QSJsonModel::fieldNames() const
 void QSJsonModel::setFieldNames(const QStringList &roleNames)
 {
     m_fieldNames = roleNames;
+    setRoleNames(roleNames);
     emit fieldNamesChanged();
 }
 
+class QSJsonModelRegistionHelper {
+
+public:
+    QSJsonModelRegistionHelper() {
+        qmlRegisterType<QSJsonModel>("QSyncable", 1, 0, "JsonModel");
+    }
+};
+
+static QSJsonModelRegistionHelper registerHelper;

@@ -26,3 +26,6 @@ HEADERS += \
 
 include(vendor/vendor.pri)
 include(../../qsyncable.pri)
+
+DISTFILES += \
+    tst_jsonModel.qml
