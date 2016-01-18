@@ -20,6 +20,8 @@ private slots:
     void diffRunner();
     void diffRunner_data();
 
+    void listModel();
+
 };
 
 #endif // QSYNCABLETESTS_H

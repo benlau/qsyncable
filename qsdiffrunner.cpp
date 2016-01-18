@@ -159,6 +159,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
 
 bool QSDiffRunner::patch(QSPatchable *patchable, const QList<QSPatch>& patches) const
 {
+    QVariantMap diff;
     foreach (QSPatch patch, patches) {
         switch (patch.type()) {
         case QSPatch::Remove:
@@ -172,7 +173,10 @@ bool QSDiffRunner::patch(QSPatchable *patchable, const QList<QSPatch>& patches) 
             patchable->move(patch.from(), patch.to(), patch.count());
             break;
         case QSPatch::Update:
-            patchable->setProperties(patch.from(), patch.data());
+            if (patch.data().size() > 0) {
+                diff = patch.data().at(0).toMap();
+            }
+            patchable->setProperties(patch.from(), diff);
             break;
         default:
             break;

@@ -23,7 +23,9 @@ public:
     };
 
     QSPatch();
-    QSPatch(Type type,int from = 0, int to = 0, int count = 0, QVariantMap data = QVariantMap());
+    QSPatch(Type type,int from = 0, int to = 0, int count = 0, const QVariantMap& data = QVariantMap());
+    QSPatch(Type type,int from, int to, int count, const QVariantList& data);
+
     QSPatch(const QSPatch &);
     QSPatch &operator=(const QSPatch &);
     ~QSPatch();
@@ -31,9 +33,10 @@ public:
     QSPatch::Type type() const;
     void setType(const QSPatch::Type &type);
 
-    QVariantMap data() const;
+    QVariantList data() const;
 
-    void setData(const QVariantMap &data);
+    void setData(const QVariantList &data);
+    void setData(const QVariantMap& data);
 
     bool operator==(const QSPatch& rhs) const;
 

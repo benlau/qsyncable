@@ -16,7 +16,7 @@ public:
     }
 
     QSPatch::Type type;
-    QVariantMap data;
+    QVariantList data;
     int from;
     int to;
     int count;
@@ -27,14 +27,23 @@ QSPatch::QSPatch() : d(new QSPatchPriv)
 
 }
 
-QSPatch::QSPatch(QSPatch::Type type, int from, int to, int count, QVariantMap data) : d(new QSPatchPriv)
+QSPatch::QSPatch(QSPatch::Type type, int from, int to, int count, const QVariantMap& data) : d(new QSPatchPriv)
 {
+    d->type = type;
+    d->from = from;
+    d->to = to;
+    d->count = count;
+    d->data.append(data);
+}
+
+QSPatch::QSPatch(Type type,int from, int to, int count, const QVariantList& data) : d(new QSPatchPriv) {
     d->type = type;
     d->from = from;
     d->to = to;
     d->count = count;
     d->data = data;
 }
+
 
 QSPatch::QSPatch(const QSPatch &rhs) : d(rhs.d)
 {
@@ -63,14 +72,20 @@ void QSPatch::setType(const QSPatch::Type &type)
     d->type = type;
 }
 
-QVariantMap QSPatch::data() const
+QVariantList QSPatch::data() const
 {
     return d->data;
 }
 
-void QSPatch::setData(const QVariantMap &data)
+void QSPatch::setData(const QVariantList &data)
 {
     d->data = data;
+}
+
+void QSPatch::setData(const QVariantMap &data)
+{
+    d->data.clear();
+    d->data.append(data);
 }
 
 bool QSPatch::operator==(const QSPatch &rhs) const
@@ -139,6 +154,11 @@ bool QSPatch::canMerge(const QSPatch &other) const
             d->to + d->count == other.to() ) {
             res = true;
         }
+    } else if (d->type == QSPatch::Insert) {
+        if (d->from == other.from() ||
+            d->to == other.from() - 1) {
+            res = true;
+        }
     }
 
     return res;
@@ -158,6 +178,13 @@ QSPatch QSPatch::merge(const QSPatch &other) const
     } else if (d->type == QSPatch::Move) {
         res = *this;
         res.setCount(res.count() + other.count());
+    } else if (d->type == QSPatch::count()) {
+        int from = d->from;
+        QVariantList data;
+        data = d->data;
+        data.append(other.data());
+        res = QSPatch(QSPatch::Insert, from,
+                      from + data.count() - 1, data.count(), data);
     }
 
     return res;

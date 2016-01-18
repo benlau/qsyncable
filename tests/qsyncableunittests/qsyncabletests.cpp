@@ -33,6 +33,10 @@ void QSyncableTests::patch()
 void QSyncableTests::patch_merge()
 {
     QSPatch c1,c2,c3,c4;
+    QVariantMap a,b;
+    a["id"] = "a";
+    b["id"] = "b";
+    QVariantList data;
 
     c1 = QSPatch(QSPatch::Move);
     c2 = QSPatch(QSPatch::Insert);
@@ -60,7 +64,6 @@ void QSyncableTests::patch_merge()
     QVERIFY(!c2.canMerge(c1));
 
     /* Merge move */
-
     c1 = QSPatch(QSPatch::Move, 1, 0, 1);
     c2 = QSPatch(QSPatch::Move, 2, 1, 1);
     QVERIFY(c1.canMerge(c2));
@@ -75,6 +78,39 @@ void QSyncableTests::patch_merge()
     QCOMPARE(c3.count(), 2);
 
     QCOMPARE(c4.type(), QSPatch::Null);
+
+    /* Merge insert */
+    data.clear();
+    data << a << b;
+
+    c1 = QSPatch(QSPatch::Insert, 0, 0, 1, a);
+    c2 = QSPatch(QSPatch::Insert, 1, 1, 1, b);
+
+    QVERIFY(c1.canMerge(c2));
+    QVERIFY(!c2.canMerge(c1));
+
+    c3 = c1.merge(c2);
+
+    QCOMPARE(c3.type(), QSPatch::Insert);
+    QCOMPARE(c3.from(), 0);
+    QCOMPARE(c3.to(), 1);
+    QCOMPARE(c3.count(), 2);
+    QVERIFY(c3.data() == data);
+
+    /* Merge insert at same position */
+
+    c1 = QSPatch(QSPatch::Insert, 0, 0, 1, a);
+    c2 = QSPatch(QSPatch::Insert, 0, 0, 1, b);
+
+    QVERIFY(c1.canMerge(c2));
+    QVERIFY(c2.canMerge(c1));
+
+    c3 = c1.merge(c2);
+
+    QCOMPARE(c3.type(), QSPatch::Insert);
+    QCOMPARE(c3.from(), 0);
+    QCOMPARE(c3.to(), 1);
+    QCOMPARE(c3.count(), 2);
 
 }
 
@@ -116,6 +152,10 @@ void QSyncableTests::diffRunner()
     QVERIFY(runner.patch(model, result));
     QVariantList modelList = model->storage();;
 
+    if (modelList != current) {
+        qDebug() << modelList;
+        qDebug() << current;
+    }
     QVERIFY(modelList == current);
 
     model->deleteLater();
@@ -173,8 +213,7 @@ void QSyncableTests::diffRunner_data()
     previous.clear();current.clear();changes.clear();
     previous << a << b;
     current << a << c << d << b;
-    changes << QSPatch(QSPatch::Insert, 1, 1, 1, c)
-            << QSPatch(QSPatch::Insert, 2, 2, 1, d);
+    changes << QSPatch(QSPatch::Insert, 1, 2, 2, QVariantList() << c << d);
     QTest::newRow("Add 2 elements to middle") << previous << current << "id" << changes;
 
     /* Move from last to first */
@@ -238,5 +277,28 @@ void QSyncableTests::diffRunner_data()
 
     QTest::newRow("Update 2 elements") << previous << current << "id" << changes;
 
+}
+
+void QSyncableTests::listModel()
+{
+    QSListModel* model = new QSListModel();
+
+    QVariantList expected;
+    QVariantMap a,b,c,d;
+    a["id"] = "a";
+    b["id"] = "b";
+    c["id"] = "c";
+    d["id"] = "d";
+
+    model->setStorage(QVariantList() << a << b);
+
+    model->insert(1, QVariantList() << c << d);
+
+    expected << a << c << d << b;
+
+    QVERIFY(expected == model->storage());
+
+
+    delete model;
 }
 

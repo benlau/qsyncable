@@ -28,6 +28,8 @@ public:
 
     Q_INVOKABLE void insert(int index,const QVariantMap& value);
 
+    virtual void insert(int index, const QVariantList &value);
+
     Q_INVOKABLE void move(int from, int to, int count = 1);
 
     Q_INVOKABLE void clear();

@@ -48,6 +48,41 @@ void QSListModel::insert(int index, const QVariantMap &value)
     emit countChanged();
 }
 
+void QSListModel::insert(int index, const QVariantList &value)
+{
+    if (value.count() == 0) {
+        return;
+    } else if (value.count() == 1) {
+        insert(index, value.at(0).toMap());
+        return;
+    }
+
+    beginInsertRows(QModelIndex(), index, index + value.count() - 1);
+    m_storage.reserve(m_storage.count() + value.count());
+
+    QVariantList mid = m_storage.mid(index);
+
+    for (int i = 0 ; i < value.size() ; i++) {
+        if (index + i < m_storage.size()) {
+            m_storage[index + i] = value.at(i);
+        } else {
+            m_storage.append(value.at(i));
+        }
+    }
+
+    for (int i = 0; i < mid.size(); i++) {
+        int idx = index + value.size() + i;
+        if (idx < m_storage.count()) {
+            m_storage[idx] = mid.at(i);
+        } else {
+            m_storage.append(mid.at(i));
+        }
+    }
+
+    endInsertRows();
+    emit countChanged();
+}
+
 void QSListModel::move(int from, int to, int count)
 {
 

@@ -11,6 +11,8 @@ public:
 
     virtual void insert(int index, const QVariantMap& value) = 0;
 
+    virtual void insert(int index, const QVariantList &value) = 0;
+
     virtual void move(int from, int to, int count) = 0;
 
     virtual void remove(int i , int count  = 1) = 0;
