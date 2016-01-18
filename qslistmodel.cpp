@@ -34,6 +34,10 @@ QVariant QSListModel::data(const QModelIndex &index, int role) const
 
 void QSListModel::append(const QVariantMap &value)
 {
+    if (m_roles.isEmpty()) {
+        setRoleNames(value);
+    }
+
     beginInsertRows(QModelIndex(),m_storage.size(),m_storage.size());
     m_storage.append(value);
     endInsertRows();
@@ -42,6 +46,10 @@ void QSListModel::append(const QVariantMap &value)
 
 void QSListModel::insert(int index, const QVariantMap &value)
 {
+    if (m_roles.isEmpty()) {
+        setRoleNames(value);
+    }
+
     beginInsertRows(QModelIndex(), index, index);
     m_storage.insert(index, value);
     endInsertRows();
@@ -55,6 +63,10 @@ void QSListModel::insert(int index, const QVariantList &value)
     } else if (value.count() == 1) {
         insert(index, value.at(0).toMap());
         return;
+    }
+
+    if (m_roles.isEmpty()) {
+        setRoleNames(value.at(0).toMap());
     }
 
     beginInsertRows(QModelIndex(), index, index + value.count() - 1);

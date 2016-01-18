@@ -357,7 +357,7 @@ void QSyncableTests::diffRunner_invalidKey()
     QVERIFY(listModel.storage() == to);
 }
 
-void QSyncableTests::listModel()
+void QSyncableTests::listModel_insert()
 {
     QSListModel* model = new QSListModel();
 
@@ -377,6 +377,32 @@ void QSyncableTests::listModel()
     QVERIFY(expected == model->storage());
 
 
+    delete model;
+}
+
+void QSyncableTests::listModel_roleNames()
+{
+    QSListModel* model = new QSListModel();
+    QCOMPARE(model->roleNames().size(), 0);
+    delete model;
+
+    QVariantMap item;
+    item["id"] = "test";
+    item["value"] = "test";
+
+    model = new QSListModel();
+    model->append(item);
+    QCOMPARE(model->roleNames().size(), 2);
+    delete model;
+
+    model = new QSListModel();
+    model->insert(0, item);
+    QCOMPARE(model->roleNames().size(), 2);
+    delete model;
+
+    model = new QSListModel();
+    model->insert(0, QVariantList() << item << item);
+    QCOMPARE(model->roleNames().size(), 2);
     delete model;
 }
 
