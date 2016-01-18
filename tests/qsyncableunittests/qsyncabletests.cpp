@@ -33,9 +33,11 @@ void QSyncableTests::patch()
 void QSyncableTests::patch_merge()
 {
     QSPatch c1,c2,c3,c4;
-    QVariantMap a,b;
+    QVariantMap a,b,c;
     a["id"] = "a";
     b["id"] = "b";
+    c["id"] = "c";
+
     QVariantList data;
 
     c1 = QSPatch(QSPatch::Move);
@@ -79,23 +81,33 @@ void QSyncableTests::patch_merge()
 
     QCOMPARE(c4.type(), QSPatch::Null);
 
-    /* Merge insert */
+    /* Merge seq of insert */
     data.clear();
     data << a << b;
 
     c1 = QSPatch(QSPatch::Insert, 0, 0, 1, a);
     c2 = QSPatch(QSPatch::Insert, 1, 1, 1, b);
+    c3 = QSPatch(QSPatch::Insert, 2, 2, 1, c);
 
     QVERIFY(c1.canMerge(c2));
     QVERIFY(!c2.canMerge(c1));
 
-    c3 = c1.merge(c2);
+    c4 = c1.merge(c2);
 
-    QCOMPARE(c3.type(), QSPatch::Insert);
-    QCOMPARE(c3.from(), 0);
-    QCOMPARE(c3.to(), 1);
-    QCOMPARE(c3.count(), 2);
-    QVERIFY(c3.data() == data);
+    QCOMPARE(c4.type(), QSPatch::Insert);
+    QCOMPARE(c4.from(), 0);
+    QCOMPARE(c4.to(), 1);
+    QCOMPARE(c4.count(), 2);
+    QVERIFY(c4.data() == data);
+
+    QVERIFY(c4.canMerge(c3));
+    c4 = c4.merge(c3);
+
+
+    QCOMPARE(c4.type(), QSPatch::Insert);
+    QCOMPARE(c4.from(), 0);
+    QCOMPARE(c4.to(), 2);
+    QCOMPARE(c4.count(), 3);
 
     /* Merge insert at same position */
 
@@ -140,6 +152,7 @@ void QSyncableTests::diffRunner()
         QSPatch expected = changes.at(i);
         QSPatch real = result.at(i);
         if (!(expected == real))  {
+            qDebug() << i;
             qDebug() << expected;
             qDebug() << real;
         }
@@ -200,6 +213,13 @@ void QSyncableTests::diffRunner_data()
     previous << a << b << c;
     changes << QSPatch(QSPatch::Remove, 0, 2, 3);
     QTest::newRow("Remove all element") << previous << current << "id" << changes;
+
+    /* Add 3 elements to empty list*/
+    previous.clear();current.clear();changes.clear();
+
+    current << a << b << c;
+    changes << QSPatch(QSPatch::Insert,0,2,3, QVariantList() << a << b << c);
+    QTest::newRow("Add 3 elements to empty list") << previous << current << "id" << changes;
 
     /* Add new element to end */
 

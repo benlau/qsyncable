@@ -178,7 +178,7 @@ QSPatch QSPatch::merge(const QSPatch &other) const
     } else if (d->type == QSPatch::Move) {
         res = *this;
         res.setCount(res.count() + other.count());
-    } else if (d->type == QSPatch::count()) {
+    } else if (d->type == QSPatch::Insert) {
         int from = d->from;
         QVariantList data;
         data = d->data;
@@ -202,7 +202,8 @@ QDebug operator<<(QDebug dbg, const QSPatch& change){
         break;
 
     case QSPatch::Insert:
-        dbg << "Insert";
+        dbg << QString("Insert from %1 to %2 with %3").arg(change.from()).arg(change.to()).arg(change.count());
+        dbg << change.data();
         break;
 
     case QSPatch::Update:
