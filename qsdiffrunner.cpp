@@ -87,7 +87,6 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     QList<QSPatch> res;
     QList<QSPatch> updates;
     QVariantList fromList;
-    QVariantList tmp;
 
     QHash<QString, int> toHashTable;
     QHash<QString, int> fromHashTable;
@@ -104,29 +103,23 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         toHashTable[key] = i;
     }
 
-    fromList = from;
+    fromList.reserve(from.size());
 
-    tmp.clear();
-    for (int i = fromList.size() - 1 ; i >= 0 ; i--) {
-        item = fromList.at(i).toMap();
+    // Find removed item and build index table.
+    for (int i = 0 ; i < from.size() ; i++) {
+        item = from.at(i).toMap();
         QString key = item[m_keyField].toString();
 
         if (!toHashTable.contains(key)) {
             res << QSPatch(QSPatch::Remove,
                            i, i, 1);
-            fromList.removeAt(i); //@FIXME
+        } else {
+            fromList << item;
+            fromHashTable[key] = fromList.count() - 1;
         }
     }
 
     /* Step 2 - Compare to find move and update */
-
-    // Build index table
-    for (int i = 0 ; i < fromList.size() ; i++) {
-        item = fromList.at(i).toMap();
-        QString key = item[m_keyField].toString();
-
-        fromHashTable[key] = i;
-    }
 
     for (int i = 0 ; i < to.size() ; i++) {
         item = to.at(i).toMap();
