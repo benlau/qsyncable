@@ -8,7 +8,7 @@ QT       += qml quick testlib
 
 QT       -= gui
 
-TARGET = tst_qsyncableunitteststest
+TARGET = qsyncableunittests
 CONFIG   += console
 CONFIG   -= app_bundle
 
