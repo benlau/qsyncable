@@ -12,7 +12,7 @@
 #include <QSharedPointer>
 #include "qspatchable.h"
 
-class QSVariantListModel : public QAbstractListModel, QSPatchable
+class QSVariantListModel : public QAbstractListModel, public QSPatchable
 {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
@@ -28,7 +28,7 @@ public:
 
     Q_INVOKABLE void insert(int index,const QVariantMap& value);
 
-    Q_INVOKABLE void move(int from, int to);
+    Q_INVOKABLE void move(int from, int to, int count = 1);
 
     Q_INVOKABLE void clear();
 
@@ -51,7 +51,9 @@ public:
 
     void setRoleNames(const QStringList& value);
 
-    void setList(QList<QVariantMap> value);
+    void setList(const QList<QVariantMap>& value);
+    void setList(const QVariantList& value);
+
 
     QList<QVariantMap> list() const;
 

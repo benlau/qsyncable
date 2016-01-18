@@ -4,13 +4,14 @@
 #include <QVariantMap>
 
 class QSPatchable {
+public:
 
     // No. of item in row
     virtual int count() const = 0;
 
     virtual void insert(int index, const QVariantMap& value) = 0;
 
-    virtual void move(int from, int to) = 0;
+    virtual void move(int from, int to, int count) = 0;
 
     virtual void remove(int i , int count  = 1) = 0;
 

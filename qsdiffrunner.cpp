@@ -164,3 +164,29 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &previous, const QVarian
     return res;
 }
 
+bool QSDiffRunner::patch(QSPatchable *patchable, const QList<QSPatch>& patches) const
+{
+    foreach (QSPatch patch, patches) {
+        switch (patch.type()) {
+        case QSPatch::Remove:
+            patchable->remove(patch.from(), patch.count());
+            break;
+        case QSPatch::Insert:
+            // @TODO Insert multiple element
+            patchable->insert(patch.from(), patch.data());
+            break;
+        case QSPatch::Move:
+            patchable->move(patch.from(), patch.to(), patch.count());
+            break;
+        case QSPatch::Update:
+            patchable->setProperties(patch.from(), patch.data());
+            break;
+        default:
+            break;
+        }
+
+    }
+
+    return true;
+}
+

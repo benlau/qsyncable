@@ -110,6 +110,19 @@ void QSyncableTests::diffRunner()
         QVERIFY(expected == real);
     }
 
+    QSVariantListModel* model = new QSVariantListModel();
+
+    model->setList(previous);
+    QVERIFY(runner.patch(model, result));
+    QList<QVariantMap> modelData = model->list();
+    QVariantList modelList;
+    for (int i = 0 ; i < modelData.size() ; i++) {
+        modelList << QVariant(modelData.at(i));
+    }
+
+    QVERIFY(modelList == current);
+
+    model->deleteLater();
 }
 
 void QSyncableTests::diffRunner_data()

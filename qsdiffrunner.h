@@ -22,6 +22,8 @@ public:
     QList<QSPatch> compare(const QVariantList& previous,
                            const QVariantList& current);
 
+    bool patch(QSPatchable* patchable, const QList<QSPatch>& patches) const;
+
 signals:
 
 public slots:

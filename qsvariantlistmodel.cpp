@@ -48,11 +48,48 @@ void QSVariantListModel::insert(int index, const QVariantMap &value)
     emit countChanged();
 }
 
-void QSVariantListModel::move(int from, int to)
+void QSVariantListModel::move(int from, int to, int count)
 {
-    if (!beginMoveRows(QModelIndex(), from, from, QModelIndex(), to > from ? to+1 : to))
-        return; //should only be triggered for our simple case if from == to.
-    m_data.move(from, to);
+
+    if (from > to) {
+        int f = from;
+        int t = to;
+        int c = count;
+        count = f - t;
+        from = t;
+        to = t + c;
+    }
+
+    if (count <= 0 ||
+        from == to ||
+        from + count > m_data.count() ||
+        to + count > m_data.count() ||
+        from < 0 ||
+        to < 0) {
+        return;
+    }
+
+    beginMoveRows(QModelIndex(), from, from + count - 1,
+                  QModelIndex(), to > from ? to + count : to);
+
+    QList<QVariantMap> tmp;
+    tmp.reserve(to - from + count);
+
+    // Move "to" block
+    for (int i=0 ; i < (to - from) ; i++) {
+        tmp.append(m_data[from + count + i]);
+    }
+
+    // Move "from" block
+    for (int i = 0 ; i < count ; i++) {
+        tmp.append(m_data[from + i]);
+    }
+
+    // Replace
+    for (int i=0 ; i < tmp.count() ; ++i) {
+        m_data[from + i] = tmp[i];
+    }
+
     endMoveRows();
 }
 
@@ -176,7 +213,16 @@ void QSVariantListModel::setRoleNames(const QStringList& list)
     }
 }
 
-void QSVariantListModel::setList(QList<QVariantMap> value)
+void QSVariantListModel::setList(const QVariantList &value)
+{
+    QList<QVariantMap> list;
+    for (int i = 0 ; i < value.size() ; i++) {
+        list << value.at(i).toMap();
+    }
+    setList(list);
+}
+
+void QSVariantListModel::setList(const QList<QVariantMap>& value)
 {
     int oldCount = m_data.count();
     beginResetModel();
