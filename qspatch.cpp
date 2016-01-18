@@ -167,11 +167,11 @@ QDebug operator<<(QDebug dbg, const QSPatch& change){
     switch (change.type()) {
 
     case QSPatch::Remove:
-        dbg.noquote() << QString("Remove from %1 to %2").arg(change.from()).arg(change.to());
+        dbg << QString("Remove from %1 to %2").arg(change.from()).arg(change.to());
         break;
 
     case QSPatch::Move:
-        dbg.noquote() << QString("Move from %1 to %2 with %3").arg(change.from()).arg(change.to()).arg(change.count());
+        dbg << QString("Move from %1 to %2 with %3").arg(change.from()).arg(change.to()).arg(change.count());
         break;
 
     case QSPatch::Insert:
