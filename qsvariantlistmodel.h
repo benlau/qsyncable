@@ -55,7 +55,7 @@ public:
     void setList(const QVariantList& value);
 
 
-    QList<QVariantMap> list() const;
+    QVariantList list() const;
 
     /* Extra API */
 
@@ -70,5 +70,5 @@ private:
 
     QHash<int, QByteArray> m_roles;
 
-    QList<QVariantMap> m_data;
+    QVariantList m_data;
 };

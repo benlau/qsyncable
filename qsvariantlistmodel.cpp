@@ -25,7 +25,7 @@ QVariant QSVariantListModel::data(const QModelIndex &index, int role) const
     QVariant v;
 
     if (m_roles.contains(role)) {
-        QVariantMap item = m_data.at(index.row());
+        QVariantMap item = m_data.at(index.row()).toMap();
         v = item[m_roles[role]];
     }
 
@@ -72,7 +72,7 @@ void QSVariantListModel::move(int from, int to, int count)
     beginMoveRows(QModelIndex(), from, from + count - 1,
                   QModelIndex(), to > from ? to + count : to);
 
-    QList<QVariantMap> tmp;
+    QVariantList tmp;
     tmp.reserve(to - from + count);
 
     // Move "to" block
@@ -122,8 +122,9 @@ int QSVariantListModel::count() const
 QVariantMap QSVariantListModel::get(int i) const
 {
     QVariantMap map;
-    if (i >=0 && i < m_data.size())
-        map = m_data.at(i);
+    if (i >=0 && i < m_data.size()) {
+        map = m_data.at(i).toMap();
+    }
     return map;
 
 }
@@ -144,7 +145,9 @@ void QSVariantListModel::setProperty(int idx, QString property, QVariant value)
         }
     }
 
-    m_data[idx][property] = value;
+    item[property] = value;
+
+    m_data[idx] = item;
 
     emit dataChanged(index(idx,0),
                      index(idx,0),
@@ -215,15 +218,6 @@ void QSVariantListModel::setRoleNames(const QStringList& list)
 
 void QSVariantListModel::setList(const QVariantList &value)
 {
-    QList<QVariantMap> list;
-    for (int i = 0 ; i < value.size() ; i++) {
-        list << value.at(i).toMap();
-    }
-    setList(list);
-}
-
-void QSVariantListModel::setList(const QList<QVariantMap>& value)
-{
     int oldCount = m_data.count();
     beginResetModel();
     m_data = value;
@@ -233,7 +227,7 @@ void QSVariantListModel::setList(const QList<QVariantMap>& value)
     }
 }
 
-QList<QVariantMap> QSVariantListModel::list() const
+QVariantList QSVariantListModel::list() const
 {
     return m_data;
 }
@@ -242,7 +236,7 @@ int QSVariantListModel::indexOf(QString field, QVariant value) const
 {
     int res = -1;
     for (int i = 0 ; i < m_data.count();i++) {
-        QVariantMap item = m_data.at(i);
+        QVariantMap item = m_data.at(i).toMap();
         if (item.contains(field) && item[field] == value) {
             res = i;
             break;
