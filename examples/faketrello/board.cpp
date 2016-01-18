@@ -3,8 +3,14 @@
 class BoardPriv : public QSharedData
 {
 public:
+    BoardPriv() {
+        nextCardId = 1;
+        nextListId = 1;
+    }
+
     QList<List> lists;
-    int nextId;
+    int nextCardId;
+    int nextListId;
 };
 
 Board::Board() : d(new BoardPriv)
@@ -39,22 +45,32 @@ void Board::setLists(const QList<List> &list)
     d->lists = list;
 }
 
-int Board::nextId() const
+int Board::nextCardId() const
 {
-    return d->nextId;
+    return d->nextCardId;
 }
 
-void Board::setNextId(int nextId)
+void Board::setNextCardId(int nextId)
 {
-    d->nextId = nextId;
+    d->nextCardId = nextId;
+}
+
+void Board::addList()
+{
+    d->lists.append(list());
 }
 
 void Board::load()
 {
-    List list1("List 1");
-    list1 << Card("Task 1")
-          << Card("Task 2");
-    d->lists << list1;
+    List list1 = list();
+    list1 << card()
+          << card()
+          << card();
+
+    List list2 = list();
+    list2 << card() << card() << card() << card() << card();
+
+    d->lists << list1 << list2;
 }
 
 QVariantMap Board::toMap() const
@@ -69,5 +85,15 @@ QVariantMap Board::toMap() const
     res["lists"] = lists;
 
     return res;
+}
+
+Card Board::card()
+{
+    return Card(QString("Card %1").arg(d->nextCardId++));
+}
+
+List Board::list()
+{
+    return List(QString("Card %1").arg(d->nextListId++));
 }
 

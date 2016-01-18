@@ -16,6 +16,8 @@ int AppDelegate::run()
 
     QCoreApplication* app = QCoreApplication::instance();
 
+    m_engine.rootContext()->setContextProperty("App", this);
+
     m_engine.rootContext()->setContextProperty("CardListStore", cardListStore);
 
     m_engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
@@ -23,6 +25,12 @@ int AppDelegate::run()
     sync();
 
     return app->exec();
+}
+
+void AppDelegate::addList()
+{
+    m_board.addList();
+    sync();
 }
 
 void AppDelegate::sync()

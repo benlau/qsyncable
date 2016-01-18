@@ -17,8 +17,10 @@ public:
     QList<List> lists() const;
     void setLists(const QList<List> &lists);
 
-    int nextId() const;
-    void setNextId(int nextId);
+    int nextCardId() const;
+    void setNextCardId(int nextCardId);
+
+    void addList();
 
     // Load from file, but now it just load dummy data for demo
     void load();
@@ -27,6 +29,8 @@ public:
 
 private:
     QSharedDataPointer<BoardPriv> d;
+    Card card();
+    List list();
 };
 
 #endif // BOARD_H

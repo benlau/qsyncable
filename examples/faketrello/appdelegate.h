@@ -18,6 +18,10 @@ signals:
 
 public slots:
 
+    void addList();
+
+private slots:
+
     void sync();
 
 private:

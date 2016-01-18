@@ -1,35 +1,26 @@
 import QtQuick 2.3
 import QtQuick.Window 2.2
+import QtQuick.Layouts 1.1
+import "./views"
 
 Window {
     width: 640
     height: 480
     visible: true
 
-    MouseArea {
+    ColumnLayout {
         anchors.fill: parent
-        onClicked: {
-            Qt.quit();
+
+        ToolBar {
+            Layout.fillWidth: true
         }
+
+        Board {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
+
     }
 
-    Text {
-        text: qsTr("Hello World")
-        anchors.centerIn: parent
-    }
-
-    Repeater {
-        model: CardListStore
-        delegate: Item {
-            width: 480
-            height: 48
-            Text {
-                text: model.uuid;
-            }
-            Component.onCompleted:  {
-                console.log("completed");
-            }
-        }
-    }
 }
 

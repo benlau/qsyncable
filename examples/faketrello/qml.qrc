@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>views/ToolBar.qml</file>
+        <file>views/Board.qml</file>
+        <file>views/CardList.qml</file>
+        <file>views/Card.qml</file>
     </qresource>
 </RCC>
-
