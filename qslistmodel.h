@@ -12,13 +12,13 @@
 #include <QSharedPointer>
 #include "qspatchable.h"
 
-class QSVariantListModel : public QAbstractListModel, public QSPatchable
+class QSListModel : public QAbstractListModel, public QSPatchable
 {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
-    explicit QSVariantListModel(QObject *parent = 0);
+    explicit QSListModel(QObject *parent = 0);
 
     int rowCount(const QModelIndex &parent) const;
 

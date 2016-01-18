@@ -4,20 +4,20 @@
    Web: https://github.com/benlau/qsyncable
 */
 #include <QtCore>
-#include "qsvariantlistmodel.h"
+#include "qslistmodel.h"
 
-QSVariantListModel::QSVariantListModel(QObject *parent) :
+QSListModel::QSListModel(QObject *parent) :
     QAbstractListModel(parent)
 {
 }
 
-int QSVariantListModel::rowCount(const QModelIndex &parent) const
+int QSListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return count();
 }
 
-QVariant QSVariantListModel::data(const QModelIndex &index, int role) const
+QVariant QSListModel::data(const QModelIndex &index, int role) const
 {
     if (index.row() < 0 || index.row() >= m_storage.size())
         return QVariant();
@@ -32,7 +32,7 @@ QVariant QSVariantListModel::data(const QModelIndex &index, int role) const
     return v;
 }
 
-void QSVariantListModel::append(const QVariantMap &value)
+void QSListModel::append(const QVariantMap &value)
 {
     beginInsertRows(QModelIndex(),m_storage.size(),m_storage.size());
     m_storage.append(value);
@@ -40,7 +40,7 @@ void QSVariantListModel::append(const QVariantMap &value)
     emit countChanged();
 }
 
-void QSVariantListModel::insert(int index, const QVariantMap &value)
+void QSListModel::insert(int index, const QVariantMap &value)
 {
     beginInsertRows(QModelIndex(), index, index);
     m_storage.insert(index, value);
@@ -48,7 +48,7 @@ void QSVariantListModel::insert(int index, const QVariantMap &value)
     emit countChanged();
 }
 
-void QSVariantListModel::move(int from, int to, int count)
+void QSListModel::move(int from, int to, int count)
 {
 
     if (from > to) {
@@ -93,7 +93,7 @@ void QSVariantListModel::move(int from, int to, int count)
     endMoveRows();
 }
 
-void QSVariantListModel::clear()
+void QSListModel::clear()
 {
     if (m_storage.isEmpty())
         return;
@@ -105,7 +105,7 @@ void QSVariantListModel::clear()
 
 }
 
-void QSVariantListModel::remove(int i, int count)
+void QSListModel::remove(int i, int count)
 {
     beginRemoveRows(QModelIndex(), i, i + count - 1);
     for (int j = 0; j < count; ++j)
@@ -114,12 +114,12 @@ void QSVariantListModel::remove(int i, int count)
     emit countChanged();
 }
 
-int QSVariantListModel::count() const
+int QSListModel::count() const
 {
     return m_storage.size();
 }
 
-QVariantMap QSVariantListModel::get(int i) const
+QVariantMap QSListModel::get(int i) const
 {
     QVariantMap map;
     if (i >=0 && i < m_storage.size()) {
@@ -129,7 +129,7 @@ QVariantMap QSVariantListModel::get(int i) const
 
 }
 
-void QSVariantListModel::setProperty(int idx, QString property, QVariant value)
+void QSListModel::setProperty(int idx, QString property, QVariant value)
 {
     if (idx < 0 || idx >= m_storage.size())
         return;
@@ -154,7 +154,7 @@ void QSVariantListModel::setProperty(int idx, QString property, QVariant value)
                      roles);
 }
 
-void QSVariantListModel::set(int idx, QVariantMap data)
+void QSListModel::set(int idx, QVariantMap data)
 {
     if (idx < 0 || idx >= m_storage.size())
         return;
@@ -172,7 +172,7 @@ void QSVariantListModel::set(int idx, QVariantMap data)
                      roles);
 }
 
-void QSVariantListModel::setProperties(int index, QVariantMap changes)
+void QSListModel::setProperties(int index, QVariantMap changes)
 {
     QVariantMap original = get(index);
 
@@ -187,12 +187,12 @@ void QSVariantListModel::setProperties(int index, QVariantMap changes)
     }
 }
 
-QHash<int, QByteArray> QSVariantListModel::roleNames() const
+QHash<int, QByteArray> QSListModel::roleNames() const
 {
     return m_roles;
 }
 
-void QSVariantListModel::setRoleNames(const QVariantMap &value)
+void QSListModel::setRoleNames(const QVariantMap &value)
 {
     m_roles.clear();
     QMapIterator<QString,QVariant> iter(value);
@@ -206,7 +206,7 @@ void QSVariantListModel::setRoleNames(const QVariantMap &value)
 
 }
 
-void QSVariantListModel::setRoleNames(const QStringList& list)
+void QSListModel::setRoleNames(const QStringList& list)
 {
     m_roles.clear();
     int role = Qt::UserRole;
@@ -216,7 +216,7 @@ void QSVariantListModel::setRoleNames(const QStringList& list)
     }
 }
 
-void QSVariantListModel::setStorage(const QVariantList &value)
+void QSListModel::setStorage(const QVariantList &value)
 {
     int oldCount = m_storage.count();
     beginResetModel();
@@ -227,12 +227,12 @@ void QSVariantListModel::setStorage(const QVariantList &value)
     }
 }
 
-QVariantList QSVariantListModel::storage() const
+QVariantList QSListModel::storage() const
 {
     return m_storage;
 }
 
-int QSVariantListModel::indexOf(QString field, QVariant value) const
+int QSListModel::indexOf(QString field, QVariant value) const
 {
     int res = -1;
     for (int i = 0 ; i < m_storage.count();i++) {

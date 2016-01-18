@@ -10,7 +10,7 @@ before_install:
     - cat /etc/apt/sources.list
     - sudo apt-get update -qq
     - apt-cache search qt5
-    - sudo apt-get install -qq qt53quickcontrols  qt53declarative qt53script qt53graphicaleffects qpm
+    - sudo apt-get install --force-yes -qq qt53quickcontrols  qt53declarative qt53script qt53graphicaleffects qpm
     - sh -e /etc/init.d/xvfb start
 script:
     - source /opt/qt53/bin/qt53-env.sh 

@@ -2,7 +2,7 @@
 #include <QTest>
 #include "qsdiffrunner.h"
 #include "qsyncabletests.h"
-#include "qsvariantlistmodel.h"
+#include "qslistmodel.h"
 
 QSyncableTests::QSyncableTests(QObject *parent) : QObject(parent)
 {
@@ -110,7 +110,7 @@ void QSyncableTests::diffRunner()
         QVERIFY(expected == real);
     }
 
-    QSVariantListModel* model = new QSVariantListModel();
+    QSListModel* model = new QSListModel();
 
     model->setStorage(previous);
     QVERIFY(runner.patch(model, result));

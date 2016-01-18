@@ -2,11 +2,11 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/qsdiffrunner.h \
-    $$PWD/qsvariantlistmodel.h \
     $$PWD/qspatch.h \
-    $$PWD/qspatchable.h
+    $$PWD/qspatchable.h \
+    $$PWD/qslistmodel.h
 
 SOURCES += \
     $$PWD/qsdiffrunner.cpp \
-    $$PWD/qsvariantlistmodel.cpp \
-    $$PWD/qspatch.cpp
+    $$PWD/qspatch.cpp \
+    $$PWD/qslistmodel.cpp
