@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import "../components"
 
 Item {
     id: card
@@ -9,7 +10,14 @@ Item {
     property string cardUuid
     property string text
 
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+    }
+
     Rectangle {
+        id: container
         color: "#FFFFFF"
         anchors.fill: parent
         anchors.margins: 8
@@ -24,11 +32,13 @@ Item {
             anchors.fill: parent
         }
 
-        Rectangle {
+        FlatButton {
             width: height
             height: parent.height
             anchors.right: parent.right
-            color: mouseArea.pressed ? "#1F000000" : "#00000000"
+
+            opacity: mouseArea.containsMouse ? 1 : 0
+            enabled: mouseArea.containsMouse
 
             Image {
                 id: close
@@ -38,11 +48,15 @@ Item {
                 anchors.centerIn: parent
             }
 
-            MouseArea {
-                id: mouseArea
-                anchors.fill: parent
-                onClicked: {
-                    App.removeCard(listUuid, cardUuid);
+            onClicked: {
+                App.removeCard(listUuid, cardUuid);
+            }
+
+            Behavior on opacity {
+                NumberAnimation {
+                    property: "opacity";
+                    duration: 200
+                    easing.type: Easing.OutQuad;
                 }
             }
 

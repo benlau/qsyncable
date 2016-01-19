@@ -11,13 +11,22 @@ Item {
     property var cards
 
     Rectangle {
-
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
         anchors.margins: 16
         color: "#ccc"
+        height: Math.min(listView.contentHeight + 16, cardList.height )
+
+        Behavior on height {
+            NumberAnimation {
+                property: "height"
+                duration: 200
+                easing.type: Easing.OutQuad
+            }
+        }
 
         ListView {
-
             id: listView
             clip: true
 
@@ -100,9 +109,7 @@ Item {
                         App.addCard(listUuid);
                     }
                 }
-
             }
-
 
             model: JsonModel {
                 keyField: "uuid"
