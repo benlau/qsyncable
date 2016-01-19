@@ -12,11 +12,11 @@ How it works?
 
 ![Workflow](https://raw.githubusercontent.com/benlau/qsyncable/master/docs/qsyncable-workflow.png)
 
-     DiffRunner (QSDiffRunner)
-     The DiffRunner compares two QVariantList to produce a patch for transforming one of the list to another list with minimum no. of steps. The result can be applied on a QSListModel. DiffRunner use an O(n) algorithm and therefore it should be fast enough for regular UI application.
+**DiffRunner (QSDiffRunner)** compares two QVariantList to produce a patch for transforming one of the list to another list with minimum no. of steps. The result can be applied on a QSListModel. DiffRunner use an O(n) algorithm and therefore it should be fast enough for regular UI application.
 
-     ListModel (QSListModel)
-     QSListModel is an implementation of QAbstactItemModel. It stores data in a list of QVariantMap. It will emit insert, remove, move and data changed signals according to the patch applied.
+**ListModel (QSListModel)** is an implementation of QAbstactItemModel. It stores data in a list of QVariantMap. It will emit insert, remove, move and data changed signals according to the patch applied.
+
+
 
 QSyncable provides the two classes above for user to convert their own data structure to a QML friendly list model. Usually there are several ways to update a list model. QSyncable combines all of update methods into a single process - patching.
 
@@ -30,6 +30,7 @@ The diagram below shows an example application architecture using QSyncable:
 In QSyncable application, ListModel only keep a copy of the data. it is meaningless for UI components to modify it. Instead, UI components should ask to update the data source and trigger synchronization afterward. The component for “update” and “query” is in fact separated. (More information in this [article](https://medium.com/@benlaud/action-dispatcher-design-pattern-for-qml-c350b1d2a7e7#.mi3b8hbuv) )
 
 Why use QSyncable for C++?
+--------------------------
 
 (1) The function of QQmlListProperty is limited.
 
@@ -52,6 +53,7 @@ You just need to write a conversion function, QSyncable will do the rest for you
 No matter what kind of update happen, just convert your data structure to QVariantList, pass it to DiffRunner, then patch a model.
 
 Why use QSyncable for QML?
+--------------------------
 
 (1) Able to work as a nested list model.
 
@@ -72,7 +74,7 @@ Check example folder
 Conclusion
 ----------
 
-QSyncable is designed to solve a fundamental problem of C++&QML application. How to share data between C++ and QML?
+QSyncable is designed to solve a fundamental problem of C++ & QML application: How to share data between C++ and QML?
 
 QObject list model is definitely a bad idea. It is terrible to manage their life cycle and ownership (QML / C++ scope).
 
