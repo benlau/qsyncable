@@ -7,5 +7,6 @@
         <file>views/Card.qml</file>
         <file>img/plus.png</file>
         <file>img/close.png</file>
+        <file>components/FlatButton.qml</file>
     </qresource>
 </RCC>

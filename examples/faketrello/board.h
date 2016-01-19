@@ -22,7 +22,9 @@ public:
 
     void addList();
 
-    void removeCard(QString listUuid, QString cardUUid);
+    void removeCard(const QString& listUuid, const QString& cardUUid);
+
+    void addCard(const QString& listUuid);
 
     // Load from file, but now it just load dummy data for demo
     void load();

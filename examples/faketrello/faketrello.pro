@@ -24,3 +24,6 @@ HEADERS += \
     card.h \
     list.h \
     board.h
+
+DISTFILES += \
+    README.md

@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QSyncable 1.0
+import "../components"
 
 Item {
     id: cardList;
@@ -16,9 +17,30 @@ Item {
         color: "#ccc"
 
         ListView {
+
             id: listView
+            clip: true
 
             anchors.fill: parent
+
+            add: Transition {
+
+                NumberAnimation {
+                    property: "opacity";
+                    from: 0;
+                    to: 1;
+                    duration: 200
+                    easing.type: Easing.OutQuad;
+                }
+            }
+
+            addDisplaced: Transition {
+                NumberAnimation {
+                    properties: "x,y";
+                    duration: 200
+                    easing.type: Easing.OutQuad;
+                }
+            }
 
             remove: Transition {
                 NumberAnimation {
@@ -47,15 +69,40 @@ Item {
 
             }
 
-            header: Text {
-                x: 12
+            header: Item {
                 width: listView.width
                 height: 48
-                text: title
-                font.bold: true
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignLeft
+
+                Text {
+                    anchors.fill: parent
+                    anchors.leftMargin: 12
+
+                    text: title
+                    font.bold: true
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignLeft
+                }
+
+                FlatButton {
+                    width: 48
+                    height: 48
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+
+                    Image {
+                        width: 24
+                        height: 24
+                        source: "../img/plus.png"
+                        anchors.centerIn: parent
+                    }
+
+                    onClicked: {
+                        App.addCard(listUuid);
+                    }
+                }
+
             }
+
 
             model: JsonModel {
                 keyField: "uuid"

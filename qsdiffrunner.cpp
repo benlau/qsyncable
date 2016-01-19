@@ -206,7 +206,6 @@ bool QSDiffRunner::patch(QSPatchable *patchable, const QList<QSPatch>& patches) 
             patchable->remove(patch.from(), patch.count());
             break;
         case QSPatch::Insert:
-            // @TODO Insert multiple element
             patchable->insert(patch.from(), patch.data());
             break;
         case QSPatch::Move:

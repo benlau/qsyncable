@@ -90,6 +90,11 @@ void List::setTitle(const QString &title)
     d->title = title;
 }
 
+void List::insertCard(int index, const Card &card)
+{
+    d->cards.insert(index, card);
+}
+
 void List::appendCard(const Card &card)
 {
     d->cards.append(card);

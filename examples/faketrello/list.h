@@ -27,6 +27,8 @@ public:
 
     void setTitle(const QString &title);
 
+    void insertCard(int index, const Card& card);
+
     void appendCard(const Card& card);
 
     void removeCard(const QString &uuid);

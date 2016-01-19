@@ -61,7 +61,19 @@ void Board::addList()
     d->lists.append(list());
 }
 
-void Board::removeCard(QString listUuid, QString cardUuid)
+void Board::addCard(const QString &listUuid)
+{
+    for (int i = 0 ; i < d->lists.size() ; i++) {
+        List list = d->lists.at(i);
+        if (list.uuid() == listUuid) {
+            list.insertCard(0, card());
+            d->lists[i] = list;
+            break;
+        }
+    }
+}
+
+void Board::removeCard(const QString& listUuid, const QString& cardUuid)
 {
     for (int i = 0 ; i < d->lists.size() ; i++) {
         List list = d->lists.at(i);

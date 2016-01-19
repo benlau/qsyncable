@@ -33,6 +33,12 @@ void AppDelegate::addList()
     sync();
 }
 
+void AppDelegate::addCard(const QString &listUuid)
+{
+    m_board.addCard(listUuid);
+    sync();
+}
+
 void AppDelegate::removeCard(const QString& listUuid, const QString& cardUuid)
 {
     m_board.removeCard(listUuid, cardUuid);
