@@ -38,9 +38,12 @@ Why use QSyncable for C++?
 
 You need to understand how QAbstactItemModel works and emit insert, remove, move and update signals correctly. Otherwise, UI components like ListView will not react correctly.
 
-(3) Use implicitly sharing class over QObject
+(3) Use implicit sharing class over QObject
 
-QObject is not copyable and you need to manage its life cycle. It is not really a good solution as a data storage class. Implicitly sharing class is recommended for this purpose.
+QObject is not copyable and you need to manage its life cycle. It is not really a good solution as a data storage class.
+
+Implicit sharing class is recommended for this purpose. Because it can safely be copied across threads, like any other QVariant classes.
+Once you find that your data is too big for processing, you may pass it to a thread and work in the background.
 
 [Implicit Sharing | Qt Core 5.5](http://doc.qt.io/qt-5/implicit-sharing.html)
 
@@ -71,8 +74,8 @@ Under construction
 Example
 -------
 
-Check example folder
-(Not finished yet)
+[faketrello](https://github.com/benlau/qsyncable/tree/master/examples/faketrello) - Simulate a Trello card board.
+
 
 Design Principle - Separation of "updates" and "queries"
 ----------
