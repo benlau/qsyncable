@@ -94,6 +94,6 @@ Card Board::card()
 
 List Board::list()
 {
-    return List(QString("Card %1").arg(d->nextListId++));
+    return List(QString("List %1").arg(d->nextListId++));
 }
 

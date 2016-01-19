@@ -35,6 +35,8 @@ void AppDelegate::addList()
 
 void AppDelegate::sync()
 {
+    // It is the only way to update QML model, you don't need
+    // to handle move, insert, remove operations explicitly.
     QVariantMap map = m_board.toMap();
 
     QVariantList lists = map["lists"].toList();
