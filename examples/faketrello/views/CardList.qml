@@ -75,7 +75,14 @@ Item {
                     duration: 200
                     easing.type: Easing.OutQuad;
                 }
+            }
 
+            moveDisplaced: Transition {
+                NumberAnimation {
+                    properties: "x,y";
+                    duration: 200
+                    easing.type: Easing.OutQuad;
+                }
             }
 
             header: Item {

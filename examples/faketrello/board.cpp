@@ -73,6 +73,30 @@ void Board::addCard(const QString &listUuid)
     }
 }
 
+void Board::moveCard(const QString &listUuid, const QString &fromCardUUid, const QString &toCardUuid)
+{
+    int index = indexOfList(listUuid);
+    if (index < 0) {
+        return;
+    }
+
+    List list = d->lists.at(index);
+    list.moveCard(fromCardUUid, toCardUuid);
+    d->lists[index] = list;
+}
+
+int Board::indexOfList(const QString &listUuid)
+{
+
+    for (int i = 0 ; i < d->lists.size() ; i++) {
+        if (d->lists.at(i).uuid() == listUuid) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 void Board::removeCard(const QString& listUuid, const QString& cardUuid)
 {
     for (int i = 0 ; i < d->lists.size() ; i++) {

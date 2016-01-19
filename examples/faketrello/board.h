@@ -26,6 +26,10 @@ public:
 
     void addCard(const QString& listUuid);
 
+    void moveCard(const QString& listUuid,const QString& fromCardUUid, const QString& toCardUuid);
+
+    int indexOfList(const QString& listUuid);
+
     // Load from file, but now it just load dummy data for demo
     void load();
 

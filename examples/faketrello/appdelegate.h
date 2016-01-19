@@ -24,6 +24,8 @@ public slots:
 
     void removeCard(const QString& listUuid, const QString& cardUUid);
 
+    void moveCard(const QString& listUuid,const QString& fromCardUUid, const QString& toCardUuid);
+
 private slots:
 
     void sync();

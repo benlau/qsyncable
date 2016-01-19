@@ -33,6 +33,10 @@ public:
 
     void removeCard(const QString &uuid);
 
+    void moveCard(const QString& fromCardUuid, const QString& toCardUuid);
+
+    int indexOfCard(const QString uuid);
+
 private:
     QSharedDataPointer<ListPriv> d;
 

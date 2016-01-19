@@ -113,6 +113,28 @@ void List::removeCard(const QString &uuid)
     }
 }
 
+void List::moveCard(const QString &fromCardUuid, const QString &toCardUuid)
+{
+    int from = indexOfCard(fromCardUuid);
+    int to = indexOfCard(toCardUuid);
+
+    if (from < 0 || to < 0) {
+        return;
+    }
+
+    d->cards.move(from, to);
+}
+
+int List::indexOfCard(const QString uuid)
+{
+    for (int i = 0 ; i < d->cards.size() ; i++) {
+        if (d->cards.at(i).uuid() == uuid) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 List& operator<<(List& list,const Card& card) {
     list.appendCard(card);
     return list;
