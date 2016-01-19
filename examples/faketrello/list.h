@@ -29,6 +29,8 @@ public:
 
     void appendCard(const Card& card);
 
+    void removeCard(const QString &uuid);
+
 private:
     QSharedDataPointer<ListPriv> d;
 

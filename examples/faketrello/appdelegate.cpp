@@ -33,6 +33,12 @@ void AppDelegate::addList()
     sync();
 }
 
+void AppDelegate::removeCard(const QString& listUuid, const QString& cardUuid)
+{
+    m_board.removeCard(listUuid, cardUuid);
+    sync();
+}
+
 void AppDelegate::sync()
 {
     // It is the only way to update QML model, you don't need
@@ -42,6 +48,9 @@ void AppDelegate::sync()
     QVariantList lists = map["lists"].toList();
 
     QSDiffRunner runner;
+
+    // It is important to set an unique key field on input data.
+    // Otherwise, it won't be able to generate insertion, removal and move patch.
     runner.setKeyField("uuid");
 
     QList<QSPatch> patches = runner.compare(cardListStore->storage(),

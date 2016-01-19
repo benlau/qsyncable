@@ -20,6 +20,8 @@ public slots:
 
     void addList();
 
+    void removeCard(const QString& listUuid, const QString& cardUUid);
+
 private slots:
 
     void sync();

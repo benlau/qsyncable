@@ -1,3 +1,4 @@
+#include <QtCore>
 #include <QUuid>
 #include "list.h"
 
@@ -92,6 +93,19 @@ void List::setTitle(const QString &title)
 void List::appendCard(const Card &card)
 {
     d->cards.append(card);
+}
+
+void List::removeCard(const QString &uuid)
+{
+    for (int i = 0 ; i < d->cards.size() ; i++) {
+        Card card = d->cards.at(i);
+        if (card.uuid() == uuid) {
+            QList<Card> cards = d->cards;
+            cards.removeAt(i);
+            d->cards = cards;
+            break;
+        }
+    }
 }
 
 List& operator<<(List& list,const Card& card) {

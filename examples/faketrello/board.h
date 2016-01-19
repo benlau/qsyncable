@@ -22,6 +22,8 @@ public:
 
     void addList();
 
+    void removeCard(QString listUuid, QString cardUUid);
+
     // Load from file, but now it just load dummy data for demo
     void load();
 

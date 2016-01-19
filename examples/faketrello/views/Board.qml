@@ -18,6 +18,7 @@ ListView {
 
     delegate: CardList {
         height: parent.height
+        listUuid: model.uuid
         title: model.title
         cards: model.cards
     }

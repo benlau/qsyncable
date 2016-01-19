@@ -5,6 +5,7 @@ Item {
     id: cardList;
     width: 240;
 
+    property var listUuid
     property var title
     property var cards
 
@@ -19,13 +20,41 @@ Item {
 
             anchors.fill: parent
 
+            remove: Transition {
+                NumberAnimation {
+                    property: "opacity";
+                    from: 1;
+                    to: 0;
+                    duration: 200
+                    easing.type: Easing.OutQuad;
+                }
+            }
+
+            removeDisplaced: Transition {
+                NumberAnimation {
+                    properties: "x,y";
+                    duration: 200
+                    easing.type: Easing.OutQuad;
+                }
+            }
+
+            move: Transition {
+                NumberAnimation {
+                    properties: "x,y";
+                    duration: 200
+                    easing.type: Easing.OutQuad;
+                }
+
+            }
+
             header: Text {
+                x: 12
                 width: listView.width
                 height: 48
                 text: title
                 font.bold: true
                 verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
+                horizontalAlignment: Text.AlignLeft
             }
 
             model: JsonModel {
@@ -34,6 +63,8 @@ Item {
             }
 
             delegate: Card {
+                listUuid: cardList.listUuid
+                cardUuid: model.uuid
                 text: model.text
                 width: listView.width
             }

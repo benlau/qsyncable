@@ -1,3 +1,4 @@
+#include <QtCore>
 #include "board.h"
 
 class BoardPriv : public QSharedData
@@ -58,6 +59,18 @@ void Board::setNextCardId(int nextId)
 void Board::addList()
 {
     d->lists.append(list());
+}
+
+void Board::removeCard(QString listUuid, QString cardUuid)
+{
+    for (int i = 0 ; i < d->lists.size() ; i++) {
+        List list = d->lists.at(i);
+        if (list.uuid() == listUuid) {
+            list.removeCard(cardUuid);
+            d->lists[i] = list;
+            break;
+        }
+    }
 }
 
 void Board::load()

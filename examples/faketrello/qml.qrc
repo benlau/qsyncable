@@ -5,5 +5,7 @@
         <file>views/Board.qml</file>
         <file>views/CardList.qml</file>
         <file>views/Card.qml</file>
+        <file>img/plus.png</file>
+        <file>img/close.png</file>
     </qresource>
 </RCC>
