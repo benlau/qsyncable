@@ -17,12 +17,14 @@ TEMPLATE = app
 
 SOURCES += \
     main.cpp \
-    qsyncabletests.cpp
+    qsyncabletests.cpp \
+    benchmarktests.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 
 HEADERS += \
-    qsyncabletests.h
+    qsyncabletests.h \
+    benchmarktests.h
 
 include(vendor/vendor.pri)
 include(../../qsyncable.pri)
