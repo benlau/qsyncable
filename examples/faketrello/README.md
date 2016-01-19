@@ -1,6 +1,9 @@
 Fake Trello
 ==========
 
+![screenshot](https://raw.githubusercontent.com/benlau/qsyncable/master/examples/faketrello/docs/screenshot.png)
+
+
 Demonstration
 
 1. How to hold application data by implicitly sharing class in C++ and update UI by sync function
