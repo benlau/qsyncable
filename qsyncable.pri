@@ -5,10 +5,12 @@ HEADERS += \
     $$PWD/qspatch.h \
     $$PWD/qspatchable.h \
     $$PWD/qslistmodel.h \
-    $$PWD/qsjsonmodel.h
+    $$PWD/qsjsonmodel.h \
+    $$PWD/qsuuid.h
 
 SOURCES += \
     $$PWD/qsdiffrunner.cpp \
     $$PWD/qspatch.cpp \
     $$PWD/qslistmodel.cpp \
-    $$PWD/qsjsonmodel.cpp
+    $$PWD/qsjsonmodel.cpp \
+    $$PWD/qsuuid.cpp

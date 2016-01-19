@@ -28,4 +28,5 @@ include(vendor/vendor.pri)
 include(../../qsyncable.pri)
 
 DISTFILES += \
-    tst_jsonModel.qml
+    tst_jsonModel.qml \
+    tst_uuid.qml
