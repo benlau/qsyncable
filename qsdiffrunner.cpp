@@ -9,6 +9,18 @@
 
 #define MISSING_KEY_WARNING "QSDiffRunner.compare() - Duplicated or missing key."
 
+class QSDiffRunnerMapper {
+public:
+    QSDiffRunnerMapper(int from = -1 , int to = -1) {
+        this->from = from;
+        this->to = to;
+    }
+
+    int from;
+    int to;
+
+};
+
 static QSPatch createInsertPath(int from, int to, const QVariantList& source ) {
     int count = to - from + 1;
 
@@ -131,14 +143,12 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     }
 
     QVariantList fromList;
+    QHash<QString, QSDiffRunnerMapper> hash;
 
-    QHash<QString, int> toHashTable;
-    QHash<QString, int> fromHashTable;
     QVariantMap item;
     int shift = 0;
 
-    toHashTable.reserve(to.size() - start + 10);
-    fromHashTable.reserve(from.size() - start + 10);
+    hash.reserve(qMax(to.size(), from.size()) - start + 10);
 
     /* Step 1 - Check Removal */
 
@@ -147,12 +157,13 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
 
-        if (toHashTable.contains(key)) {
+        if (hash.contains(key)) {
             qWarning() << MISSING_KEY_WARNING;
             return compareWithoutKey(from, to);
         }
 
-        toHashTable[key] = i;
+        QSDiffRunnerMapper mapper(-1,i);
+        hash[key] = mapper;
     }
 
     fromList.reserve(from.size() - start);
@@ -163,7 +174,13 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         item = from.at(i).toMap();
         QString key = item[m_keyField].toString();
 
-        if (!toHashTable.contains(key)) {
+        QSDiffRunnerMapper mapper = QSDiffRunnerMapper(-1,-1);
+
+        if (hash.contains(key)) {
+            mapper = hash[key];
+        }
+
+        if (mapper.to < 0) {
             QSPatch patch = QSPatch(QSPatch::Remove,
                                     i, i, 1);
 
@@ -171,12 +188,13 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         } else {
             fromList << item;
 
-            if (fromHashTable.contains(key)) {
+            if (mapper.from >= 0) {
                 qWarning() << MISSING_KEY_WARNING;
                 return compareWithoutKey(from, to);
             }
 
-            fromHashTable[key] = fromList.count() - 1;
+            mapper.from = fromList.count() - 1;
+            hash[key] = mapper;
         }
     }
 
@@ -188,7 +206,14 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
 
-        if (!fromHashTable.contains(key)) {
+        QSDiffRunnerMapper mapper = QSDiffRunnerMapper(-1,-1);
+
+        if (hash.contains(key)) {
+            mapper = hash[key];
+        }
+
+
+        if (mapper.from < 0 ) {
             shift++;
 
             if (insertStart < 0) {
@@ -203,7 +228,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
                 insertStart = -1;
             }
 
-            int realPos = fromHashTable[key]; // Real position in fromList
+            int realPos = mapper.from; // Real position in fromList
             int expectedPos = realPos + start; // Expected position in from
             int shiftedPos = realPos + shift + start; // Expected position + shift;
 
