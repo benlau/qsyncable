@@ -23,7 +23,8 @@ public:
     };
 
     QSPatch();
-    QSPatch(Type type,int from = 0, int to = 0, int count = 0, const QVariantMap& data = QVariantMap());
+    QSPatch(Type type,int from = 0, int to = 0, int count = 0);
+    QSPatch(Type type,int from, int to, int count, const QVariantMap& data);
     QSPatch(Type type,int from, int to, int count, const QVariantList& data);
 
     QSPatch(const QSPatch &);

@@ -27,6 +27,14 @@ QSPatch::QSPatch() : d(new QSPatchPriv)
 
 }
 
+QSPatch::QSPatch(QSPatch::Type type, int from, int to, int count) : d(new QSPatchPriv)
+{
+    d->type = type;
+    d->from = from;
+    d->to = to;
+    d->count = count;
+}
+
 QSPatch::QSPatch(QSPatch::Type type, int from, int to, int count, const QVariantMap& data) : d(new QSPatchPriv)
 {
     d->type = type;

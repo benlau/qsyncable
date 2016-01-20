@@ -36,6 +36,8 @@ private:
     // Preprocess the list, stop until the key is different
     int preprocess(const QVariantList& from, const QVariantList& to);
 
+    void appendPatch(const QSPatch& patch);
+
     QList<QSPatch> patches;
     QList<QSPatch> updatePatches;
 

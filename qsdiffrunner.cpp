@@ -11,7 +11,6 @@
 
 static QSPatch createInsertPath(int from, int to, const QVariantList& source ) {
     int count = to - from + 1;
-    qDebug() << count;
 
     return QSPatch(QSPatch::Insert, from, to, count, source.mid(from, count));
 }
@@ -165,8 +164,8 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         QString key = item[m_keyField].toString();
 
         if (!toHashTable.contains(key)) {
-            patches << QSPatch(QSPatch::Remove,
-                           i, i, 1);
+            appendPatch(QSPatch(QSPatch::Remove,
+                           i, i, 1));
         } else {
             fromList << item;
 
@@ -197,7 +196,8 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         } else {
 
             if (insertStart >=0 ) {
-                patches << createInsertPath(insertStart, i - 1, to);
+                // Add Insert Patch with a block of data. It is faster.
+                appendPatch(createInsertPath(insertStart, i - 1, to));
                 insertStart = -1;
             }
 
@@ -207,7 +207,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
 
             if (shiftedPos != i) {
                 QSPatch change(QSPatch::Move, expectedPos, i, 1);
-                patches << change;
+                appendPatch(change);
                 shift++;
             }
 
@@ -221,9 +221,8 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     }
 
     if (insertStart >=0) {
-        patches << createInsertPath(insertStart, to.size()  - 1, to);
+        appendPatch(createInsertPath(insertStart, to.size()  - 1, to));
     }
-
 
     return combine();
 }
@@ -292,5 +291,26 @@ int QSDiffRunner::preprocess(const QVariantList &from, const QVariantList &to)
     }
 
     return index;
+}
+
+void QSDiffRunner::appendPatch(const QSPatch &value)
+{
+    // append non-update patch.
+
+    QSPatch patch = value;
+
+    if (patches.size() > 0) {
+        QSPatch last = patches.last();
+
+        if (last.canMerge(patch)) {
+            patch = last.merge(patch);
+            patches[patches.size() - 1] = patch;
+            patch = QSPatch();
+        }
+    }
+
+    if (!patch.isNull()) {
+        patches << patch;
+    }
 }
 

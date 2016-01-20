@@ -95,11 +95,12 @@ void BenchmarkTests::removeAll()
     QVERIFY(from.size() == size);
 
     QVariantList to;
+    QList<QSPatch> patches;
 
     QBENCHMARK {
         QSDiffRunner runner;
         runner.setKeyField("id");
-        runner.compare(from, to);
+        patches = runner.compare(from, to);
     }
 
 }
