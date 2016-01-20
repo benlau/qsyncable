@@ -161,7 +161,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
 
     /* Step 2 - Compare to find move and update */
 
-    if (fromList.size() == 0) {
+    if (fromList.size() == 0 && to.size() > 0) {
         // A special case. Insert all
         return QList<QSPatch>() << QSPatch(QSPatch::Insert, 0, to.size() - 1,to.size(), to);
     }
