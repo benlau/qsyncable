@@ -54,7 +54,9 @@ public:
 
     bool canMerge(const QSPatch& other) const;
 
-    QSPatch merge(const QSPatch &other) const;
+    QSPatch merged(const QSPatch &other) const;
+
+    QSPatch& merge(const QSPatch &other);
 
     static QSPatch createUpdate(int index, const QVariantMap& diff);
 

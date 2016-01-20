@@ -172,30 +172,37 @@ bool QSPatch::canMerge(const QSPatch &other) const
     return res;
 }
 
-QSPatch QSPatch::merge(const QSPatch &other) const
+QSPatch QSPatch::merged(const QSPatch &other) const
 {
-    if (!canMerge(other))
+    if (!canMerge(other)) {
         return QSPatch();
-
-    QSPatch res;
-
-    if (d->type == QSPatch::Remove) {
-        int from = qMin(d->from, other.from());
-        int to = qMax(d->to, other.to());
-        res = QSPatch(QSPatch::Remove, from, to, to - from + 1);
-    } else if (d->type == QSPatch::Move) {
-        res = *this;
-        res.setCount(res.count() + other.count());
-    } else if (d->type == QSPatch::Insert) {
-        int from = d->from;
-        QVariantList data;
-        data = d->data;
-        data.append(other.data());
-        res = QSPatch(QSPatch::Insert, from,
-                      from + data.count() - 1, data.count(), data);
     }
 
+    QSPatch res = *this;
+
+    res.merge(other);
+
     return res;
+}
+
+QSPatch &QSPatch::merge(const QSPatch &other)
+{
+    if (!canMerge(other))
+        return (*this);
+
+    if (d->type == QSPatch::Remove) {
+        d->from = qMin(d->from, other.from());
+        d->to = qMax(d->to, other.to());
+        d->count = d->to - d->from + 1;
+    } else if (d->type == QSPatch::Move) {
+        d->count = d->count + other.count();
+    } else if (d->type == QSPatch::Insert) {
+        d->data.append(other.data());
+        d->to  = d->from + d->data.count() - 1;
+        d->count = d->data.count();
+    }
+
+    return *this;
 }
 
 QSPatch QSPatch::createUpdate(int index, const QVariantMap &diff)

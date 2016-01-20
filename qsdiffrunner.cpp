@@ -34,7 +34,7 @@ static QList<QSPatch> merge(const QList<QSPatch> list) {
         }
 
         if (prev.canMerge(current)) {
-            prev = prev.merge(current);
+            prev = prev.merged(current);
         } else {
             res << prev;
             prev = current;
@@ -164,8 +164,10 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         QString key = item[m_keyField].toString();
 
         if (!toHashTable.contains(key)) {
-            appendPatch(QSPatch(QSPatch::Remove,
-                           i, i, 1));
+            QSPatch patch = QSPatch(QSPatch::Remove,
+                                    i, i, 1);
+
+            appendPatch(patch);
         } else {
             fromList << item;
 
@@ -295,22 +297,17 @@ int QSDiffRunner::preprocess(const QVariantList &from, const QVariantList &to)
 
 void QSDiffRunner::appendPatch(const QSPatch &value)
 {
-    // append non-update patch.
-
-    QSPatch patch = value;
+    bool merged = false;
 
     if (patches.size() > 0) {
-        QSPatch last = patches.last();
-
-        if (last.canMerge(patch)) {
-            patch = last.merge(patch);
-            patches[patches.size() - 1] = patch;
-            patch = QSPatch();
+        if (patches.last().canMerge(value)) {
+            patches.last().merge(value);
+            merged = true;
         }
     }
 
-    if (!patch.isNull()) {
-        patches << patch;
+    if (!merged) {
+        patches << value;
     }
 }
 

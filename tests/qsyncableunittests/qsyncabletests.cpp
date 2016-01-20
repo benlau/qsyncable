@@ -51,8 +51,8 @@ void QSyncableTests::patch_merge()
     QVERIFY(c1.canMerge(c2));
     QVERIFY(c2.canMerge(c1));
 
-    c3 = c1.merge(c2);
-    c4 = c2.merge(c1);
+    c3 = c1.merged(c2);
+    c4 = c2.merged(c1);
 
     QCOMPARE(c3.type(), QSPatch::Remove);
     QCOMPARE(c3.from(), 0);
@@ -71,8 +71,8 @@ void QSyncableTests::patch_merge()
     QVERIFY(c1.canMerge(c2));
     QVERIFY(!c2.canMerge(c1));
 
-    c3 = c1.merge(c2);
-    c4 = c2.merge(c1);
+    c3 = c1.merged(c2);
+    c4 = c2.merged(c1);
 
     QCOMPARE(c3.type(), QSPatch::Move);
     QCOMPARE(c3.from(), 1);
@@ -92,7 +92,7 @@ void QSyncableTests::patch_merge()
     QVERIFY(c1.canMerge(c2));
     QVERIFY(!c2.canMerge(c1));
 
-    c4 = c1.merge(c2);
+    c4 = c1.merged(c2);
 
     QCOMPARE(c4.type(), QSPatch::Insert);
     QCOMPARE(c4.from(), 0);
@@ -101,7 +101,7 @@ void QSyncableTests::patch_merge()
     QVERIFY(c4.data() == data);
 
     QVERIFY(c4.canMerge(c3));
-    c4 = c4.merge(c3);
+    c4 = c4.merged(c3);
 
 
     QCOMPARE(c4.type(), QSPatch::Insert);
@@ -117,7 +117,7 @@ void QSyncableTests::patch_merge()
     QVERIFY(c1.canMerge(c2));
     QVERIFY(c2.canMerge(c1));
 
-    c3 = c1.merge(c2);
+    c3 = c1.merged(c2);
 
     QCOMPARE(c3.type(), QSPatch::Insert);
     QCOMPARE(c3.from(), 0);
