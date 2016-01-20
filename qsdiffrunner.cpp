@@ -9,6 +9,13 @@
 
 #define MISSING_KEY_WARNING "QSDiffRunner.compare() - Duplicated or missing key."
 
+static QSPatch createInsertPath(int from, int to, const QVariantList& source ) {
+    int count = to - from + 1;
+    qDebug() << count;
+
+    return QSPatch(QSPatch::Insert, from, to, count, source.mid(from, count));
+}
+
 static QList<QSPatch> merge(const QList<QSPatch> list) {
 
     if (list.size() <= 1) {
@@ -115,6 +122,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         return compareWithoutKey(from, to);
     }
 
+    // Compare the list, until it found moved component.
     int start = preprocess(from, to);
 
     if (start >= from.size() &&
@@ -128,7 +136,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     QHash<QString, int> toHashTable;
     QHash<QString, int> fromHashTable;
     QVariantMap item;
-    int offset = 0;
+    int shift = 0;
 
     toHashTable.reserve(to.size() - start + 10);
     fromHashTable.reserve(from.size() - start + 10);
@@ -148,15 +156,11 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         toHashTable[key] = i;
     }
 
-    if (start != 0) {
-        //@TODO - remove
-        fromList = from.mid(0, start);
-    }
+    fromList.reserve(from.size() - start);
 
-    fromList.reserve(from.size());
-
-    // Find removed item and build index table.
     for (int i = start ; i < from.size() ; i++) {
+        // Find removed item and build index table.
+
         item = from.at(i).toMap();
         QString key = item[m_keyField].toString();
 
@@ -177,38 +181,47 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
 
     /* Step 2 - Compare to find move and update */
 
-    if (fromList.size() == 0 && to.size() > 0) {
-        // Original items are all removed.
-        // A special case. Insert all
-        patches <<  QSPatch(QSPatch::Insert, 0, to.size() - 1,to.size(), to);
-        return combine();
-    }
+    int insertStart = -1;
 
     for (int i = start ; i < to.size() ; i++) {
         item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
 
         if (!fromHashTable.contains(key)) {
-            offset++;
-            patches << QSPatch(QSPatch::Insert, i, i, 1, item);
-        } else {
-            int prevPos = fromHashTable[key];
-            int expectedPos = prevPos + offset;
+            shift++;
 
-            if (expectedPos != i) {
-                QSPatch change(QSPatch::Move, prevPos, i, 1);
-                patches << change;
-
-                offset++;
+            if (insertStart < 0) {
+                insertStart = i;
             }
 
-            QVariantMap before = fromList.at(prevPos).toMap();
+        } else {
+
+            if (insertStart >=0 ) {
+                patches << createInsertPath(insertStart, i - 1, to);
+                insertStart = -1;
+            }
+
+            int realPos = fromHashTable[key]; // Real position in fromList
+            int expectedPos = realPos + start; // Expected position in from
+            int shiftedPos = realPos + shift + start; // Expected position + shift;
+
+            if (shiftedPos != i) {
+                QSPatch change(QSPatch::Move, expectedPos, i, 1);
+                patches << change;
+                shift++;
+            }
+
+            QVariantMap before = fromList.at(realPos).toMap();
             QVariantMap after = item;
             QVariantMap diff = compareMap(before, after);
             if (diff.size() > 0) {
                 updatePatches << QSPatch(QSPatch::Update, i, i, 1, diff);
             }
         }
+    }
+
+    if (insertStart >=0) {
+        patches << createInsertPath(insertStart, to.size()  - 1, to);
     }
 
 
