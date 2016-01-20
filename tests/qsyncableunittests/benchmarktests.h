@@ -14,11 +14,25 @@ signals:
 public slots:
 
 private slots:
+
     void noChange();
     void noChange_data();
 
+    void changeOne();
+    void changeOne_data();
+
     void moveOne();
     void moveOne_data();
+
+    void insertAll();
+    void insertAll_data();
+
+    void changeAll();
+    void changeAll_data();
+
+private:
+    void setup();
+    QList<int> sizes;
 };
 
 #endif // BENCHMARKTESTS_H

@@ -99,7 +99,7 @@ void QSDiffRunner::setKeyField(const QString &keyField)
     m_keyField = keyField;
 }
 
-/*! \fn QList<QSChange> QSDiffRunner::run(const QVariantList &previous, const QVariantList &current)
+/*! \fn QList<QSChange> QSDiffRunner::compare(const QVariantList &from, const QVariantList &to)
 
     Call this function to compare two list, then return a
     list of patches required to transform from a list to other with
@@ -161,6 +161,11 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
 
     /* Step 2 - Compare to find move and update */
 
+    if (fromList.size() == 0) {
+        // A special case. Insert all
+        return QList<QSPatch>() << QSPatch(QSPatch::Insert, 0, to.size() - 1,to.size(), to);
+    }
+
     for (int i = 0 ; i < to.size() ; i++) {
         item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
@@ -180,7 +185,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
             }
 
             QVariantMap before = fromList.at(prevPos).toMap();
-            QVariantMap after = to.at(i).toMap();
+            QVariantMap after = item;
             QVariantMap diff = compareMap(before, after);
             if (diff.size() > 0) {
                 updates << QSPatch(QSPatch::Update, i, i, 1, diff);
