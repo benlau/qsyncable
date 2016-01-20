@@ -29,6 +29,16 @@ signals:
 public slots:
 
 private:
+
+    // Combine all the processing patches into a single list. It will clear the processing result too.
+    QList<QSPatch> combine();
+
+    // Preprocess the list, stop until the key is different
+    int preprocess(const QVariantList& from, const QVariantList& to);
+
+    QList<QSPatch> patches;
+    QList<QSPatch> updatePatches;
+
     QString m_keyField;
 };
 

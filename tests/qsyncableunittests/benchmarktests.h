@@ -14,6 +14,9 @@ signals:
 public slots:
 
 private slots:
+    void copy();
+
+    void hashing();
 
     void noChange();
     void noChange_data();
@@ -29,6 +32,9 @@ private slots:
 
     void changeAll();
     void changeAll_data();
+
+    void removeAll();
+    void removeAll_data();
 
 private:
     void setup();

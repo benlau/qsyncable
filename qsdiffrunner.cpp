@@ -108,12 +108,21 @@ void QSDiffRunner::setKeyField(const QString &keyField)
 
 QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantList &to)
 {
+    patches.clear();
+    updatePatches.clear();
+
     if (m_keyField.isEmpty()) {
         return compareWithoutKey(from, to);
     }
 
-    QList<QSPatch> res;
-    QList<QSPatch> updates;
+    int start = preprocess(from, to);
+
+    if (start >= from.size() &&
+        start >= to.size()) {
+        // Nothing moved
+        return combine();
+    }
+
     QVariantList fromList;
 
     QHash<QString, int> toHashTable;
@@ -121,11 +130,13 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     QVariantMap item;
     int offset = 0;
 
-    toHashTable.reserve(to.size() + 10);
-    fromHashTable.reserve(from.size() + 10);
+    toHashTable.reserve(to.size() - start + 10);
+    fromHashTable.reserve(from.size() - start + 10);
 
     /* Step 1 - Check Removal */
-    for (int i = 0 ; i < to.size() ; i++) {
+
+    for (int i = start ; i < to.size() ; i++) {
+        // Build toHashTable
         item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
 
@@ -137,15 +148,20 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         toHashTable[key] = i;
     }
 
+    if (start != 0) {
+        //@TODO - remove
+        fromList = from.mid(0, start);
+    }
+
     fromList.reserve(from.size());
 
     // Find removed item and build index table.
-    for (int i = 0 ; i < from.size() ; i++) {
+    for (int i = start ; i < from.size() ; i++) {
         item = from.at(i).toMap();
         QString key = item[m_keyField].toString();
 
         if (!toHashTable.contains(key)) {
-            res << QSPatch(QSPatch::Remove,
+            patches << QSPatch(QSPatch::Remove,
                            i, i, 1);
         } else {
             fromList << item;
@@ -162,24 +178,26 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     /* Step 2 - Compare to find move and update */
 
     if (fromList.size() == 0 && to.size() > 0) {
+        // Original items are all removed.
         // A special case. Insert all
-        return QList<QSPatch>() << QSPatch(QSPatch::Insert, 0, to.size() - 1,to.size(), to);
+        patches <<  QSPatch(QSPatch::Insert, 0, to.size() - 1,to.size(), to);
+        return combine();
     }
 
-    for (int i = 0 ; i < to.size() ; i++) {
+    for (int i = start ; i < to.size() ; i++) {
         item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
 
         if (!fromHashTable.contains(key)) {
             offset++;
-            res << QSPatch(QSPatch::Insert, i, i, 1, item);
+            patches << QSPatch(QSPatch::Insert, i, i, 1, item);
         } else {
             int prevPos = fromHashTable[key];
             int expectedPos = prevPos + offset;
 
             if (expectedPos != i) {
                 QSPatch change(QSPatch::Move, prevPos, i, 1);
-                res << change;
+                patches << change;
 
                 offset++;
             }
@@ -188,18 +206,13 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
             QVariantMap after = item;
             QVariantMap diff = compareMap(before, after);
             if (diff.size() > 0) {
-                updates << QSPatch(QSPatch::Update, i, i, 1, diff);
+                updatePatches << QSPatch(QSPatch::Update, i, i, 1, diff);
             }
         }
     }
 
-    res = merge(res);
 
-    if (updates.size() > 0) {
-        res.append(updates);
-    }
-
-    return res;
+    return combine();
 }
 
 bool QSDiffRunner::patch(QSPatchable *patchable, const QList<QSPatch>& patches) const
@@ -229,5 +242,42 @@ bool QSDiffRunner::patch(QSPatchable *patchable, const QList<QSPatch>& patches) 
     }
 
     return true;
+}
+
+QList<QSPatch> QSDiffRunner::combine()
+{
+    QList<QSPatch> tmp = merge(patches);
+
+    if (updatePatches.size() > 0) {
+        tmp.append(updatePatches);
+    }
+
+    patches.clear();
+    updatePatches.clear();
+
+    return tmp;
+}
+
+int QSDiffRunner::preprocess(const QVariantList &from, const QVariantList &to)
+{
+    int index = 0;
+    int min = qMin(from.size(), to.size());
+
+    for (index = 0 ; index < min ;index++) {
+
+        QVariantMap f = from[index].toMap();
+        QVariantMap t = to[index].toMap();
+
+        if (f[m_keyField] != t[m_keyField]) {
+            break;
+        }
+
+        QVariantMap diff = compareMap(f,t);
+        if (diff.size()) {
+            updatePatches << QSPatch::createUpdate(index, diff);
+        }
+    }
+
+    return index;
 }
 

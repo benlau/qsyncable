@@ -55,6 +55,8 @@ public:
 
     QSPatch merge(const QSPatch &other) const;
 
+    static QSPatch createUpdate(int index, const QVariantMap& diff);
+
 signals:
 
 public slots:

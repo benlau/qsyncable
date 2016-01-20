@@ -190,6 +190,11 @@ QSPatch QSPatch::merge(const QSPatch &other) const
     return res;
 }
 
+QSPatch QSPatch::createUpdate(int index, const QVariantMap &diff)
+{
+    return QSPatch(QSPatch::Update, index, index, 1, diff);
+}
+
 QDebug operator<<(QDebug dbg, const QSPatch& change){
     switch (change.type()) {
 

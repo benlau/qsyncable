@@ -26,6 +26,35 @@ BenchmarkTests::BenchmarkTests(QObject *parent) : QObject(parent)
 #endif
 }
 
+void BenchmarkTests::copy()
+{
+    QVariantList from = create(100000);
+    QVariantList to;
+
+    QBENCHMARK {
+
+        for (int i =0 ; i < from.size() ; i++) {
+            to << from.at(i);
+        }
+    }
+}
+
+void BenchmarkTests::hashing()
+{
+    QStringList uuids;
+    for (int i = 0 ; i < 100000 ; i++) {
+        uuids << QUuid::createUuid().toString().replace(QRegExp("[{}]"), "");
+    }
+
+    QBENCHMARK {
+        QHash<QString,int> hash;
+        hash.reserve(100000 + 100);
+        for (int i =0 ; i < 100000 ; i++) {
+            hash[uuids.at(i)] = i;
+        }
+    }
+}
+
 void BenchmarkTests::changeAll()
 {
     QFETCH(int, size);
@@ -56,6 +85,28 @@ void BenchmarkTests::changeAll_data()
         QTest::newRow(QString("%1").arg(size).toLocal8Bit().constData()) << size;
     }
 
+}
+
+void BenchmarkTests::removeAll()
+{
+    QFETCH(int, size);
+
+    QVariantList from = create(size);
+    QVERIFY(from.size() == size);
+
+    QVariantList to;
+
+    QBENCHMARK {
+        QSDiffRunner runner;
+        runner.setKeyField("id");
+        runner.compare(from, to);
+    }
+
+}
+
+void BenchmarkTests::removeAll_data()
+{
+    setup();
 }
 
 void BenchmarkTests::setup()
@@ -145,12 +196,7 @@ void BenchmarkTests::moveOne()
 
 void BenchmarkTests::moveOne_data()
 {
-    QTest::addColumn<int>("size");
-
-    foreach(int size, sizes) {
-        QTest::newRow(QString("%1").arg(size).toLocal8Bit().constData()) << size;
-    }
-
+    setup();
 }
 
 void BenchmarkTests::insertAll()
