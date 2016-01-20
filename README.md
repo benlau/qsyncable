@@ -29,6 +29,23 @@ The diagram below shows an example application architecture using QSyncable:
 
 In QSyncable application, ListModel only keep a copy of the data. it is meaningless for UI components to modify it. Instead, UI components should ask to update the data source and trigger synchronization afterward. The component for “updates” and “queries” is in fact separated. (More information in this [article](https://medium.com/@benlaud/action-dispatcher-design-pattern-for-qml-c350b1d2a7e7#.mi3b8hbuv) )
 
+Design Principle - Separation of "updates" and "queries"
+----------
+
+QSyncable is designed to solve a fundamental problem of C++ & QML application: How to share data between C++ and QML?
+
+QObject list model is definitely a bad idea. It is terrible to manage their life cycle and ownership (QML / C++ scope). You should beaware of garbage collection in your QObject list model even it is written by C++.
+
+Using a variant list model is better, but it is not C++ friendly. And it is difficult to handle nested list model.
+
+In fact, the problem will be simple if you separate “updates” and “queries” into different components. First of all, you don’t even need to consider QObject list model approach.
+It has no any advantage of using QObject list model if you use other component for update.
+
+Moreover, it is not necessary to use a variant list model as a central data source. You may use any data structure you like. Leave variant list model for presentation only.
+
+QSyncable takes a step further. It simplifies the process to update the variant list model from a data source by combining insertion, removal, move and change operations into a single process - patching, while maintaining the correctness of UI response. It solves not only the problem of C++ and QML data sharing, but also a solution of nested list model within QML.
+
+
 Why use QSyncable for C++?
 --------------------------
 
@@ -76,20 +93,4 @@ Example
 
 [faketrello](https://github.com/benlau/qsyncable/tree/master/examples/faketrello) - Simulate a Trello card board.
 
-
-Design Principle - Separation of "updates" and "queries"
-----------
-
-QSyncable is designed to solve a fundamental problem of C++ & QML application: How to share data between C++ and QML?
-
-QObject list model is definitely a bad idea. It is terrible to manage their life cycle and ownership (QML / C++ scope). You should beaware of garbage collection in your QObject list model even it is written by C++.
-
-Using a variant list model is better, but it is not C++ friendly. And it is difficult to handle nested list model.
-
-In fact, the problem will be simple if you separate “updates” and “queries” into different components. First of all, you don’t even need to consider QObject list model approach.
-It has no any advantage of using QObject list model if you use other component for update.
-
-Moreover, it is not necessary to use a variant list model as a central data source. You may use any data structure you like. Leave variant list model for presentation only.
-
-QSyncable takes a step further. It simplifies the process to update the variant list model from a data source by combining insertion, removal, move and change operations into a single process - patching, while maintaining the correctness of UI response. It solves not only the problem of C++ and QML data sharing, but also a solution of nested list model within QML.
 

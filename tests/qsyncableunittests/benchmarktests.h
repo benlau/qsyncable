@@ -14,6 +14,9 @@ signals:
 public slots:
 
 private slots:
+    void noChange();
+    void noChange_data();
+
     void moveOne();
     void moveOne_data();
 };
