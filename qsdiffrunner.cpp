@@ -12,12 +12,18 @@
 class QSDiffRunnerMapper {
 public:
     QSDiffRunnerMapper(int from = -1 , int to = -1) {
-        this->from = from;
-        this->to = to;
+        this->atFrom = from;
+        this->atTo = to;
     }
 
-    int from;
-    int to;
+    // The position in "from" list
+    int atFrom;
+
+    // The position in "from" after removal.
+    int atRemovedFrom;
+
+    // The position in "to" list
+    int atTo;
 
 };
 
@@ -142,7 +148,6 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         return combine();
     }
 
-    QVariantList fromList;
     QHash<QString, QSDiffRunnerMapper> hash;
 
     QVariantMap item;
@@ -153,7 +158,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     /* Step 1 - Check Removal */
 
     for (int i = start ; i < to.size() ; i++) {
-        // Build toHashTable
+        // Build hash table of "to" list
         item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
 
@@ -166,7 +171,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         hash[key] = mapper;
     }
 
-    fromList.reserve(from.size() - start);
+    shift = 0;
 
     for (int i = start ; i < from.size() ; i++) {
         // Find removed item and build index table.
@@ -180,20 +185,21 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
             mapper = hash[key];
         }
 
-        if (mapper.to < 0) {
+        if (mapper.atTo < 0) {
             QSPatch patch = QSPatch(QSPatch::Remove,
                                     i, i, 1);
 
             appendPatch(patch);
+            shift--;
         } else {
-            fromList << item;
 
-            if (mapper.from >= 0) {
+            if (mapper.atFrom >= 0) {
                 qWarning() << MISSING_KEY_WARNING;
                 return compareWithoutKey(from, to);
             }
 
-            mapper.from = fromList.count() - 1;
+            mapper.atFrom = i;
+            mapper.atRemovedFrom = i + shift;
             hash[key] = mapper;
         }
     }
@@ -201,6 +207,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     /* Step 2 - Compare to find move and update */
 
     int insertStart = -1;
+    shift = 0;
 
     for (int i = start ; i < to.size() ; i++) {
         item = to.at(i).toMap();
@@ -212,8 +219,8 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
             mapper = hash[key];
         }
 
-
-        if (mapper.from < 0 ) {
+        if (mapper.atFrom < 0 ) {
+            // New item
             shift++;
 
             if (insertStart < 0) {
@@ -228,9 +235,9 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
                 insertStart = -1;
             }
 
-            int realPos = mapper.from; // Real position in fromList
-            int expectedPos = realPos + start; // Expected position in from
-            int shiftedPos = realPos + shift + start; // Expected position + shift;
+            int realPos = mapper.atFrom; // Real position in fromList
+            int expectedPos = mapper.atRemovedFrom; // Expected position in from
+            int shiftedPos = expectedPos + shift; // Expected position + shift;
 
             if (shiftedPos != i) {
                 QSPatch change(QSPatch::Move, expectedPos, i, 1);
@@ -238,7 +245,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
                 shift++;
             }
 
-            QVariantMap before = fromList.at(realPos).toMap();
+            QVariantMap before = from.at(realPos).toMap();
             QVariantMap after = item;
             QVariantMap diff = compareMap(before, after);
             if (diff.size() > 0) {
