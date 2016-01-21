@@ -16,7 +16,7 @@ public:
     }
 
     QSPatch::Type type;
-    QVariantList data;
+    QVariant data;
     int from;
     int to;
     int count;
@@ -41,7 +41,11 @@ QSPatch::QSPatch(QSPatch::Type type, int from, int to, int count, const QVariant
     d->from = from;
     d->to = to;
     d->count = count;
-    d->data.append(data);
+
+    QVariantList list;
+    list.append(data);
+
+    d->data = list;
 }
 
 QSPatch::QSPatch(Type type,int from, int to, int count, const QVariantList& data) : d(new QSPatchPriv) {
@@ -82,7 +86,7 @@ void QSPatch::setType(const QSPatch::Type &type)
 
 QVariantList QSPatch::data() const
 {
-    return d->data;
+    return d->data.toList();
 }
 
 void QSPatch::setData(const QVariantList &data)
@@ -92,14 +96,15 @@ void QSPatch::setData(const QVariantList &data)
 
 void QSPatch::setData(const QVariantMap &data)
 {
-    d->data.clear();
-    d->data.append(data);
+    QVariantList list;
+    list << data;
+    d->data = list;
 }
 
 bool QSPatch::operator==(const QSPatch &rhs) const
 {
     if (d->type != rhs.d->type ||
-        d->data != rhs.data() ||
+        d->data.toList() != rhs.data() ||
         d->from != rhs.from() ||
         d->to != rhs.to() ||
         d->count != rhs.count()) {
@@ -197,9 +202,11 @@ QSPatch &QSPatch::merge(const QSPatch &other)
     } else if (d->type == QSPatch::Move) {
         d->count = d->count + other.count();
     } else if (d->type == QSPatch::Insert) {
-        d->data.append(other.data());
-        d->to  = d->from + d->data.count() - 1;
-        d->count = d->data.count();
+        QVariantList list = d->data.toList();
+        list.append(other.data());
+        d->data = list;
+        d->to  = d->from + list.count() - 1;
+        d->count = list.count();
     }
 
     return *this;
