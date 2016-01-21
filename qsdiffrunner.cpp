@@ -140,6 +140,8 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
 
     shift = 0;
 
+    int removeStart = -1;
+
     for (int i = start ; i < from.size() ; i++) {
         // Find removed item and build index table on "from" list.
 
@@ -153,12 +155,17 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
         }
 
         if (mapper.atTo < 0) {
-            QSPatch patch = QSPatch(QSPatch::Remove,
-                                    i, i, 1);
 
-            appendPatch(patch);
+            if (removeStart < 0) {
+                removeStart = i + shift;
+            }
             shift--;
         } else {
+
+            if (removeStart >= 0) {
+                appendPatch(QSPatch::createRemove(removeStart, i + shift), false);
+                removeStart = -1;
+            }
 
             if (mapper.atFrom >= 0) {
                 qWarning() << MISSING_KEY_WARNING;
@@ -169,6 +176,11 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
             mapper.atRemovedFrom = i + shift;
             hash[key] = mapper;
         }
+    }
+
+    if (removeStart >= 0) {
+        appendPatch(QSPatch::createRemove(removeStart, from.size() - 1), false);
+        removeStart = -1;
     }
 
     /* Step 2 - Compare to find move and update */
@@ -306,11 +318,11 @@ int QSDiffRunner::preprocess(const QVariantList &from, const QVariantList &to)
     return index;
 }
 
-void QSDiffRunner::appendPatch(const QSPatch &value)
+void QSDiffRunner::appendPatch(const QSPatch &value, bool merge)
 {
     bool merged = false;
 
-    if (patches.size() > 0) {
+    if (patches.size() > 0 && merge) {
         if (patches.last().canMerge(value)) {
             patches.last().merge(value);
             merged = true;
