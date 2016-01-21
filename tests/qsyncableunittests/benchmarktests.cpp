@@ -110,6 +110,30 @@ void BenchmarkTests::removeAll_data()
     setup();
 }
 
+void BenchmarkTests::removeOne()
+{
+    QFETCH(int, size);
+
+    QVariantList from = create(size);
+    QVERIFY(from.size() == size);
+
+    QVariantList to = from;
+    to.takeFirst();
+    QList<QSPatch> patches;
+
+    QBENCHMARK {
+        QSDiffRunner runner;
+        runner.setKeyField("id");
+        patches = runner.compare(from, to);
+    }
+
+}
+
+void BenchmarkTests::removeOne_data()
+{
+    setup();
+}
+
 void BenchmarkTests::setup()
 {
     QTest::addColumn<int>("size");

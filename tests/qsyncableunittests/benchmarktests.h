@@ -36,6 +36,9 @@ private slots:
     void removeAll();
     void removeAll_data();
 
+    void removeOne();
+    void removeOne_data();
+
 private:
     void setup();
     QList<int> sizes;

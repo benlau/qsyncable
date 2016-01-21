@@ -33,39 +33,6 @@ static QSPatch createInsertPath(int from, int to, const QVariantList& source ) {
     return QSPatch(QSPatch::Insert, from, to, count, source.mid(from, count));
 }
 
-static QList<QSPatch> merge(const QList<QSPatch> list) {
-
-    if (list.size() <= 1) {
-        return list;
-    }
-
-    QList<QSPatch> res;
-
-    QSPatch prev;
-
-    for (int i = 0 ; i < list.size() ; i++) {
-        QSPatch current = list.at(i);
-
-        if (prev.isNull()) {
-            prev = current;
-            continue;
-        }
-
-        if (prev.canMerge(current)) {
-            prev = prev.merged(current);
-        } else {
-            res << prev;
-            prev = current;
-        }
-    }
-
-    if (!prev.isNull()) {
-        res << prev;
-    }
-
-    return res;
-}
-
 static QVariantMap compareMap(const QVariantMap& prev, const QVariantMap &current) {
     // To make this function faster, it won't track removed fields from prev.
     // Clear a field to null value should set it explicitly.
@@ -105,7 +72,7 @@ static QList<QSPatch> compareWithoutKey(const QVariantList& from, const QVariant
         }
     }
 
-    return merge(patches);
+    return patches;
 }
 
 QSDiffRunner::QSDiffRunner()
@@ -153,12 +120,12 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     QVariantMap item;
     int shift = 0;
 
-    hash.reserve(qMax(to.size(), from.size()) - start + 10);
+    hash.reserve( (qMax(to.size(), from.size()) - start) * 2 + 10);
 
     /* Step 1 - Check Removal */
 
     for (int i = start ; i < to.size() ; i++) {
-        // Build hash table of "to" list
+        // Build hash index table on "to" list
         item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
 
@@ -174,7 +141,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     shift = 0;
 
     for (int i = start ; i < from.size() ; i++) {
-        // Find removed item and build index table.
+        // Find removed item and build index table on "from" list.
 
         item = from.at(i).toMap();
         QString key = item[m_keyField].toString();
@@ -292,7 +259,7 @@ bool QSDiffRunner::patch(QSPatchable *patchable, const QList<QSPatch>& patches) 
 
 QList<QSPatch> QSDiffRunner::combine()
 {
-    QList<QSPatch> tmp = merge(patches);
+    QList<QSPatch> tmp = patches;
 
     if (updatePatches.size() > 0) {
         tmp.append(updatePatches);
