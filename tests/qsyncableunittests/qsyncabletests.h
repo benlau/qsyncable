@@ -25,6 +25,8 @@ private slots:
 
     void diffRunner_invalidKey();
 
+    void diffRunner_random();
+
     void listModel_insert();
     void listModel_roleNames();
 

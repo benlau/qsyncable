@@ -59,6 +59,7 @@ public:
     QSPatch& merge(const QSPatch &other);
 
     static QSPatch createUpdate(int index, const QVariantMap& diff);
+    static QSPatch createRemove(int from,int to);
 
 signals:
 

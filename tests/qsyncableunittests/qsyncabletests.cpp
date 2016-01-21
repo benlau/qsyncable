@@ -4,6 +4,16 @@
 #include "qsyncabletests.h"
 #include "qslistmodel.h"
 
+static QStringList convert(const QVariantList& list) {
+    QStringList res;
+
+    for (int i = 0 ; i < list.size() ; i++) {
+        res << list.at(i).toMap()["id"].toString();
+    }
+
+    return res;
+}
+
 QSyncableTests::QSyncableTests(QObject *parent) : QObject(parent)
 {
 
@@ -141,9 +151,8 @@ void QSyncableTests::diffRunner()
     QList<QSPatch> result = runner.compare(previous, current);
 
     if (changes.size() != result.size()) {
-        for (int i = 0 ; i < result.size() ; i++) {
-            qDebug() << result.at(i);
-        }
+        qDebug() << expectedChanges;
+        qDebug() << result;
     }
 
     QCOMPARE(expectedChanges.size(), result.size());
@@ -152,9 +161,8 @@ void QSyncableTests::diffRunner()
         QSPatch expected = changes.at(i);
         QSPatch real = result.at(i);
         if (!(expected == real))  {
-            qDebug() << i;
-            qDebug() << expected;
-            qDebug() << real;
+            qDebug() << expectedChanges;
+            qDebug() << result;
         }
         QVERIFY(expected == real);
     }
@@ -186,7 +194,7 @@ void QSyncableTests::diffRunner_data()
     QList<QSPatch> changes;
     QSPatch c1;
 
-    QVariantMap a,b,c,d,e;
+    QVariantMap a,b,c,d,e,f;
     QVariantMap tmp;
 
     a["id"] = "a";
@@ -194,6 +202,7 @@ void QSyncableTests::diffRunner_data()
     c["id"] = "c";
     d["id"] = "d";
     e["id"] = "e";
+    f["id"] = "f";
 
     previous << a << b << c;
     current << a << b << c;
@@ -213,6 +222,14 @@ void QSyncableTests::diffRunner_data()
     previous << a << b << c;
     changes << QSPatch(QSPatch::Remove, 0, 2, 3);
     QTest::newRow("Remove all element") << previous << current << "id" << changes;
+
+    /* Remove two elements from different position*/
+    previous.clear();current.clear();changes.clear();
+    previous << a << b << c << d << e;
+    current << a << c << e;
+    changes << QSPatch(QSPatch::Remove, 1, 1, 1)
+            << QSPatch(QSPatch::Remove, 2, 2, 1);
+    QTest::newRow("Remove two elements from different position") << previous << current << "id" << changes;
 
     /* Add 3 elements to empty list*/
     previous.clear();current.clear();changes.clear();
@@ -307,6 +324,18 @@ void QSyncableTests::diffRunner_data()
 
     QTest::newRow("Update 2 elements") << previous << current << "id" << changes;
 
+    /* Remove, Insert, Move */
+    previous.clear();
+    current.clear();
+    changes.clear();
+
+    previous << a << b << c << d << e;
+    current << a << f << d << e << c;
+    changes << QSPatch(QSPatch::Remove,1,1,1)
+            << QSPatch(QSPatch::Insert,1,1,1,f)
+            << QSPatch(QSPatch::Move,3,2,2);
+    QTest::newRow("Remove, Insert, Move") << previous << current << "id" << changes;
+
 }
 
 void QSyncableTests::diffRunner_noKeyField()
@@ -375,6 +404,66 @@ void QSyncableTests::diffRunner_invalidKey()
     runner.patch(&listModel, patches);
 
     QVERIFY(listModel.storage() == to);
+}
+
+void QSyncableTests::diffRunner_random()
+{
+    QVariantList from;
+    int count = 10;
+    for (int i = 0 ; i < count;i++) {
+        QVariantMap item;
+        item["id"] = i;
+        item["value"] = i;
+        from << item;
+    }
+
+    QVariantList to = from;
+    int nextId = count;
+    QVariantMap item;
+
+    for (int i = 0 ; i < 10 ;i++) {
+        int type = qrand()  % 4;
+        int f = qrand() % count;
+        int t = qrand() % count;
+        switch (type) {
+        case 0:
+            item = to[i].toMap();
+            item["value"] = item["value"].toInt() + 1;
+            to[i] = item;
+            break;
+        case 1:
+            to.removeAt(f);
+            break;
+        case 2:
+            item = QVariantMap();
+            item["id"] = nextId++;
+            item["value"] = nextId;
+            to.insert(f,item);
+        case 3:
+            to.move(f,t);
+            break;
+        }
+    }
+
+    QSListModel listModel;
+
+    listModel.setStorage(from);
+
+    QSDiffRunner runner;
+    runner.setKeyField("id");
+
+    QList<QSPatch> patches = runner.compare(from, to);
+    runner.patch(&listModel, patches);
+
+    if (to != listModel.storage()) {
+        qDebug() << "from" << convert(from).join(",");
+        qDebug() << "to" << convert(to).join(",");
+        qDebug() << "actual" << convert(listModel.storage()).join(",");
+        qDebug() << patches;
+
+    }
+
+    QVERIFY(to == listModel.storage());
 }
 
 void QSyncableTests::listModel_insert()

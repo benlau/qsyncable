@@ -217,6 +217,11 @@ QSPatch QSPatch::createUpdate(int index, const QVariantMap &diff)
     return QSPatch(QSPatch::Update, index, index, 1, diff);
 }
 
+QSPatch QSPatch::createRemove(int from, int to)
+{
+    return QSPatch(QSPatch::Remove, from, to, from - to + 1);
+}
+
 QDebug operator<<(QDebug dbg, const QSPatch& change){
     switch (change.type()) {
 
