@@ -75,6 +75,26 @@ static QList<QSPatch> compareWithoutKey(const QVariantList& from, const QVariant
     return patches;
 }
 
+
+class QSDiffRunnerAlgo {
+public:
+    // Combine all the processing patches into a single list. It will clear the processing result too.
+    QList<QSPatch> combine();
+
+    QList<QSPatch> compare(const QVariantList& from, const QVariantList& to);
+
+    // Preprocess the list, stop until the key is different
+    int preprocess(const QVariantList& from, const QVariantList& to);
+
+    void appendPatch(const QSPatch& patch, bool merge = true);
+
+    QList<QSPatch> patches;
+    QList<QSPatch> updatePatches;
+    QString m_keyField;
+};
+
+
+
 QSDiffRunner::QSDiffRunner()
 {
 
@@ -98,6 +118,56 @@ void QSDiffRunner::setKeyField(const QString &keyField)
  */
 
 QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantList &to)
+{
+    QSDiffRunnerAlgo algo;
+    algo.m_keyField = m_keyField;
+    return algo.compare(from, to);
+}
+
+bool QSDiffRunner::patch(QSPatchable *patchable, const QList<QSPatch>& patches) const
+{
+    QVariantMap diff;
+    foreach (QSPatch patch, patches) {
+        switch (patch.type()) {
+        case QSPatch::Remove:
+            patchable->remove(patch.from(), patch.count());
+            break;
+        case QSPatch::Insert:
+            patchable->insert(patch.from(), patch.data());
+            break;
+        case QSPatch::Move:
+            patchable->move(patch.from(), patch.to(), patch.count());
+            break;
+        case QSPatch::Update:
+            if (patch.data().size() > 0) {
+                diff = patch.data().at(0).toMap();
+            }
+            patchable->setProperties(patch.from(), diff);
+            break;
+        default:
+            break;
+        }
+
+    }
+
+    return true;
+}
+
+QList<QSPatch> QSDiffRunnerAlgo::combine()
+{
+    QList<QSPatch> tmp = patches;
+
+    if (updatePatches.size() > 0) {
+        tmp.append(updatePatches);
+    }
+
+    patches.clear();
+    updatePatches.clear();
+
+    return tmp;
+}
+
+QList<QSPatch> QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantList &to)
 {
     patches.clear();
     updatePatches.clear();
@@ -240,50 +310,7 @@ QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantLis
     return combine();
 }
 
-bool QSDiffRunner::patch(QSPatchable *patchable, const QList<QSPatch>& patches) const
-{
-    QVariantMap diff;
-    foreach (QSPatch patch, patches) {
-        switch (patch.type()) {
-        case QSPatch::Remove:
-            patchable->remove(patch.from(), patch.count());
-            break;
-        case QSPatch::Insert:
-            patchable->insert(patch.from(), patch.data());
-            break;
-        case QSPatch::Move:
-            patchable->move(patch.from(), patch.to(), patch.count());
-            break;
-        case QSPatch::Update:
-            if (patch.data().size() > 0) {
-                diff = patch.data().at(0).toMap();
-            }
-            patchable->setProperties(patch.from(), diff);
-            break;
-        default:
-            break;
-        }
-
-    }
-
-    return true;
-}
-
-QList<QSPatch> QSDiffRunner::combine()
-{
-    QList<QSPatch> tmp = patches;
-
-    if (updatePatches.size() > 0) {
-        tmp.append(updatePatches);
-    }
-
-    patches.clear();
-    updatePatches.clear();
-
-    return tmp;
-}
-
-int QSDiffRunner::preprocess(const QVariantList &from, const QVariantList &to)
+int QSDiffRunnerAlgo::preprocess(const QVariantList &from, const QVariantList &to)
 {
     int index = 0;
     int min = qMin(from.size(), to.size());
@@ -318,7 +345,7 @@ int QSDiffRunner::preprocess(const QVariantList &from, const QVariantList &to)
     return index;
 }
 
-void QSDiffRunner::appendPatch(const QSPatch &value, bool merge)
+void QSDiffRunnerAlgo::appendPatch(const QSPatch &value, bool merge)
 {
     bool merged = false;
 
