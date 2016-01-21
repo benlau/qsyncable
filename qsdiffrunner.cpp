@@ -291,6 +291,18 @@ int QSDiffRunner::preprocess(const QVariantList &from, const QVariantList &to)
         }
     }
 
+    if (from.size() == index && to.size() - index > 0)  {
+        // Special case: append to end
+        appendPatch(createInsertPath(index,to.size() - 1,to));
+        return to.size();
+    }
+
+    if (to.size() == index && from.size() - index> 0) {
+        // Special case: removed from end
+        appendPatch(QSPatch(QSPatch::Remove, index, from.size() - 1 , from.size() - index));
+        return from.size();
+    }
+
     return index;
 }
 
