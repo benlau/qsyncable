@@ -14,9 +14,23 @@ static QStringList convert(const QVariantList& list) {
     return res;
 }
 
+static QVariantList convert(const QStringList& list) {
+    QVariantList res;
+
+    for (int i = 0 ; i < list.size() ; i++) {
+        QVariantMap item;
+        item["id"] = list.at(i);
+        res << item;
+    }
+
+    return res;
+
+}
+
 QSyncableTests::QSyncableTests(QObject *parent) : QObject(parent)
 {
 
+     qsrand( QDateTime::currentDateTime().toTime_t());
 }
 
 void QSyncableTests::patch()
@@ -335,6 +349,48 @@ void QSyncableTests::diffRunner_data()
             << QSPatch(QSPatch::Insert,1,1,1,f)
             << QSPatch(QSPatch::Move,3,2,2);
     QTest::newRow("Remove, Insert, Move") << previous << current << "id" << changes;
+
+}
+
+void QSyncableTests::diffRunner_failedCase()
+{
+    QFETCH(QString, from);
+    QFETCH(QString, to);
+
+    QVariantList fList = convert(from.split(","));
+    QVariantList tList = convert(to.split(","));
+
+
+    QSListModel listModel;
+
+    listModel.setStorage(fList);
+
+    QSDiffRunner runner;
+    runner.setKeyField("id");
+
+    QList<QSPatch> patches = runner.compare(fList, tList);
+    runner.patch(&listModel, patches);
+
+    if (tList != listModel.storage()) {
+        qDebug() << "from" << from;
+        qDebug() << "to" << to;
+        qDebug() << "actual" << convert(listModel.storage()).join(",");
+        qDebug() << patches;
+    }
+
+    QVERIFY(tList == listModel.storage());
+}
+
+void QSyncableTests::diffRunner_failedCase_data()
+{
+    QTest::addColumn<QString>("from");
+    QTest::addColumn<QString>("to");
+
+//    QTest::newRow("1") << "1,2,3,4,5,6,7"
+//                       << "3,1,2,4,5,6,7";
+
+    QTest::newRow("2") << "0,1,2,3,4,5,6,7,8,9"
+                       << "1,11,2,3,12,4,5,6,10,7,8,0,9";
 
 }
 

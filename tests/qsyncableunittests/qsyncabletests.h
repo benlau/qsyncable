@@ -20,6 +20,9 @@ private slots:
     void diffRunner();
     void diffRunner_data();
 
+    void diffRunner_failedCase();
+    void diffRunner_failedCase_data();
+
     void diffRunner_noKeyField();
     void diffRunner_noKeyField_data();
 
