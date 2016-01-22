@@ -7,6 +7,8 @@ An immediate benefit of using QSycnable is the simplification of data pipeline. 
 
 Moreover, QSyncable could also be used as a solution for the nested list model.
 
+**Remarks: This project is still under development. Do not use it.**
+
 How it works?
 -------------
 
