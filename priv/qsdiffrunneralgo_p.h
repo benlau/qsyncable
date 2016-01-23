@@ -92,6 +92,9 @@ public:
     // No. of removed item
     int removed;
 
+    // No. of removing item
+    int removing;
+
     // No. of inserted item
     int inserted;
 
@@ -105,6 +108,8 @@ public:
     int skipped;
 
     QString fKey,tKey;
+
+    int indexF,indexT;
 };
 
 

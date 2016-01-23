@@ -422,6 +422,9 @@ void QSyncableTests::diffRunner_failedCase_data()
     QTest::newRow("2") << "0,1,2,3,4,5,6,7,8,9"
                        << "1,11,2,3,12,4,5,6,10,7,8,0,9";
 
+    QTest::newRow("3") << "0,1,2,3,4,5,6,7,8,9"
+                       << "1,3,7,2,10,8,5,9";
+
 }
 
 void QSyncableTests::diffRunner_noKeyField()
@@ -509,8 +512,8 @@ void QSyncableTests::diffRunner_random()
 
     for (int i = 0 ; i < 10 ;i++) {
         int type = qrand()  % 4;
-        int f = qrand() % count;
-        int t = qrand() % count;
+        int f = qrand() % to.size();
+        int t = qrand() % to.size();
         switch (type) {
         case 0:
             item = to[i].toMap();
@@ -541,15 +544,21 @@ void QSyncableTests::diffRunner_random()
     QList<QSPatch> patches = runner.compare(from, to);
     runner.patch(&listModel, patches);
 
-    if (to != listModel.storage()) {
+    QList<QSPatch> patches2 = runner.compare(to, listModel.storage());
+
+    if (patches2.size() > 0) {
         qDebug() << "from" << convert(from).join(",");
         qDebug() << "to" << convert(to).join(",");
         qDebug() << "actual" << convert(listModel.storage()).join(",");
         qDebug() << patches;
 
+        qDebug() << "Result";
+        qDebug() << to;
+        qDebug() << listModel.storage();
+        qDebug() << patches2;
     }
 
-    QVERIFY(to == listModel.storage());
+    QVERIFY(patches2.size() == 0);
 }
 
 void QSyncableTests::listModel_insert()
