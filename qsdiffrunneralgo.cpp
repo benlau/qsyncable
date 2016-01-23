@@ -11,6 +11,9 @@ QSDiffRunnerState::QSDiffRunnerState(int from, int to) {
     isMoved = false;
 }
 
+QSDiffRunnerStackItem::QSDiffRunnerStackItem(int from, int count, int acc) : from(from) , count(count) , acc(acc) {
+}
+
 
 QSDiffRunnerAlgo::QSDiffRunnerAlgo()
 {
@@ -37,31 +40,35 @@ QList<QSPatch> QSDiffRunnerAlgo::combine()
 
 void QSDiffRunnerAlgo::fixMovePatches()
 {
-    QList<QSPatch> movePatches;
-    movePatches.reserve(patches.size());
+    QStack<QSDiffRunnerStackItem> stack;
 
 #ifdef USE_4WAY_PASS_ALGO
-    for (int i = patches.size() - 1 ; i >= 0 ; i--) {
+
+    for (int i = 0 ; i < patches.size() ; i++) {
         QSPatch patch = patches.at(i);
         if (patch.type() == QSPatch::Move) {
-            QVariantMap item = to.at(patch.to()).toMap();
-            QString key = item[m_keyField].toString();
-            QSDiffRunnerState mapper = hash[key];
+            int acc = 0;
 
-            for (int j = movePatches.size() - 1; j >= 0;j--) {
-                if (movePatches.at(j).to() < patch.to()) {
-                    qDebug() << "remove";
-                    movePatches.removeAt(j);
+            while (stack.size() > 0) {
+                if (stack.top().from < patch.from()) {
+                    stack.pop();
+                } else {
+                    break;
                 }
             }
 
-            if (mapper.atFrom != mapper.shiftedPos + movePatches.size()) {
-                qDebug() << "update move" << patch.from() << mapper.shiftedPos
-                       << mapper.shiftedPos + movePatches.size();
+            if (stack.size() > 0) {
+                acc = stack.top().acc;
             }
-            patch.setFrom(mapper.shiftedPos + movePatches.size());
-            patches[i] = patch;
-            movePatches << patch;
+
+            stack.push(QSDiffRunnerStackItem(patch.from(),
+                                             patch.count(),
+                                             patch.count() + acc));
+
+            if (acc != 0) {
+                patch.setFrom(patch.from() + acc);
+                patches[i] = patch;
+            }
         }
     }
 #endif
@@ -285,7 +292,7 @@ QList<QSPatch> QSDiffRunnerAlgo::compare(const QVariantList &from, const QVarian
 
 void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, int index, QSDiffRunnerState &state)
 {
-    qDebug() << "markItemAtFrom" << index << type;
+//    qDebug() << "markItemAtFrom" << index << type;
     if (removeStart >= 0 && type != QSDiffRunnerAlgo::Remove) {
         int pos = index - 1 - removed + inserted;
         appendPatch(QSPatch::createRemove(removeStart, pos), false);
@@ -304,9 +311,6 @@ void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, int index
     if (type == Move) {
         moved--;
         state.shiftedPos = state.atFrom - removed + inserted;
-        qDebug() << "mark move" <<
-                    state.atFrom <<
-                    state.shiftedPos << moved;
         hash[fKey] = state;
     }
 
@@ -322,8 +326,6 @@ void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, int index
 
 void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index,  QSDiffRunnerState& mapper)
 {
-    qDebug() << "markItemAtToList" << index << type;
-
     /* Insert */
     if (insertStart >= 0 && type != QSDiffRunnerAlgo::Insert) {
         appendPatch(createInsertPatch(insertStart,
@@ -342,7 +344,7 @@ void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index, 
 
     if (type == QSDiffRunnerAlgo::Move) {
         QSPatch change(QSPatch::Move,
-                       mapper.atFrom + inserted + inserting,
+                       mapper.atFrom + inserted + inserting - removed,
                        index, 1);
         appendPatch(change);
 

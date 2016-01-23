@@ -24,6 +24,15 @@ public:
     int atTo;
 };
 
+class QSDiffRunnerStackItem {
+public:
+    QSDiffRunnerStackItem(int from = 0, int count = 0, int acc = 0);
+
+    int from;
+    int count;
+    int acc;
+};
+
 class QSDiffRunnerAlgo {
 
 public:
