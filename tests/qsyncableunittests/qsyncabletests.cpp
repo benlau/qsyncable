@@ -27,6 +27,35 @@ static QVariantList convert(const QStringList& list) {
 
 }
 
+void run() {
+    QFETCH(QString, from);
+    QFETCH(QString, to);
+
+    QVariantList fList = convert(from.split(","));
+    QVariantList tList = convert(to.split(","));
+
+
+    QSListModel listModel;
+
+    listModel.setStorage(fList);
+
+    QSDiffRunner runner;
+    runner.setKeyField("id");
+
+    QList<QSPatch> patches = runner.compare(fList, tList);
+    runner.patch(&listModel, patches);
+
+    if (tList != listModel.storage()) {
+        qDebug() << "from" << from;
+        qDebug() << "to" << to;
+        qDebug() << "actual" << convert(listModel.storage()).join(",");
+        qDebug() << patches;
+    }
+
+    QVERIFY(tList == listModel.storage());
+
+}
+
 QSyncableTests::QSyncableTests(QObject *parent) : QObject(parent)
 {
 
@@ -352,33 +381,34 @@ void QSyncableTests::diffRunner_data()
 
 }
 
+void QSyncableTests::diffRunner_move()
+{
+    run();
+
+}
+
+void QSyncableTests::diffRunner_move_data()
+{
+    QTest::addColumn<QString>("from");
+    QTest::addColumn<QString>("to");
+
+    QTest::newRow("1") << "1,2,3,4,5,6,7"
+                       << "4,1,7,2,3,5,6";
+
+    QTest::newRow("2") << "1,2,3,4,5,6,7"
+                       << "4,7,1,2,3,5,6";
+
+    QTest::newRow("3") << "1,2,3,4,5,6,7"
+                       << "3,6,1,7,2,4,5";
+
+    QTest::newRow("4") << "1,2,3,4,5,6,7"
+                       << "7,1,5,2,3,4,6";
+
+}
+
 void QSyncableTests::diffRunner_failedCase()
 {
-    QFETCH(QString, from);
-    QFETCH(QString, to);
-
-    QVariantList fList = convert(from.split(","));
-    QVariantList tList = convert(to.split(","));
-
-
-    QSListModel listModel;
-
-    listModel.setStorage(fList);
-
-    QSDiffRunner runner;
-    runner.setKeyField("id");
-
-    QList<QSPatch> patches = runner.compare(fList, tList);
-    runner.patch(&listModel, patches);
-
-    if (tList != listModel.storage()) {
-        qDebug() << "from" << from;
-        qDebug() << "to" << to;
-        qDebug() << "actual" << convert(listModel.storage()).join(",");
-        qDebug() << patches;
-    }
-
-    QVERIFY(tList == listModel.storage());
+    run();
 }
 
 void QSyncableTests::diffRunner_failedCase_data()
@@ -386,8 +416,8 @@ void QSyncableTests::diffRunner_failedCase_data()
     QTest::addColumn<QString>("from");
     QTest::addColumn<QString>("to");
 
-//    QTest::newRow("1") << "1,2,3,4,5,6,7"
-//                       << "3,1,2,4,5,6,7";
+    QTest::newRow("1") << "1,2,3,4,5,6,7"
+                       << "3,1,2,4,5,6,7";
 
     QTest::newRow("2") << "0,1,2,3,4,5,6,7,8,9"
                        << "1,11,2,3,12,4,5,6,10,7,8,0,9";
