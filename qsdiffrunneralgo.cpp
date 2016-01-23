@@ -280,12 +280,16 @@ QList<QSPatch> QSDiffRunnerAlgo::compare(const QVariantList &from, const QVarian
 
             if (mapper.atFrom < 0) {
                 // new item
-                markItemAtToList(Insert,indexT++, mapper);
+                markItemAtToList(Insert,indexT, mapper);
+                indexT++;
             } else {
                 if (tKey != fKey) {
-                    markItemAtToList(Move, indexT++, mapper);
+                    markItemAtToList(Move, indexT, mapper);
+                    indexT++;
+
                 } else {
-                    markItemAtToList(NoMove, indexT++, mapper);
+                    markItemAtToList(NoMove, indexT, mapper);
+                    indexT++;
                     indexF++;
                     break;
                 }
@@ -334,8 +338,10 @@ void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, int index
 
 void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index,  QSDiffRunnerState& mapper)
 {
-    /* Insert */
+    qDebug() << "markItemAtToList" << index << type;
+
     if (insertStart >= 0 && type != QSDiffRunnerAlgo::Insert) {
+        /* Insert */
         appendPatch(createInsertPatch(insertStart,
                                      index - 1, to), false);
         insertStart = -1;
@@ -359,6 +365,16 @@ void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index, 
         mapper.isMoved = true;
         hash[tKey] = mapper;
         moved++;
+    }
+
+    if (type == QSDiffRunnerAlgo::Move || type == QSDiffRunnerAlgo::NoMove) {
+        QVariantMap itemF = from[mapper.atFrom].toMap();
+        QVariantMap itemT = to[mapper.atTo].toMap();
+        QVariantMap diff = compareMap(itemF, itemT);
+        if (diff.size()) {
+            qDebug() << "Diff" << index;
+            updatePatches << QSPatch(QSPatch::Update, index, index, 1, diff);
+        }
     }
 }
 
