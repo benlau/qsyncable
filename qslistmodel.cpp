@@ -154,9 +154,13 @@ void QSListModel::clear()
 
 void QSListModel::remove(int i, int count)
 {
+    if (count < 1 || i + count > m_storage.size()) {
+        return;
+    }
     beginRemoveRows(QModelIndex(), i, i + count - 1);
-    for (int j = 0; j < count; ++j)
+    for (int j = 0; j < count; ++j) {
         m_storage.removeAt(i);
+    }
     endRemoveRows();
     emit countChanged();
 }

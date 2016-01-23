@@ -219,28 +219,28 @@ QSPatch QSPatch::createUpdate(int index, const QVariantMap &diff)
 
 QSPatch QSPatch::createRemove(int from, int to)
 {
-    return QSPatch(QSPatch::Remove, from, to, from - to + 1);
+    return QSPatch(QSPatch::Remove, from, to, to - from + 1);
 }
 
-QDebug operator<<(QDebug dbg, const QSPatch& change){
-    switch (change.type()) {
+QDebug operator<<(QDebug dbg, const QSPatch& patch){
+    switch (patch.type()) {
 
     case QSPatch::Remove:
-        dbg << QString("Remove from %1 to %2").arg(change.from()).arg(change.to());
+        dbg << QString("Remove from %1 to %2 with %3").arg(patch.from()).arg(patch.to()).arg(patch.count());
         break;
 
     case QSPatch::Move:
-        dbg << QString("Move from %1 to %2 with %3").arg(change.from()).arg(change.to()).arg(change.count());
+        dbg << QString("Move from %1 to %2 with %3").arg(patch.from()).arg(patch.to()).arg(patch.count());
         break;
 
     case QSPatch::Insert:
-        dbg << QString("Insert from %1 to %2 with %3").arg(change.from()).arg(change.to()).arg(change.count());
-        dbg << change.data();
+        dbg << QString("Insert from %1 to %2 with %3").arg(patch.from()).arg(patch.to()).arg(patch.count());
+        dbg << patch.data();
         break;
 
     case QSPatch::Update:
-        dbg << QString("Update %12").arg(change.from());
-        dbg << change.data();
+        dbg << QString("Update %12").arg(patch.from());
+        dbg << patch.data();
         break;
 
     default:

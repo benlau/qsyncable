@@ -151,7 +151,7 @@ int QSDiffRunnerAlgo::preprocess(const QVariantList &from, const QVariantList &t
 
     if (to.size() == index && from.size() - index> 0) {
         // Special case: removed from end
-        appendPatch(QSPatch(QSPatch::Remove, index, from.size() - 1 , from.size() - index));
+        appendPatch(QSPatch::createRemove(index, from.size() - 1));
         skipped = from.size();
         return from.size();
     }
@@ -246,18 +246,17 @@ QList<QSPatch> QSDiffRunnerAlgo::compare(const QVariantList &from, const QVarian
     QVariantMap fItem,tItem;
 
     while (indexF < from.size() || indexT < to.size()) {
-        // Step 1. Check removal
         QSDiffRunnerState mapper;
 
         fKey.clear();
 
         while (indexF < from.size()) {
+            // Find non-removed item / moved item
             fItem = from.at(indexF).toMap();
             fKey = fItem[m_keyField].toString();
             mapper = hash[fKey]; // It mush obtain the key value
 
             if (mapper.atTo < 0) {
-                qDebug() << "Mark remove" << indexF << indexT;
                 markItemAtFromList(Remove, indexF++, mapper);
             } else if (mapper.isMoved) {
                 markItemAtFromList(Move, indexF++, mapper);

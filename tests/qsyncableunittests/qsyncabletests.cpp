@@ -425,6 +425,8 @@ void QSyncableTests::diffRunner_failedCase_data()
     QTest::newRow("3") << "0,1,2,3,4,5,6,7,8,9"
                        << "1,3,7,2,10,8,5,9";
 
+    QTest::newRow("4") << "0,1,2,3,4,5,6,7,8,9"
+                       << "1,12,6,4,10,5,11,8,9";
 }
 
 void QSyncableTests::diffRunner_noKeyField()
