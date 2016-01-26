@@ -33,6 +33,17 @@ public:
     int acc;
 };
 
+class QSDiffRunnerTreeData {
+public:
+    inline QSDiffRunnerTreeData() {
+        indexF = 0;
+        count = 0;
+    }
+
+    int indexF;
+    int count;
+};
+
 class QSDiffRunnerAlgo {
 
 public:
@@ -78,6 +89,7 @@ public:
 
     // Update patches
     QList<QSPatch> updatePatches;
+
     QString m_keyField;
 
     // Hash table
@@ -110,6 +122,14 @@ public:
     QString fKey,tKey;
 
     int indexF,indexT;
+
+    /* Move Patches */
+    QSPatch pendingMovePatch;
+    int minMovePoint;
+    QList<QSDiffRunnerTreeData> movePoints; // @TODO - change to Tree
+
+    void appendMovePatch(QSPatch & patch);
+    void updateMovePatchIndex();
 };
 
 

@@ -28,6 +28,8 @@ QSDiffRunnerAlgo::QSDiffRunnerAlgo()
     inserting = 0;
     indexT = -1;
     indexF = -1;
+
+    minMovePoint = -1;
 }
 
 QList<QSPatch> QSDiffRunnerAlgo::combine()
@@ -43,37 +45,15 @@ QList<QSPatch> QSDiffRunnerAlgo::combine()
 
 void QSDiffRunnerAlgo::fixMovePatches()
 {
-    QStack<QSDiffRunnerStackItem> stack;
+    int lowerLimit = 0;
+    int upperLimit = from.size() - 1;
 
 #ifdef USE_4WAY_PASS_ALGO
 
     for (int i = 0 ; i < patches.size() ; i++) {
-        QSPatch patch = patches.at(i);
-        if (patch.type() == QSPatch::Move) {
-            int acc = 0;
 
-            while (stack.size() > 0) {
-                if (stack.top().from < patch.from()) {
-                    stack.pop();
-                } else {
-                    break;
-                }
-            }
-
-            if (stack.size() > 0) {
-                acc = stack.top().acc;
-            }
-
-            stack.push(QSDiffRunnerStackItem(patch.from(),
-                                             patch.count(),
-                                             patch.count() + acc));
-
-            if (acc != 0) {
-                patch.setFrom(patch.from() + acc);
-                patches[i] = patch;
-            }
-        }
     }
+
 #endif
 }
 
@@ -214,6 +194,52 @@ QSPatch QSDiffRunnerAlgo::createInsertPatch(int from, int to, const QVariantList
     return QSPatch(QSPatch::Insert, from, to, count, source.mid(from, count));
 }
 
+void QSDiffRunnerAlgo::appendMovePatch(QSPatch &patch)
+{
+    int offset = 0;
+    QVariantMap item = to[patch.to()].toMap();
+    QString key = item[m_keyField].toString();
+    QSDiffRunnerState state = hash[key];
+
+    //@TODO - change to tree data structure
+
+    int i = 0;
+    for (i = 0 ; i < movePoints.size() ; i++) {
+        QSDiffRunnerTreeData data = movePoints.at(i);
+
+        if (data.indexF > state.atFrom) {
+            break;
+        }
+
+        offset+= data.count;
+    }
+
+    if (offset > 0) {
+        patch.setFrom(patch.from() - offset);
+    }
+
+    QSDiffRunnerTreeData newData;
+    newData.indexF = state.atFrom;
+    newData.count = patch.count();
+    movePoints.insert(i,newData);
+
+    appendPatch(patch);
+}
+
+void QSDiffRunnerAlgo::updateMovePatchIndex()
+{
+    //@TODO - change to tree data structure
+    while (movePoints.size() > 0) {
+
+        if (movePoints.at(0).indexF < indexF) {
+            movePoints.removeFirst();
+        } else {
+            break;
+        }
+    }
+
+}
+
 
 #ifdef USE_4WAY_PASS_ALGO
 QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantList &to) {
@@ -285,7 +311,6 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
                 if (tKey != fKey) {
                     markItemAtToList(Move, indexT, mapper);
                     indexT++;
-
                 } else {
                     markItemAtToList(NoMove, indexT, mapper);
                     indexT++;
@@ -295,6 +320,11 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
             }
         }
     }
+    QSDiffRunnerState dummy;
+
+    markItemAtToList(NoMove, indexT, dummy);
+    markItemAtFromList(NoMove, indexF, dummy);
+
     //@TODO - combine should update move patch
     return combine();
 }
@@ -322,6 +352,7 @@ void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, int index
     if (type == Move) {
         moved--;
         state.shiftedPos = state.atFrom - removed + inserted;
+        updateMovePatchIndex();
         hash[fKey] = state;
     }
 
@@ -356,17 +387,31 @@ void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index, 
     }
 
     if (type == QSDiffRunnerAlgo::Move) {
+        qDebug() << indexT << indexF << mapper.atFrom << mapper.atFrom - indexF + indexT;
         QSPatch change(QSPatch::Move,
-                       mapper.atFrom + inserted + inserting - removed,
-                       index, 1);
-        appendPatch(change);
+                       indexT + mapper.atFrom - indexF,
+                       indexT, 1);
+
+        if (pendingMovePatch.isNull()) {
+            pendingMovePatch = change;
+        } else if (pendingMovePatch.canMerge(change)){
+            pendingMovePatch.merge(change);
+        } else {
+            appendMovePatch(pendingMovePatch);
+            pendingMovePatch = change;
+        }
 
         mapper.isMoved = true;
         hash[tKey] = mapper;
         moved++;
     }
 
-    if (type == QSDiffRunnerAlgo::Move || type == QSDiffRunnerAlgo::NoMove) {
+    if (type != QSDiffRunnerAlgo::Move && !pendingMovePatch.isNull()) {
+        appendMovePatch(pendingMovePatch);
+        pendingMovePatch = QSPatch();
+    }
+
+    if (indexT < to.size() && (type == QSDiffRunnerAlgo::Move || type == QSDiffRunnerAlgo::NoMove)) {
         QVariantMap itemF = from[mapper.atFrom].toMap();
         QVariantMap itemT = to[mapper.atTo].toMap();
         QVariantMap diff = compareMap(itemF, itemT);

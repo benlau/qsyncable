@@ -53,6 +53,7 @@ void run() {
     }
 
     QVERIFY(tList == listModel.storage());
+    qDebug() << patches;
 
 }
 
@@ -392,17 +393,31 @@ void QSyncableTests::diffRunner_move_data()
     QTest::addColumn<QString>("from");
     QTest::addColumn<QString>("to");
 
-    QTest::newRow("1") << "1,2,3,4,5,6,7"
-                       << "4,1,7,2,3,5,6";
+    QTest::newRow("S1") << "1,2,3,4,5,6,7"
+                        << "4,1,7,2,3,5,6";
 
-    QTest::newRow("2") << "1,2,3,4,5,6,7"
-                       << "4,7,1,2,3,5,6";
+    QTest::newRow("S2") << "1,2,3,4,5,6,7"
+                        << "4,7,1,2,3,5,6";
 
-    QTest::newRow("3") << "1,2,3,4,5,6,7"
-                       << "3,6,1,7,2,4,5";
+    QTest::newRow("S3") << "1,2,3,4,5,6,7"
+                        << "3,6,1,7,2,4,5";
 
-    QTest::newRow("4") << "1,2,3,4,5,6,7"
-                       << "7,1,5,2,3,4,6";
+    QTest::newRow("S4") << "1,2,3,4,5,6,7"
+                        << "7,1,5,2,3,4,6";
+
+
+    QTest::newRow("S6") << "1,2,3,4,5,6,7"
+                        << "7,2,1,5,3,4,6";
+
+    QTest::newRow("S7") << "1,2,3,4,5,6,7"
+                        << "7,6,5,4,3,2,1";
+
+
+    QTest::newRow("S9") << "1,2,3,4,5,6,7"
+                        << "7,3,5,1,2,4,6";
+
+    QTest::newRow("S10") << "1,2,3,4,5,6,7,8,9"
+                        << "7,3,5,1,8,2,4,6,9";
 
 }
 
@@ -427,6 +442,12 @@ void QSyncableTests::diffRunner_failedCase_data()
 
     QTest::newRow("4") << "0,1,2,3,4,5,6,7,8,9"
                        << "1,12,6,4,10,5,11,8,9";
+
+    QTest::newRow("5") << "0,1,2,3,4,5,6,7,8,9"
+                       << "0,3,8,11,7,9,5,10,1";
+    QTest::newRow("6") << "0,1,2,3,4,5,6,7,8,9"
+                       << "1,4,7,10,8";
+
 }
 
 void QSyncableTests::diffRunner_noKeyField()
@@ -518,9 +539,9 @@ void QSyncableTests::diffRunner_random()
         int t = qrand() % to.size();
         switch (type) {
         case 0:
-            item = to[i].toMap();
+            item = to[t].toMap();
             item["value"] = item["value"].toInt() + 1;
-            to[i] = item;
+            to[t] = item;
             break;
         case 1:
             to.removeAt(f);
@@ -536,6 +557,9 @@ void QSyncableTests::diffRunner_random()
         }
     }
 
+    qDebug() << "from" << convert(from).join(",");
+    qDebug() << "to" << convert(to).join(",");
+
     QSListModel listModel;
 
     listModel.setStorage(from);
@@ -549,8 +573,6 @@ void QSyncableTests::diffRunner_random()
     QList<QSPatch> patches2 = runner.compare(to, listModel.storage());
 
     if (patches2.size() > 0) {
-        qDebug() << "from" << convert(from).join(",");
-        qDebug() << "to" << convert(to).join(",");
         qDebug() << "actual" << convert(listModel.storage()).join(",");
         qDebug() << patches;
 
