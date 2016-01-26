@@ -216,7 +216,7 @@ QSPatch QSDiffRunnerAlgo::createInsertPatch(int from, int to, const QVariantList
 
 
 #ifdef USE_4WAY_PASS_ALGO
-QList<QSPatch> QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantList &to) {
+QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantList &to) {
     patches.clear();
     updatePatches.clear();
 

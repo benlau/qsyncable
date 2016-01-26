@@ -71,4 +71,6 @@ private:
 
 QDebug operator<<(QDebug dbg, const QSPatch& change);
 
+typedef QList<QSPatch> QSPatchSet;
+
 Q_DECLARE_METATYPE(QSPatch)

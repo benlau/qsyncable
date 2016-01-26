@@ -54,7 +54,7 @@ public:
 
     static QVariantMap compareMap(const QVariantMap& prev, const QVariantMap& current);
 
-    QList<QSPatch> compare(const QVariantList& from, const QVariantList& to);
+    QSPatchSet compare(const QVariantList& from, const QVariantList& to);
 
     // Preprocess the list, stop until the key is different. It will also handle common pattern (like append to end , remove from end)
     int preprocess(const QVariantList& from, const QVariantList& to);

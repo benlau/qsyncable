@@ -32,14 +32,14 @@ void QSDiffRunner::setKeyField(const QString &keyField)
     the minimum number of steps. It uses an algorithm with O(n) runtime.
  */
 
-QList<QSPatch> QSDiffRunner::compare(const QVariantList &from, const QVariantList &to)
+QSPatchSet QSDiffRunner::compare(const QVariantList &from, const QVariantList &to)
 {
     QSDiffRunnerAlgo algo;
     algo.m_keyField = m_keyField;
     return algo.compare(from, to);
 }
 
-bool QSDiffRunner::patch(QSPatchable *patchable, const QList<QSPatch>& patches) const
+bool QSDiffRunner::patch(QSPatchable *patchable, const QSPatchSet& patches) const
 {
     QVariantMap diff;
     foreach (QSPatch patch, patches) {

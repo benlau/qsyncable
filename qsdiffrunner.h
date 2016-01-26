@@ -19,10 +19,10 @@ public:
 
     void setKeyField(const QString &value);
 
-    QList<QSPatch> compare(const QVariantList& from,
-                           const QVariantList& to);
+    QSPatchSet compare(const QVariantList& from,
+                       const QVariantList& to);
 
-    bool patch(QSPatchable* patchable, const QList<QSPatch>& patches) const;
+    bool patch(QSPatchable* patchable, const QSPatchSet& patches) const;
 
 signals:
 
