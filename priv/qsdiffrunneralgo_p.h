@@ -11,12 +11,6 @@ public:
     // The position in "from" list
     int atFrom;
 
-    // The position in "from" after removal.
-    int atRemovedFrom;
-
-    // The position in "from" after applied "removed" / "inserted" and "moved"
-    int shiftedPos;
-
     // Is it moved?
     bool isMoved;
 
@@ -24,14 +18,6 @@ public:
     int atTo;
 };
 
-class QSDiffRunnerStackItem {
-public:
-    QSDiffRunnerStackItem(int from = 0, int count = 0, int acc = 0);
-
-    int from;
-    int count;
-    int acc;
-};
 
 class QSDiffRunnerTreeData {
 public:
@@ -101,27 +87,14 @@ public:
     // The start position of insertion block
     int insertStart;
 
-    // No. of removed item
-    int removed;
-
-    // No. of removing item
-    int removing;
-
-    // No. of inserted item
-    int inserted;
-
-    // No. of inserting item
-    int inserting;
-
-    // No. of moved item
-    int moved;
-
     // A no. of item could be skipped found preprocess().
     int skipped;
 
     QString fKey,tKey;
 
     int indexF,indexT;
+
+    int removing;
 
     /* Move Patches */
     QSPatch pendingMovePatch;
