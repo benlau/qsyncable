@@ -5,8 +5,8 @@ compiler:
   - gcc
 before_install:
     - cat /etc/apt/sources.list
-    - echo "deb http://efever-oss.s3-website-us-west-1.amazonaws.com/deb/ amd64/" | sudo tee -a /etc/apt/sources.list
     - sudo add-apt-repository --yes ppa:beineri/opt-qt532
+    - sudo add-apt-repository --yes "deb http://download.opensuse.org/repositories/home:/benlau/xUbuntu_15.10 ./"
     - cat /etc/apt/sources.list
     - sudo apt-get update -qq
     - apt-cache search qt5
