@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 
     runner.add<QSyncableTests>();
     runner.add(QString(SRCDIR));
-//    runner.add<BenchmarkTests>();
+    runner.add<BenchmarkTests>();
 
     bool error = runner.exec(app.arguments());
 

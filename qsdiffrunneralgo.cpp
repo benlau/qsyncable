@@ -24,27 +24,11 @@ QSDiffRunnerAlgo::QSDiffRunnerAlgo()
 
 QList<QSPatch> QSDiffRunnerAlgo::combine()
 {
-    fixMovePatches();
-
     if (updatePatches.size() > 0) {
         patches.append(updatePatches);
     }
 
     return patches;
-}
-
-void QSDiffRunnerAlgo::fixMovePatches()
-{
-    int lowerLimit = 0;
-    int upperLimit = from.size() - 1;
-
-#ifdef USE_4WAY_PASS_ALGO
-
-    for (int i = 0 ; i < patches.size() ; i++) {
-
-    }
-
-#endif
 }
 
 QList<QSPatch> QSDiffRunnerAlgo::compareWithoutKey(const QVariantList &from, const QVariantList &to)
@@ -183,8 +167,11 @@ QSPatch QSDiffRunnerAlgo::createInsertPatch(int from, int to, const QVariantList
     return QSPatch(QSPatch::Insert, from, to, count, source.mid(from, count));
 }
 
-void QSDiffRunnerAlgo::appendMovePatch(QSPatch &patch)
+void QSDiffRunnerAlgo::appendMovePatch(MoveOp &moveOp)
 {
+
+    QSPatch patch(QSPatch::Move, moveOp.from, moveOp.to, moveOp.count);
+
     int offset = 0;
     QVariantMap item = to[patch.to()].toMap();
     QString key = item[m_keyField].toString();
@@ -342,7 +329,7 @@ void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, int index
     hash[fKey] = state;
 }
 
-void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index,  QSDiffRunnerState& mapper)
+void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index,  QSDiffRunnerState& state)
 {
 
     if (insertStart >= 0 && type != QSDiffRunnerAlgo::Insert) {
@@ -359,9 +346,9 @@ void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index, 
     }
 
     if (type == QSDiffRunnerAlgo::Move) {
-        QSPatch change(QSPatch::Move,
-                       indexT + mapper.atFrom - indexF,
-                       indexT, 1);
+        MoveOp change(state.atFrom,
+                      indexT + state.atFrom - indexF,
+                      indexT);
 
         if (pendingMovePatch.isNull()) {
             pendingMovePatch = change;
@@ -372,18 +359,18 @@ void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index, 
             pendingMovePatch = change;
         }
 
-        mapper.isMoved = true;
-        hash[tKey] = mapper;
+        state.isMoved = true;
+        hash[tKey] = state;
     }
 
     if (type != QSDiffRunnerAlgo::Move && !pendingMovePatch.isNull()) {
         appendMovePatch(pendingMovePatch);
-        pendingMovePatch = QSPatch();
+        pendingMovePatch.clear();
     }
 
     if (indexT < to.size() && (type == QSDiffRunnerAlgo::Move || type == QSDiffRunnerAlgo::NoMove)) {
-        QVariantMap itemF = from[mapper.atFrom].toMap();
-        QVariantMap itemT = to[mapper.atTo].toMap();
+        QVariantMap itemF = from[state.atFrom].toMap();
+        QVariantMap itemT = to[state.atTo].toMap();
         QVariantMap diff = compareMap(itemF, itemT);
         if (diff.size()) {
             updatePatches << QSPatch(QSPatch::Update, index, index, 1, diff);
@@ -575,3 +562,28 @@ void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index, 
 
 #endif
 
+
+
+QSDiffRunnerAlgo::MoveOp::MoveOp(int indexF, int from, int to, int count) : indexF(indexF) , from(from), to(to), count(count)
+{
+}
+
+bool QSDiffRunnerAlgo::MoveOp::canMerge(const QSDiffRunnerAlgo::MoveOp &other) const
+{
+    return indexF + count == other.indexF && to + count == other.to ;
+}
+
+void QSDiffRunnerAlgo::MoveOp::merge(const QSDiffRunnerAlgo::MoveOp &other)
+{
+    count += other.count;
+}
+
+bool QSDiffRunnerAlgo::MoveOp::isNull() const
+{
+    return indexF < 0;
+}
+
+void QSDiffRunnerAlgo::MoveOp::clear()
+{
+    indexF = from = to = -1;
+}

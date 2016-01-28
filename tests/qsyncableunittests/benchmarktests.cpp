@@ -6,10 +6,11 @@
 static QVariantList create(int size) {
 
     QVariantList result;
+    static int nextId = 0;
 
     for (int i = 0 ; i < size ; i++) {
         QVariantMap item;
-        item["id"] = QUuid::createUuid().toString().replace(QRegExp("[{}]"), "");
+        item["id"] = nextId++;
         item["value"] =  qrand();
         result << item;
     }

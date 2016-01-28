@@ -40,12 +40,34 @@ public:
         Move
     };
 
+    // Move data storage
+    class MoveOp {
+    public:
+        MoveOp(int indexF = -1, int from = -1, int to = -1, int count = 1);
+
+        bool isNull() const;
+
+        bool canMerge(const MoveOp& other) const;
+
+        void merge(const MoveOp& other);
+
+        void clear();
+
+        // The absolute position in "from"
+        int indexF;
+
+        int from;
+
+        int to;
+
+        int count;
+
+    };
+
     QSDiffRunnerAlgo();
 
     // Combine all the processing patches into a single list. It will clear the processing result too.
     QList<QSPatch> combine();
-
-    void fixMovePatches();
 
     static QList<QSPatch> compareWithoutKey(const QVariantList& from, const QVariantList& to);
 
@@ -97,11 +119,12 @@ public:
     int removing;
 
     /* Move Patches */
-    QSPatch pendingMovePatch;
+    MoveOp pendingMovePatch;
+
     int minMovePoint;
     QList<QSDiffRunnerTreeData> movePoints; // @TODO - change to Tree
 
-    void appendMovePatch(QSPatch & patch);
+    void appendMovePatch(MoveOp& patch);
     void updateMovePatchIndex();
 };
 
