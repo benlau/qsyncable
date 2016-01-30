@@ -3,7 +3,7 @@
 #define MISSING_KEY_WARNING "QSDiffRunner.compare() - Duplicated or missing key."
 #define USE_4WAY_PASS_ALGO
 
-QSDiffRunnerState::QSDiffRunnerState(int from, int to) {
+QSDiffRunnerAlgo::State::State(int from, int to) {
     this->atFrom = from;
     this->atTo = to;
     isMoved = false;
@@ -126,14 +126,14 @@ void QSDiffRunnerAlgo::buildHashTable()
             qWarning() << MISSING_KEY_WARNING;
             //@TODO fail back to burte force mode
         }
-        QSDiffRunnerState mapper(i,-1);
+        State mapper(i,-1);
         hash[key] = mapper;
     }
 
     for (int i = skipped; i < to.size() ; i++) {
         QVariantMap item = to.at(i).toMap();
         QString key = item[m_keyField].toString();
-        QSDiffRunnerState mapper;
+        State mapper;
 
         if (hash.contains(key)) {
             mapper = hash[key];
@@ -175,7 +175,7 @@ void QSDiffRunnerAlgo::appendMovePatch(MoveOp &moveOp)
     int offset = 0;
     QVariantMap item = to[patch.to()].toMap();
     QString key = item[m_keyField].toString();
-    QSDiffRunnerState state = hash[key];
+    State state = hash[key];
 
     //@TODO - change to tree data structure
 
@@ -246,7 +246,7 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
     QVariantMap fItem,tItem;
 
     while (indexF < from.size() || indexT < to.size()) {
-        QSDiffRunnerState mapper;
+        State mapper;
 
         fKey.clear();
 
@@ -294,7 +294,7 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
             }
         }
     }
-    QSDiffRunnerState dummy;
+    State dummy;
 
     markItemAtToList(NoMove, indexT, dummy);
     markItemAtFromList(NoMove, indexF, dummy);
@@ -303,7 +303,7 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
     return combine();
 }
 
-void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, int index, QSDiffRunnerState &state)
+void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, int index, State &state)
 {
     if (removeStart >= 0 && type != QSDiffRunnerAlgo::Remove) {
 
@@ -329,7 +329,7 @@ void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, int index
     hash[fKey] = state;
 }
 
-void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index,  QSDiffRunnerState& state)
+void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, int index,  State& state)
 {
 
     if (insertStart >= 0 && type != QSDiffRunnerAlgo::Insert) {

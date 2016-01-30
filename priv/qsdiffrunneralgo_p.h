@@ -4,20 +4,6 @@
 #include <QString>
 #include "qspatch.h"
 
-class QSDiffRunnerState {
-public:
-    QSDiffRunnerState(int from = -1 , int to = -1);
-
-    // The position in "from" list
-    int atFrom;
-
-    // Is it moved?
-    bool isMoved;
-
-    // The position in "to" list
-    int atTo;
-};
-
 
 class QSDiffRunnerTreeData {
 public:
@@ -38,6 +24,20 @@ public:
         Insert,
         Remove,
         Move
+    };
+
+    class State {
+    public:
+        State(int from = -1 , int to = -1);
+
+        // The position in "from" list
+        int atFrom;
+
+        // Is it moved?
+        bool isMoved;
+
+        // The position in "to" list
+        int atTo;
     };
 
     // Move data storage
@@ -83,9 +83,9 @@ public:
     void appendPatch(const QSPatch& patch, bool merge = true);
 
     // Mark an item for insert, remove, move
-    void markItemAtFromList(Type type,int index, QSDiffRunnerState &mapper);
+    void markItemAtFromList(Type type,int index, State &mapper);
 
-    void markItemAtToList(Type type,int index, QSDiffRunnerState& mapper);
+    void markItemAtToList(Type type,int index, State& mapper);
 
     static QSPatch createInsertPatch(int from, int to, const QVariantList& source );
 
@@ -101,7 +101,7 @@ public:
     QString m_keyField;
 
     // Hash table
-    QHash<QString, QSDiffRunnerState> hash;
+    QHash<QString, State> hash;
 
     // The start position of remove block
     int removeStart;
