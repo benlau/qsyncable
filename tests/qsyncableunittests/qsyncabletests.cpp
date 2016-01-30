@@ -3,6 +3,7 @@
 #include "qsdiffrunner.h"
 #include "qsyncabletests.h"
 #include "qslistmodel.h"
+#include "qstree.h"
 
 static QStringList convert(const QVariantList& list) {
     QStringList res;
@@ -178,6 +179,41 @@ void QSyncableTests::patch_merge()
     QCOMPARE(c3.to(), 1);
     QCOMPARE(c3.count(), 2);
 
+}
+
+void QSyncableTests::tree()
+{
+    QSTree tree;
+    QVERIFY(tree.min() == 0);
+    QVERIFY(tree.max() == 0);
+    QVERIFY(tree.height() == 0);
+    QVERIFY(tree.sum() == 0);
+    QVERIFY(tree.root() == 0);
+
+    QSTreeNode* node = tree.insert(8,10);
+
+    QVERIFY(tree.root() == node);
+    QCOMPARE(tree.min() , 8);
+    QVERIFY(tree.max() == 8);
+    QCOMPARE(tree.sum() , 10);
+    QVERIFY(tree.height() == 1);
+
+    node = tree.insert(9,12);
+    QVERIFY(node->height() == 1);
+    QCOMPARE(tree.sum(), 22);
+    QVERIFY(tree.height() == 2);
+
+    tree.insert(7,5);
+    QVERIFY(tree.sum() == 27);
+
+    tree.insert(6,5);
+    QVERIFY(tree.sum() == 32);
+    QVERIFY(tree.height() == 3);
+
+    // 6,7,8,9
+    tree.remove(7);
+    QCOMPARE(tree.sum(), 22); // 6 & 7 are removed.
+    QVERIFY(tree.height() == 2);
 }
 
 void QSyncableTests::diffRunner()

@@ -7,7 +7,9 @@ HEADERS += \
     $$PWD/qslistmodel.h \
     $$PWD/qsjsonmodel.h \
     $$PWD/qsuuid.h \
-    $$PWD/priv/qsdiffrunneralgo_p.h
+    $$PWD/priv/qsdiffrunneralgo_p.h \
+    $$PWD/qstree.h \
+    $$PWD/qstreenode.h
 
 SOURCES += \
     $$PWD/qsdiffrunner.cpp \
@@ -15,4 +17,6 @@ SOURCES += \
     $$PWD/qslistmodel.cpp \
     $$PWD/qsjsonmodel.cpp \
     $$PWD/qsuuid.cpp \
-    $$PWD/qsdiffrunneralgo.cpp
+    $$PWD/qsdiffrunneralgo.cpp \
+    $$PWD/qstree.cpp \
+    $$PWD/qstreenode.cpp
