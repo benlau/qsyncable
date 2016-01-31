@@ -24,6 +24,8 @@ public:
 
     QSTreeNode* search(int value) const;
 
+    int countLessThan(int valueOfNode) const;
+
 private:
     void insert(QSTreeNode* node);
     void searchNodeToInsert(QSTreeNode* current, QSTreeNode* node);

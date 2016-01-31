@@ -129,6 +129,37 @@ QSTreeNode *QSTree::search(int value) const
     return search(m_root, value);
 }
 
+int QSTree::countLessThan(int valueOfNode) const
+{
+    QSTreeNode* node = search(valueOfNode);
+
+    if (node == 0) {
+        return 0;
+    }
+
+    int sum = 0;
+    bool fromRightChild = false;
+
+    while (node != 0) {
+
+        if (!fromRightChild && node->left()) {
+            sum += node->left()->sum();
+        }
+
+        if (node->value() < valueOfNode) {
+            sum += node->count();
+        }
+
+        if (node->parent()) {
+            fromRightChild = node->parent()->right() != node;
+        }
+
+        node = node->parent();
+    }
+
+    return sum;
+}
+
 void QSTree::insert(QSTreeNode *node)
 {
     if (m_root == 0) {

@@ -190,6 +190,7 @@ void QSyncableTests::tree()
     QVERIFY(tree.sum() == 0);
     QVERIFY(tree.root() == 0);
 
+    // 8(10)
     QSTreeNode* node = tree.insert(8,10);
 
     QVERIFY(tree.root() == node);
@@ -198,22 +199,51 @@ void QSyncableTests::tree()
     QCOMPARE(tree.sum() , 10);
     QVERIFY(tree.height() == 1);
 
+    // 8(10)
+    //     9(12)
+
     node = tree.insert(9,12);
+
     QVERIFY(node->height() == 1);
     QCOMPARE(tree.sum(), 22);
     QVERIFY(tree.height() == 2);
 
+    //     8(10)
+    // 7(5)     9(12)
+
     tree.insert(7,5);
     QVERIFY(tree.sum() == 27);
+
+    //      8(10)
+    //  7(5)     9(12)
+    //6(5)
 
     tree.insert(6,5);
     QVERIFY(tree.sum() == 32);
     QVERIFY(tree.height() == 3);
 
-    // 6,7,8,9
+    //      8(10)
+    //  7(5)     9(12)
+    //6(5)         10(6)
+
+    tree.insert(10,6);
+    QVERIFY(tree.sum() == 38);
+    QVERIFY(tree.height() == 3);
+
+    QCOMPARE(tree.countLessThan(10), 32);
+    QCOMPARE(tree.countLessThan(9), 20);
+    QCOMPARE(tree.countLessThan(8), 10);
+    QCOMPARE(tree.countLessThan(7), 5);
+    QCOMPARE(tree.countLessThan(6), 0);
+
     tree.remove(7);
-    QCOMPARE(tree.sum(), 22); // 6 & 7 are removed.
+    QCOMPARE(tree.sum(), 28); // 6 & 7 are removed.
+    QVERIFY(tree.height() == 3);
+
+    tree.remove(10);
+    QCOMPARE(tree.sum(), 22);
     QVERIFY(tree.height() == 2);
+
 }
 
 void QSyncableTests::diffRunner()
