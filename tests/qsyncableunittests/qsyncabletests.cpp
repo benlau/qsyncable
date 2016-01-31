@@ -240,8 +240,15 @@ void QSyncableTests::tree()
     QCOMPARE(tree.sum(), 33); // Only 7 are removed.
     QVERIFY(tree.height() == 3);
 
+    //     8(10
+    // 6(5)    9(12)
+
     tree.remove(10);
     QCOMPARE(tree.sum(), 27);
+    QVERIFY(tree.height() == 2);
+
+    tree.remove(8);
+    QCOMPARE(tree.sum(), 17);
     QVERIFY(tree.height() == 2);
 
 }

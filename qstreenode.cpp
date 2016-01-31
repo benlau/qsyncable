@@ -83,6 +83,9 @@ QSTreeNode *QSTreeNode::left() const
 void QSTreeNode::setLeft(QSTreeNode *left)
 {
     m_left = left;
+    if (left) {
+        left->setParent(this);
+    }
 }
 
 QSTreeNode *QSTreeNode::right() const
@@ -93,6 +96,9 @@ QSTreeNode *QSTreeNode::right() const
 void QSTreeNode::setRight(QSTreeNode *right)
 {
     m_right = right;
+    if (right) {
+        right->setParent(this);
+    }
 }
 
 void QSTreeNode::update()
