@@ -112,6 +112,16 @@ void QSTreeNode::update()
     m_height = h;
 }
 
+bool QSTreeNode::hasLeft() const
+{
+    return m_left != 0;
+}
+
+bool QSTreeNode::hasRight() const
+{
+    return m_right != 0;
+}
+
 QSTreeNode *QSTreeNode::parent() const
 {
     return m_parent;

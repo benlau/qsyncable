@@ -32,6 +32,10 @@ public:
     // Update height and sum from child
     void update();
 
+    bool hasLeft() const;
+
+    bool hasRight() const;
+
 private:
 
     int m_value;
