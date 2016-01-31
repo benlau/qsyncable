@@ -246,6 +246,28 @@ void QSyncableTests::tree()
 
 }
 
+void QSyncableTests::tree_updateMin()
+{
+    QSTree tree;
+
+    tree.insert(8,1);
+    tree.insert(6,1);
+    tree.insert(7,1);
+    tree.insert(5,1);
+    tree.insert(10,1);
+
+    QList<int> list;
+
+    list << 5 << 6 << 7 << 8 << 10;
+
+    for (int i = 0 ; i < list.size() - 1 ; i++) {
+        int min = list.at(i);
+        QCOMPARE(tree.min() , min);
+        tree.remove(min);
+    }
+
+}
+
 void QSyncableTests::diffRunner()
 {
     QFETCH(QVariantList, previous);

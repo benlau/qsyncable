@@ -55,6 +55,11 @@ void QSTree::simpleRemove(QSTreeNode *node)
     } else {
         parent->setRight(child);
     }
+
+    if (child) {
+        child->setParent(parent);
+    }
+
     delete node;
 }
 
@@ -143,6 +148,11 @@ void QSTree::remove(int value)
             QSTreeNode* parent = node->parent();
             simpleRemove(node);
             updateNodeToRoot(parent);
+        }
+
+        if (value == m_min ) {
+            QSTreeNode* minNode = searchMin(m_root);
+            m_min = minNode->value();
         }
     }
 
