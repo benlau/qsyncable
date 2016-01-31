@@ -223,3 +223,21 @@ QSTreeNode* QSTree::search(QSTreeNode *node, int value) const
     return res;
 }
 
+QSTreeNode *QSTree::searchMin(QSTreeNode *node) const
+{
+    if (!node->hasLeft()) {
+        return node;
+    } else {
+        searchMin(node->left());
+    }
+}
+
+QSTreeNode *QSTree::searchMax(QSTreeNode *node) const
+{
+    if (!node->hasRight()) {
+        return node;
+    } else {
+        searchMax(node->right());
+    }
+}
+

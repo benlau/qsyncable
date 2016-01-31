@@ -28,9 +28,14 @@ public:
 
 private:
     void insert(QSTreeNode* node);
+
     void searchNodeToInsert(QSTreeNode* current, QSTreeNode* node);
 
     QSTreeNode* search(QSTreeNode* node, int value) const;
+
+    QSTreeNode* searchMin(QSTreeNode* node) const;
+
+    QSTreeNode* searchMax(QSTreeNode* node) const;
 
     void setRoot(QSTreeNode *root);
 
