@@ -36,6 +36,28 @@ void QSTree::updateFromRoot()
     }
 }
 
+void QSTree::simpleRemove(QSTreeNode *node)
+{
+    QSTreeNode* child = 0;
+
+    if (node->hasLeft()) {
+        child = node->left();
+        node->setLeft(0);
+    } else if (node->hasRight()) {
+        child = node->right();
+        node->setRight(0);
+    }
+
+    QSTreeNode * parent = node->parent();
+
+    if (parent->left() == node) {
+        parent->setLeft(child);
+    } else {
+        parent->setRight(child);
+    }
+    delete node;
+}
+
 int QSTree::max() const
 {
     return m_max;
@@ -106,18 +128,25 @@ void QSTree::remove(int value)
 
     if (m_root == node) {
         setRoot(0);
+        delete node;
     } else {
-        QSTreeNode * parent = node->parent();
-        if (parent->left() == node) {
-            parent->setLeft(0);
+
+        if (node->hasLeft() && node->hasRight()) {
+            QSTreeNode* minNode = searchMin(node->right());
+            QSTreeNode* maxNode = searchMax(node->right());
+            node->setCount(minNode->count());
+            node->setValue(minNode->value());
+            simpleRemove(minNode);
+            updateNodeToRoot(maxNode);
+            delete node;
         } else {
-            parent->setRight(0);
+            QSTreeNode* parent = node->parent();
+            simpleRemove(node);
+            updateNodeToRoot(parent);
         }
-        updateNodeToRoot(parent);
     }
 
     updateFromRoot();
-    delete node;
 }
 
 QSTreeNode *QSTree::search(int value) const
@@ -228,7 +257,7 @@ QSTreeNode *QSTree::searchMin(QSTreeNode *node) const
     if (!node->hasLeft()) {
         return node;
     } else {
-        searchMin(node->left());
+        return searchMin(node->left());
     }
 }
 
@@ -237,7 +266,7 @@ QSTreeNode *QSTree::searchMax(QSTreeNode *node) const
     if (!node->hasRight()) {
         return node;
     } else {
-        searchMax(node->right());
+        return searchMax(node->right());
     }
 }
 

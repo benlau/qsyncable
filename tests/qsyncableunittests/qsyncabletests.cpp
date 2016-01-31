@@ -237,11 +237,11 @@ void QSyncableTests::tree()
     QCOMPARE(tree.countLessThan(6), 0);
 
     tree.remove(7);
-    QCOMPARE(tree.sum(), 28); // 6 & 7 are removed.
+    QCOMPARE(tree.sum(), 33); // Only 7 are removed.
     QVERIFY(tree.height() == 3);
 
     tree.remove(10);
-    QCOMPARE(tree.sum(), 22);
+    QCOMPARE(tree.sum(), 27);
     QVERIFY(tree.height() == 2);
 
 }

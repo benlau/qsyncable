@@ -49,6 +49,9 @@ private:
 
     void updateFromRoot();
 
+    // Remove a non-root node without two childs
+    void simpleRemove(QSTreeNode* node);
+
     int m_min;
     int m_max;
     int m_sum;
