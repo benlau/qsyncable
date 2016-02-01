@@ -5,17 +5,6 @@
 #include "qspatch.h"
 #include "qstree.h"
 
-class QSDiffRunnerTreeData {
-public:
-    inline QSDiffRunnerTreeData() {
-        indexF = 0;
-        count = 0;
-    }
-
-    int indexF;
-    int count;
-};
-
 class QSDiffRunnerAlgo {
 
 public:
@@ -31,19 +20,19 @@ public:
         State(int from = -1 , int to = -1);
 
         // The position in "from" list
-        int atFrom;
+        int posF;
+
+        // The position in "to" list
+        int postT;
 
         // Is it moved?
         bool isMoved;
-
-        // The position in "to" list
-        int atTo;
     };
 
     // Move data storage
     class MoveOp {
     public:
-        MoveOp(int indexF = -1, int from = -1, int to = -1, int count = 1);
+        MoveOp(int posF = -1, int from = -1, int to = -1, int count = 1);
 
         bool isNull() const;
 
@@ -54,20 +43,19 @@ public:
         void clear();
 
         // The absolute position in "from"
-        int indexF;
+        int posF;
 
         int from;
 
         int to;
 
         int count;
-
     };
 
     QSDiffRunnerAlgo();
 
     // Combine all the processing patches into a single list. It will clear the processing result too.
-    QList<QSPatch> combine();
+    QSPatchSet combine();
 
     static QList<QSPatch> compareWithoutKey(const QVariantList& from, const QVariantList& to);
 
@@ -83,13 +71,14 @@ public:
     void appendPatch(const QSPatch& patch, bool merge = true);
 
     // Mark an item for insert, remove, move
-    void markItemAtFromList(Type type,int index, State &mapper);
+    void markItemAtFromList(Type type, State &mapper);
 
-    void markItemAtToList(Type type,int index, State& mapper);
+    void markItemAtToList(Type type, State& state);
 
     static QSPatch createInsertPatch(int from, int to, const QVariantList& source );
 
     QVariantList from;
+
     QVariantList to;
 
     // Stored patches (without any update patches)
@@ -121,11 +110,12 @@ public:
     /* Move Patches */
     MoveOp pendingMovePatch;
 
-    int minMovePoint;
-    QSTree movePoints; // @TODO - change to Tree
+    // Tree of move patch
+    QSTree tree;
 
     void appendMovePatch(MoveOp& patch);
-    void updateMovePatchIndex();
+
+    void updateTree();
 };
 
 
