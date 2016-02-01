@@ -179,41 +179,24 @@ void QSDiffRunnerAlgo::appendMovePatch(MoveOp &moveOp)
 
     //@TODO - change to tree data structure
 
-    int i = 0;
-    for (i = 0 ; i < movePoints.size() ; i++) {
-        QSDiffRunnerTreeData data = movePoints.at(i);
 
-        if (data.indexF > state.atFrom) {
-            break;
-        }
-
-        offset+= data.count;
-    }
+    QSTreeNode* node = movePoints.insert(moveOp.indexF,moveOp.count);
+    offset = movePoints.countLessThan(node);
+    qDebug() << "appendMovePatch" << movePoints << offset;
 
     if (offset > 0) {
         patch.setFrom(patch.from() - offset);
     }
-
-    QSDiffRunnerTreeData newData;
-    newData.indexF = state.atFrom;
-    newData.count = patch.count();
-    movePoints.insert(i,newData);
 
     appendPatch(patch);
 }
 
 void QSDiffRunnerAlgo::updateMovePatchIndex()
 {
-    //@TODO - change to tree data structure
-    while (movePoints.size() > 0) {
 
-        if (movePoints.at(0).indexF < indexF) {
-            movePoints.removeFirst();
-        } else {
-            break;
-        }
+    while (movePoints.root() != 0 && movePoints.min() <= indexF) {
+        movePoints.remove(movePoints.min());
     }
-
 }
 
 

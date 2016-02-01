@@ -27,6 +27,8 @@ public:
 
     int countLessThan(int valueOfNode) const;
 
+    int countLessThan(QSTreeNode* node) const;
+
 private:
     void insert(QSTreeNode* node);
 
@@ -61,5 +63,8 @@ private:
     QSTreeNode* m_root;
 
 };
+
+QDebug operator<<(QDebug dbg, const QSTree& change);
+
 
 #endif // QSTREE_H

@@ -3,7 +3,7 @@
 
 #include <QString>
 #include "qspatch.h"
-
+#include "qstree.h"
 
 class QSDiffRunnerTreeData {
 public:
@@ -122,7 +122,7 @@ public:
     MoveOp pendingMovePatch;
 
     int minMovePoint;
-    QList<QSDiffRunnerTreeData> movePoints; // @TODO - change to Tree
+    QSTree movePoints; // @TODO - change to Tree
 
     void appendMovePatch(MoveOp& patch);
     void updateMovePatchIndex();

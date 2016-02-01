@@ -187,8 +187,14 @@ int QSTree::countLessThan(int valueOfNode) const
         return 0;
     }
 
+    return countLessThan(node);
+}
+
+int QSTree::countLessThan(QSTreeNode *node) const
+{
     int sum = 0;
     bool fromRightChild = false;
+    int valueOfNode = node->value();
 
     while (node != 0) {
 
@@ -289,5 +295,36 @@ QSTreeNode *QSTree::searchMax(QSTreeNode *node) const
     } else {
         return searchMax(node->right());
     }
+}
+
+QDebug operator<<(QDebug dbg, const QSTree& tree) {
+
+    QQueue<QSTreeNode*> queue;
+    QStringList links;
+
+    if (tree.root() != 0) {
+        queue.enqueue(tree.root());
+        links.append(QString("[%1]").arg(tree.root()->value()));
+    }
+
+    while (queue.size() > 0) {
+        QSTreeNode* node = queue.dequeue();
+
+        if (node->parent() != 0) {
+            links << QString("%1 -> %2").arg(node->parent()->value()).arg(node->value());
+        }
+
+        if (node->hasLeft()) {
+            queue.enqueue(node->left());
+        }
+
+        if (node->hasRight()) {
+            queue.enqueue(node->right());
+        }
+
+    }
+
+    dbg << links.join(",");
+    return dbg;
 }
 
