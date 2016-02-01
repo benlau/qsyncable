@@ -19,6 +19,7 @@ private slots:
 
     void tree();
     void tree_updateMin();
+    void tree_remove();
 
     void diffRunner();
     void diffRunner_data();

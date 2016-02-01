@@ -138,3 +138,29 @@ void QSTreeNode::setParent(QSTreeNode *parent)
     m_parent = parent;
 }
 
+QSTreeNode *QSTreeNode::takeLeft()
+{
+    QSTreeNode* res = 0;
+
+    if (m_left) {
+        res = m_left;
+        m_left->setParent(0);
+        m_left = 0;
+    }
+
+    return res;
+}
+
+QSTreeNode *QSTreeNode::takeRight()
+{
+    QSTreeNode* res = 0;
+
+    if (m_right) {
+        res = m_right;
+        m_right->setParent(0);
+        m_right = 0;
+    }
+
+    return res;
+}
+

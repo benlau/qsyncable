@@ -15,6 +15,13 @@ QSTree::QSTree()
     m_root = 0;
 }
 
+QSTree::~QSTree()
+{
+    if (m_root) {
+        delete m_root;
+    }
+}
+
 int QSTree::min() const
 {
     return m_min;
@@ -41,11 +48,9 @@ void QSTree::simpleRemove(QSTreeNode *node)
     QSTreeNode* child = 0;
 
     if (node->hasLeft()) {
-        child = node->left();
-        node->setLeft(0);
+        child = node->takeLeft();
     } else if (node->hasRight()) {
-        child = node->right();
-        node->setRight(0);
+        child = node->takeRight();
     }
 
     QSTreeNode * parent = node->parent();
@@ -57,7 +62,7 @@ void QSTree::simpleRemove(QSTreeNode *node)
             parent->setRight(child);
         }
     } else {
-        // It is node is root
+        // It is root node
         m_root = child;
         updateFromRoot();
     }
@@ -138,20 +143,26 @@ void QSTree::remove(int value)
         QSTreeNode* maxNode = searchMax(node->right());
         node->setCount(minNode->count());
         node->setValue(minNode->value());
-        simpleRemove(minNode);
-        updateNodeToRoot(maxNode);
-        delete node;
 
+        bool isMinMaxSame = minNode == maxNode;
+        simpleRemove(minNode);
+
+        if (!isMinMaxSame) {
+            updateNodeToRoot(maxNode);
+        } else {
+            updateNodeToRoot(node);
+        }
     } else {
         QSTreeNode* parent = node->parent();
         simpleRemove(node);
 
         if (parent) {
+            // Node is not root element
             updateNodeToRoot(parent);
         }
     }
 
-    if (value == m_min ) {
+    if (value == m_min && m_root != 0) {
         QSTreeNode* minNode = searchMin(m_root);
         m_min = minNode->value();
     }

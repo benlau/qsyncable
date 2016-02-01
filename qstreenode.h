@@ -29,6 +29,13 @@ public:
     QSTreeNode *parent() const;
     void setParent(QSTreeNode *parent);
 
+    // Remove the left node and return it.
+    QSTreeNode* takeLeft();
+
+    // Remove the right node and return it
+    QSTreeNode* takeRight();
+
+
     // Update height and sum from child
     void update();
 

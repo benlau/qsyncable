@@ -275,6 +275,17 @@ void QSyncableTests::tree_updateMin()
 
 }
 
+void QSyncableTests::tree_remove()
+{
+    QSTree tree;
+    tree.insert(3,1);
+    tree.insert(6,1);
+
+    tree.remove(3);
+    tree.remove(6);
+
+}
+
 void QSyncableTests::diffRunner()
 {
     QFETCH(QVariantList, previous);

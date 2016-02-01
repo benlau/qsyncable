@@ -7,6 +7,7 @@ class QSTree
 {
 public:
     QSTree();
+    ~QSTree();
 
     int min() const;
 
