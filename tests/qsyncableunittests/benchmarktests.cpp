@@ -10,7 +10,7 @@ static QVariantList create(int size) {
 
     for (int i = 0 ; i < size ; i++) {
         QVariantMap item;
-        item["id"] = nextId++;
+        item["id"] = QString("%1").arg(nextId++);
         item["value"] =  qrand();
         result << item;
     }
@@ -213,11 +213,15 @@ void BenchmarkTests::moveOne()
 
     QVERIFY(from != to);
 
+    QSPatchSet patch;
+
     QBENCHMARK {
         QSDiffRunner runner;
         runner.setKeyField("id");
-        runner.compare(from, to);
+        patch = runner.compare(from, to);
     }
+
+    QVERIFY(patch.size() == 1);
 }
 
 void BenchmarkTests::moveOne_data()

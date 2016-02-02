@@ -23,7 +23,7 @@ public:
         int posF;
 
         // The position in "to" list
-        int postT;
+        int posT;
 
         // Is it moved?
         bool isMoved;

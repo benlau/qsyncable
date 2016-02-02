@@ -1,7 +1,7 @@
 QSyncable - Synchronize data between models
 ===========================================
 
-QSyncable provides an QML friendly list model (based on QAbstractItemModel) as a wrapper of any data structure from C++ / QML. Instead to access data from original source per query, it duplicates a copy of data locally, and keep updated by an O(n) synchronization algorithm. Every update is carried by passing a full copy of data snapshot. It will find out the diff and transform into a list of change operations like insertion, removal and move. It will guarantee the behaviour is identical to the original QML ListModel. Therefore, UI components could react to the changes correctly.
+QSyncable provides an QML friendly list model (based on QAbstractItemModel) as a wrapper of any data structure from C++ / QML. Instead to access data from original source per query, it duplicates a copy of data locally, and keep updated by an average O(n) synchronization algorithm. Every update is carried by passing a full copy of data snapshot. It will find out the diff and transform into a list of change operations like insertion, removal and move. It will guarantee the behaviour is identical to the original QML ListModel. Therefore, UI components could react to the changes correctly.
 
 An immediate benefit of using QSycnable is the simplification of data pipeline. If you need your UI to respond for changes like insertion / removal correctly, you must update the ListModel by the corresponding method explicitly. QSyncable combines all kinds of update methods into a single way. Such that user doesn’t need to care about their differences and setup data binding by just a single connection.
 
@@ -14,7 +14,7 @@ How it works?
 
 ![Workflow](https://raw.githubusercontent.com/benlau/qsyncable/master/docs/qsyncable-workflow.png)
 
-**DiffRunner (QSDiffRunner)** compares two QVariantList to produce a patch for transforming one of the list to another list with minimum no. of steps. The result can be applied on a QSListModel. DiffRunner use an O(n) algorithm and therefore it should be fast enough for regular UI application.
+**DiffRunner (QSDiffRunner)** compares two QVariantList to produce a patch for transforming one of the list to another list with minimum no. of steps. The result can be applied on a QSListModel. DiffRunner use an average O(n) algorithm and therefore it should be fast enough for regular UI application.
 
 **ListModel (QSListModel)** is an implementation of QAbstactItemModel. It stores data in a list of QVariantMap. It will emit insert, remove, move and data changed signals according to the patch applied.
 
