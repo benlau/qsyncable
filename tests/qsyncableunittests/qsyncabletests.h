@@ -36,6 +36,7 @@ private slots:
     void diffRunner_invalidKey();
 
     void diffRunner_random();
+    void diffRunner_randomMove();
 
     void listModel_insert();
     void listModel_roleNames();

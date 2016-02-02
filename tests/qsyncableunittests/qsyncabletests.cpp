@@ -691,6 +691,54 @@ void QSyncableTests::diffRunner_random()
     QVERIFY(patches2.size() == 0);
 }
 
+void QSyncableTests::diffRunner_randomMove()
+{
+    QVariantList from;
+    int count = 30;
+    for (int i = 0 ; i < count;i++) {
+        QVariantMap item;
+        item["id"] = i;
+        item["value"] = i;
+        from << item;
+    }
+
+    QVariantList to = from;
+
+    for (int i = 0 ; i < count ;i++) {
+        int f = qrand() % to.size();
+        int t = qrand() % to.size();
+        to.move(f,t);
+    }
+
+    qDebug() << "from" << convert(from).join(",");
+    qDebug() << "to" << convert(to).join(",");
+
+    QSListModel listModel;
+
+    listModel.setStorage(from);
+
+    QSDiffRunner runner;
+    runner.setKeyField("id");
+
+    QList<QSPatch> patches = runner.compare(from, to);
+    runner.patch(&listModel, patches);
+
+    QList<QSPatch> patches2 = runner.compare(to, listModel.storage());
+
+    if (patches2.size() > 0) {
+        qDebug() << "actual" << convert(listModel.storage()).join(",");
+        qDebug() << patches;
+
+        qDebug() << "Result";
+        qDebug() << to;
+        qDebug() << listModel.storage();
+        qDebug() << patches2;
+    }
+
+    QVERIFY(patches2.size() == 0);
+
+}
+
 void QSyncableTests::listModel_insert()
 {
     QSListModel* model = new QSListModel();
