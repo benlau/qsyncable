@@ -29,19 +29,25 @@ public:
     QSTreeNode *parent() const;
     void setParent(QSTreeNode *parent);
 
-    // Remove the left node and return it.
+    // Remove the left node and return it. It won't be destroyed
     QSTreeNode* takeLeft();
 
-    // Remove the right node and return it
+    // Remove the right node and return it. It won't be destroyed
     QSTreeNode* takeRight();
 
+    // If the parent is not null, remove current this node from parent.
+    void unparent();
 
-    // Update height and sum from child
+    // Update height and sum from children
     void update();
 
     bool hasLeft() const;
 
     bool hasRight() const;
+
+    int leftHeight() const;
+
+    int rightHeight() const;
 
 private:
 

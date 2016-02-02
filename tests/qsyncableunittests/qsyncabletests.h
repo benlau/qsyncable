@@ -18,8 +18,9 @@ private slots:
     void patch_merge();
 
     void tree();
-    void tree_updateMin();
+    void tree_insert();
     void tree_remove();
+    void tree_updateMin();
 
     void diffRunner();
     void diffRunner_data();

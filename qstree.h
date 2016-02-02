@@ -9,6 +9,8 @@ public:
     QSTree();
     ~QSTree();
 
+    bool isNull() const;
+
     int min() const;
 
     int max() const;
@@ -19,21 +21,21 @@ public:
 
     QSTreeNode *root() const;
 
-    QSTreeNode* insert(int key, int count);
+    QSTreeNode* insert(int key, int count = 0);
 
     void remove(int key);
 
     QSTreeNode* search(int key) const;
 
+    // Find sum of count of node wher its's key is less than input key
     int countLessThan(int key) const;
-
 
 private:
     int countLessThan(QSTreeNode* node) const;
 
     void insert(QSTreeNode* node);
 
-    void searchNodeToInsert(QSTreeNode* current, QSTreeNode* node);
+    void insert(QSTreeNode* parent, QSTreeNode* node);
 
     QSTreeNode* search(QSTreeNode* node, int key) const;
 
@@ -55,6 +57,10 @@ private:
 
     // Remove a non-root node without two childs
     void simpleRemove(QSTreeNode* node);
+
+    QSTreeNode* rotateLeft(QSTreeNode* node);
+
+    QSTreeNode* rotateRight(QSTreeNode* node);
 
     int m_min;
     int m_max;

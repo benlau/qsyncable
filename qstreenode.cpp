@@ -128,6 +128,24 @@ bool QSTreeNode::hasRight() const
     return m_right != 0;
 }
 
+int QSTreeNode::leftHeight() const
+{
+    int ret = 0;
+    if (m_left) {
+        ret = m_left->height();
+    }
+    return ret;
+}
+
+int QSTreeNode::rightHeight() const
+{
+    int ret = 0;
+    if (m_right) {
+        ret = m_right->height();
+    }
+    return ret;
+}
+
 QSTreeNode *QSTreeNode::parent() const
 {
     return m_parent;
@@ -162,5 +180,18 @@ QSTreeNode *QSTreeNode::takeRight()
     }
 
     return res;
+}
+
+void QSTreeNode::unparent()
+{
+    if (m_parent) {
+        if (m_parent->left() == this) {
+            m_parent->takeLeft();
+        } else if (m_parent->right() == this) {
+            m_parent->takeRight();
+        } else {
+            qWarning() << "QSTreeNode::unparent(): Invalid tree structure";
+        }
+    }
 }
 

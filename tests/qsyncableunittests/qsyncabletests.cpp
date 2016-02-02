@@ -253,6 +253,27 @@ void QSyncableTests::tree()
 
 }
 
+void QSyncableTests::tree_insert()
+{
+    QSTree tree;
+
+    tree.insert(100);
+    tree.insert(99);
+    QCOMPARE(tree.height(), 2);
+
+    tree.insert(98);
+    QCOMPARE(tree.height(), 2);
+    QCOMPARE(tree.root()->key(), 99);
+
+    tree.insert(97);
+    tree.insert(96);
+    QCOMPARE(tree.height(), 3);
+
+    tree.insert(95);
+    QCOMPARE(tree.height(), 3);
+    QCOMPARE(tree.root()->key(), 97);
+}
+
 void QSyncableTests::tree_updateMin()
 {
     QSTree tree;

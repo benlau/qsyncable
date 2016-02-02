@@ -22,6 +22,11 @@ QSTree::~QSTree()
     }
 }
 
+bool QSTree::isNull() const
+{
+    return m_root == 0;
+}
+
 int QSTree::min() const
 {
     return m_min;
@@ -68,6 +73,86 @@ void QSTree::simpleRemove(QSTreeNode *node)
     }
 
     delete node;
+}
+
+QSTreeNode* QSTree::rotateLeft(QSTreeNode *n)
+{
+    /* n            x
+     *  \         /
+     *   x       n
+     *  /         \
+     * y            y
+     */
+
+    bool isLeft = false;
+    QSTreeNode* parent = n->parent();
+
+    if (parent) {
+        isLeft = (parent->left() == n);
+    }
+
+    QSTreeNode* x = n->takeRight();
+    QSTreeNode* y = x->takeLeft();
+
+    x->setLeft(n);
+    n->setRight(y);
+
+    n->update();
+    x->update();
+
+    if (parent) {
+        if (isLeft) {
+            parent->setLeft(x);
+        } else {
+            parent->setRight(x);
+        }
+    } else {
+        // It is root
+        m_root = x;
+        updateFromRoot();
+    }
+
+    return x;
+}
+
+QSTreeNode *QSTree::rotateRight(QSTreeNode *n)
+{
+    /*   n      x
+     *  /         \
+     * x           n
+     *  \         /
+     *   y       y
+     */
+
+    bool isLeft = false;
+    QSTreeNode* parent = n->parent();
+
+    if (parent) {
+        isLeft = (parent->left() == n);
+    }
+
+    QSTreeNode* x = n->takeLeft();
+    QSTreeNode* y = x->takeRight();
+
+    x->setRight(n);
+    n->setLeft(y);
+
+    n->update();
+    x->update();
+
+    if (parent) {
+        if (isLeft) {
+            parent->setLeft(x);
+        } else {
+            parent->setRight(x);
+        }
+    } else {
+        // It is root
+        m_root = x;
+        updateFromRoot();
+    }
+
+    return x;
 }
 
 int QSTree::max() const
@@ -221,8 +306,7 @@ void QSTree::insert(QSTreeNode *node)
     if (m_root == 0) {
         setRoot(node);
     } else {
-
-        searchNodeToInsert(m_root, node);
+        insert(m_root, node);
 
         if (m_min > node->key()) {
             m_min = node->key();
@@ -232,30 +316,40 @@ void QSTree::insert(QSTreeNode *node)
         }
     }
 
-    m_sum = m_root->sum();
-    m_height = m_root->height();
+    updateFromRoot();
 }
 
-void QSTree::searchNodeToInsert(QSTreeNode *current, QSTreeNode *node)
+void QSTree::insert(QSTreeNode *current, QSTreeNode *node)
 {
     if (node->key() < current->key()) {
-
-        if (current->left() == 0) {
+        if (current->hasLeft()) {
+            insert(current->left(), node);
+        } else {
             current->setLeft(node);
-            node->setParent(current);
-        } else {
-            searchNodeToInsert(current->left(), node);
         }
-
     } else {
-
-        if (current->right() == 0) {
-            current->setRight(node);
-            node->setParent(current);
+        if (current->hasRight()) {
+            insert(current->right(), node);
         } else {
-            searchNodeToInsert(current->right(), node);
+            current->setRight(node);
         }
+    }
 
+    int balance = current->leftHeight() - current->rightHeight();
+
+    if (balance > 1 && node->key() < current->left()->key()) {
+        // Left Left Case
+        rotateRight(current);
+    } else if (balance < -1 && node->key() > current->right()->key()) {
+        // Right Right Case
+        rotateLeft(current);
+    } else if (balance > 1 && node->key() > current->left()->key()) {
+        // Left Right Case
+        rotateLeft(current->left());
+        rotateRight(current);
+    } else if (balance < -1 && node->key() < current->right()->key()) {
+        rotateRight(current->right());
+        rotateLeft(current);
     }
 
     current->update();
