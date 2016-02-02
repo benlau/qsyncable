@@ -3,7 +3,7 @@
 
 QSTreeNode::QSTreeNode()
 {
-    m_value = 0;
+    m_key = 0;
     m_height = 0;
     m_count = 0;
     m_sum = 0;
@@ -13,9 +13,9 @@ QSTreeNode::QSTreeNode()
 
 }
 
-QSTreeNode::QSTreeNode(int value, int count)
+QSTreeNode::QSTreeNode(int key, int count)
 {
-    m_value = value;
+    m_key = key;
     m_count = count;
     m_sum = count;
     m_height = 1;
@@ -45,14 +45,14 @@ void QSTreeNode::setCount(int count)
     m_count = count;
 }
 
-int QSTreeNode::value() const
+int QSTreeNode::key() const
 {
-    return m_value;
+    return m_key;
 }
 
-void QSTreeNode::setValue(int value)
+void QSTreeNode::setKey(int key)
 {
-    m_value = value;
+    m_key = key;
 }
 
 int QSTreeNode::sum() const

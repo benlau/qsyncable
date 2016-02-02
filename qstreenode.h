@@ -5,14 +5,14 @@ class QSTreeNode
 {
 public:
     QSTreeNode();
-    QSTreeNode(int value, int count);
+    QSTreeNode(int key, int count);
     ~QSTreeNode();
 
     int count() const;
     void setCount(int count);
 
-    int value() const;
-    void setValue(int value);
+    int key() const;
+    void setKey(int key);
 
     int sum() const;
     void setSum(int sum);
@@ -45,7 +45,7 @@ public:
 
 private:
 
-    int m_value;
+    int m_key;
     int m_count;
     int m_sum;
     int m_height;

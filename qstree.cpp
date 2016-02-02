@@ -109,8 +109,8 @@ void QSTree::setRoot(QSTreeNode *root)
 {
     m_root = root;
     if (root) {
-        m_min = root->value();
-        m_max = root->value();
+        m_min = root->key();
+        m_max = root->key();
         m_sum = root->count();
     } else {
         m_min = 0;
@@ -119,20 +119,20 @@ void QSTree::setRoot(QSTreeNode *root)
     }
 }
 
-QSTreeNode *QSTree::insert(int value, int count)
+QSTreeNode *QSTree::insert(int key, int count)
 {
-    QSTreeNode* node = new QSTreeNode(value, count);
+    QSTreeNode* node = new QSTreeNode(key, count);
     insert(node);
     return node;
 }
 
-void QSTree::remove(int value)
+void QSTree::remove(int key)
 {
     if (m_root == 0) {
         return;
     }
 
-    QSTreeNode *node = search(value);
+    QSTreeNode *node = search(key);
 
     if (node == 0) {
         return;
@@ -142,7 +142,7 @@ void QSTree::remove(int value)
         QSTreeNode* minNode = searchMin(node->right());
         QSTreeNode* maxNode = searchMax(node->right());
         node->setCount(minNode->count());
-        node->setValue(minNode->value());
+        node->setKey(minNode->key());
 
         bool isMinMaxSame = minNode == maxNode;
         simpleRemove(minNode);
@@ -162,26 +162,26 @@ void QSTree::remove(int value)
         }
     }
 
-    if (value == m_min && m_root != 0) {
+    if (key == m_min && m_root != 0) {
         QSTreeNode* minNode = searchMin(m_root);
-        m_min = minNode->value();
+        m_min = minNode->key();
     }
 
     updateFromRoot();
 }
 
-QSTreeNode *QSTree::search(int value) const
+QSTreeNode *QSTree::search(int key) const
 {
     if (m_root == 0) {
         return 0;
     }
 
-    return search(m_root, value);
+    return search(m_root, key);
 }
 
-int QSTree::countLessThan(int valueOfNode) const
+int QSTree::countLessThan(int key) const
 {
-    QSTreeNode* node = search(valueOfNode);
+    QSTreeNode* node = search(key);
 
     if (node == 0) {
         return 0;
@@ -194,7 +194,7 @@ int QSTree::countLessThan(QSTreeNode *node) const
 {
     int sum = 0;
     bool fromRightChild = false;
-    int valueOfNode = node->value();
+    int key = node->key();
 
     while (node != 0) {
 
@@ -202,7 +202,7 @@ int QSTree::countLessThan(QSTreeNode *node) const
             sum += node->left()->sum();
         }
 
-        if (node->value() < valueOfNode) {
+        if (node->key() < key) {
             sum += node->count();
         }
 
@@ -224,11 +224,11 @@ void QSTree::insert(QSTreeNode *node)
 
         searchNodeToInsert(m_root, node);
 
-        if (m_min > node->value()) {
-            m_min = node->value();
+        if (m_min > node->key()) {
+            m_min = node->key();
         }
-        if (m_max < node->value()) {
-            m_max = node->value();
+        if (m_max < node->key()) {
+            m_max = node->key();
         }
     }
 
@@ -238,7 +238,7 @@ void QSTree::insert(QSTreeNode *node)
 
 void QSTree::searchNodeToInsert(QSTreeNode *current, QSTreeNode *node)
 {
-    if (node->value() < current->value()) {
+    if (node->key() < current->key()) {
 
         if (current->left() == 0) {
             current->setLeft(node);
@@ -261,19 +261,19 @@ void QSTree::searchNodeToInsert(QSTreeNode *current, QSTreeNode *node)
     current->update();
 }
 
-QSTreeNode* QSTree::search(QSTreeNode *node, int value) const
+QSTreeNode* QSTree::search(QSTreeNode *node, int key) const
 {
     QSTreeNode* res = 0;
 
-    if (node->value() == value) {
+    if (node->key() == key) {
         return node;
-    } else if (value < node->value() ) {
+    } else if (key < node->key() ) {
         if (node->left() != 0) {
-            res = search(node->left(), value);
+            res = search(node->left(), key);
         }
     } else {
         if (node->right() != 0) {
-            res = search(node->right(), value);
+            res = search(node->right(), key);
         }
     }
     return res;
@@ -304,14 +304,14 @@ QDebug operator<<(QDebug dbg, const QSTree& tree) {
 
     if (tree.root() != 0) {
         queue.enqueue(tree.root());
-        links.append(QString("[%1]").arg(tree.root()->value()));
+        links.append(QString("[%1]").arg(tree.root()->key()));
     }
 
     while (queue.size() > 0) {
         QSTreeNode* node = queue.dequeue();
 
         if (node->parent() != 0) {
-            links << QString("%1 -> %2").arg(node->parent()->value()).arg(node->value());
+            links << QString("%1 -> %2").arg(node->parent()->key()).arg(node->key());
         }
 
         if (node->hasLeft()) {

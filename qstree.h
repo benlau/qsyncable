@@ -19,22 +19,23 @@ public:
 
     QSTreeNode *root() const;
 
-    QSTreeNode* insert(int value, int count);
+    QSTreeNode* insert(int key, int count);
 
-    void remove(int value);
+    void remove(int key);
 
-    QSTreeNode* search(int value) const;
+    QSTreeNode* search(int key) const;
 
-    int countLessThan(int valueOfNode) const;
+    int countLessThan(int key) const;
 
-    int countLessThan(QSTreeNode* node) const;
 
 private:
+    int countLessThan(QSTreeNode* node) const;
+
     void insert(QSTreeNode* node);
 
     void searchNodeToInsert(QSTreeNode* current, QSTreeNode* node);
 
-    QSTreeNode* search(QSTreeNode* node, int value) const;
+    QSTreeNode* search(QSTreeNode* node, int key) const;
 
     QSTreeNode* searchMin(QSTreeNode* node) const;
 
