@@ -3,6 +3,8 @@
 
 #include "qstreenode.h"
 
+// AVL Tree Implementation
+
 class QSTree
 {
 public:
@@ -21,7 +23,7 @@ public:
 
     QSTreeNode *root() const;
 
-    QSTreeNode* insert(int key, int count = 0);
+    QSTreeNode* insert(int key, int count = 1);
 
     void remove(int key);
 
@@ -57,9 +59,6 @@ private:
     void setMin(int min);
 
     void updateFromRoot();
-
-    // Remove a non-root node without two childs
-    void simpleRemove(QSTreeNode* node);
 
     QSTreeNode* rotateLeft(QSTreeNode* node);
 

@@ -4,6 +4,7 @@
 #include "qsyncabletests.h"
 #include "qslistmodel.h"
 #include "qstree.h"
+#include "math.h"
 
 static QStringList convert(const QVariantList& list) {
     QStringList res;
@@ -293,6 +294,64 @@ void QSyncableTests::tree_updateMin()
         QCOMPARE(tree.min() , min);
         tree.remove(min);
     }
+
+}
+
+void QSyncableTests::tree_balance()
+{
+    QList<int> src;
+    QList<int> insert;
+    QList<int> remove;
+
+    for (int i = 0 ; i < 100;i++) {
+        src << i;
+    }
+
+    insert = src;
+    QSTree tree;
+
+    while (insert.size() > 0) {
+        int i = qrand() % insert.size();
+        int v = insert.takeAt(i);
+        int inserted = src.size() - insert.size();
+
+        tree.insert(v);
+
+        QCOMPARE(tree.sum() , inserted);
+
+        int height = qFloor(log2(inserted));
+
+        int diff = qAbs(tree.height() - height);
+
+        if (diff > 2) {
+            qDebug() << tree;
+            qDebug() << tree.height() << height;
+        }
+
+        QVERIFY(diff <= 2);
+    }
+
+    remove = src;
+    while (remove.size() > 0) {
+        int i = qrand() % remove.size();
+        int v = remove.takeAt(i);
+
+        tree.remove(v);
+        QCOMPARE(tree.sum(), remove.size());
+
+        int height = qFloor(log2(remove.size()));
+
+        int diff = qAbs(tree.height() - height);
+
+        if (diff > 2) {
+            qDebug() << tree;
+            qDebug() << tree.height() << height;
+        }
+
+        QVERIFY(diff <= 2);
+
+    }
+
 
 }
 

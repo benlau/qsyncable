@@ -49,6 +49,9 @@ public:
 
     int rightHeight() const;
 
+    // Calculate the differnet of heigth from left to right child
+    int balance() const;
+
 private:
 
     int m_key;

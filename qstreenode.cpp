@@ -146,6 +146,20 @@ int QSTreeNode::rightHeight() const
     return ret;
 }
 
+int QSTreeNode::balance() const
+{
+    int l = 0, r = 0;
+    if (m_left) {
+        l = m_left->height();
+    }
+
+    if (m_right) {
+        r = m_right->height();
+    }
+
+    return l - r;
+}
+
 QSTreeNode *QSTreeNode::parent() const
 {
     return m_parent;

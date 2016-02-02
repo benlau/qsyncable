@@ -40,33 +40,6 @@ void QSTree::updateFromRoot()
     }
 }
 
-void QSTree::simpleRemove(QSTreeNode *node)
-{
-    QSTreeNode* child = 0;
-
-    if (node->hasLeft()) {
-        child = node->takeLeft();
-    } else if (node->hasRight()) {
-        child = node->takeRight();
-    }
-
-    QSTreeNode * parent = node->parent();
-
-    if (parent) {
-        if (parent->left() == node) {
-            parent->setLeft(child);
-        } else {
-            parent->setRight(child);
-        }
-    } else {
-        // It is root node
-        m_root = child;
-        updateFromRoot();
-    }
-
-    delete node;
-}
-
 QSTreeNode* QSTree::rotateLeft(QSTreeNode *n)
 {
     /* n            x
@@ -370,7 +343,21 @@ void QSTree::remove(QSTreeNode *node, int key)
 
     if (node) {
         // The node is not deleted or replaced by its child
-        // TODO: Balance checking
+
+        int balance = node->balance();
+
+        if (balance > 1 && node->left()->balance() >= 0) {
+            rotateRight(node);
+        } else if (balance > 1 && node->left()->balance() < 0) {
+            rotateLeft(node->left());
+            rotateRight(node);
+        } else if (balance < -1 && node->right()->balance() <= 0) {
+            rotateLeft(node);
+        } else if (balance < -1 && node->right()->balance() > 0) {
+            rotateRight(node->right());
+            rotateLeft(node);
+        }
+
         node->update();
     }
 }
