@@ -302,9 +302,11 @@ void QSyncableTests::tree_remove()
     tree.insert(3,1);
     tree.insert(6,1);
 
+    QCOMPARE(tree.min(), 3);
     tree.remove(3);
-    tree.remove(6);
 
+    QCOMPARE(tree.min(), 6);
+    tree.remove(6);
 }
 
 void QSyncableTests::diffRunner()

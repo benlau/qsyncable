@@ -1,14 +1,6 @@
 #include <QtCore>
 #include "qstree.h"
 
-static void updateNodeToRoot(QSTreeNode* node) {
-    node->update();
-
-    if (node->parent() != 0) {
-        updateNodeToRoot(node->parent());
-    }
-}
-
 QSTree::QSTree()
 {
     m_min = m_max = m_sum = m_height = 0;
@@ -217,42 +209,16 @@ void QSTree::remove(int key)
         return;
     }
 
-    QSTreeNode *node = search(key);
-
-    if (node == 0) {
-        return;
-    }
-
-    if (node->hasLeft() && node->hasRight()) {
-        QSTreeNode* minNode = searchMin(node->right());
-        QSTreeNode* maxNode = searchMax(node->right());
-        node->setCount(minNode->count());
-        node->setKey(minNode->key());
-
-        bool isMinMaxSame = minNode == maxNode;
-        simpleRemove(minNode);
-
-        if (!isMinMaxSame) {
-            updateNodeToRoot(maxNode);
-        } else {
-            updateNodeToRoot(node);
-        }
-    } else {
-        QSTreeNode* parent = node->parent();
-        simpleRemove(node);
-
-        if (parent) {
-            // Node is not root element
-            updateNodeToRoot(parent);
-        }
-    }
-
-    if (key == m_min && m_root != 0) {
-        QSTreeNode* minNode = searchMin(m_root);
-        m_min = minNode->key();
-    }
-
+    remove(m_root, key);
     updateFromRoot();
+
+    if (key == m_min && m_root) {
+        QSTreeNode* node = searchMin(m_root);
+        m_min = node->key();
+    }
+
+    // Remarks: It don't update max. Becoz it is not needed in Diff algorithm.
+
 }
 
 QSTreeNode *QSTree::search(int key) const
@@ -353,6 +319,60 @@ void QSTree::insert(QSTreeNode *current, QSTreeNode *node)
     }
 
     current->update();
+}
+
+void QSTree::remove(QSTreeNode *node, int key)
+{
+    if (node->key() != key) {
+
+        if (key < node->key()) {
+            if (node->hasLeft()) {
+                remove(node->left(), key);
+            }
+        } else {
+            if (node->hasRight()) {
+                remove(node->right(), key);
+            }
+        }
+
+    } else {
+
+        if (node->hasLeft() && node->hasRight()) {
+            QSTreeNode* minNode = searchMin(node->right());
+            node->setCount(minNode->count());
+            node->setKey(minNode->key());
+            remove(node->right(), minNode->key());
+
+        } else {
+
+            QSTreeNode* parent = node->parent();
+            QSTreeNode* child = 0;
+            if (node->hasLeft()) {
+                child = node->takeLeft();
+            } else if (node->hasRight()) {
+                child = node->takeRight();
+            }
+
+            if (parent) {
+                if (parent->left() == node) {
+                    parent->setLeft(child);
+                } else {
+                    parent->setRight(child);
+                }
+            } else {
+                m_root = child;
+            }
+
+            delete node;
+            node = child; // Replace current node
+        }
+    }
+
+    if (node) {
+        // The node is not deleted or replaced by its child
+        // TODO: Balance checking
+        node->update();
+    }
 }
 
 QSTreeNode* QSTree::search(QSTreeNode *node, int key) const

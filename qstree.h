@@ -30,12 +30,15 @@ public:
     // Find sum of count of node wher its's key is less than input key
     int countLessThan(int key) const;
 
-private:
     int countLessThan(QSTreeNode* node) const;
+
+private:
 
     void insert(QSTreeNode* node);
 
-    void insert(QSTreeNode* parent, QSTreeNode* node);
+    void insert(QSTreeNode* current, QSTreeNode* node);
+
+    void remove(QSTreeNode* current, int key);
 
     QSTreeNode* search(QSTreeNode* node, int key) const;
 
