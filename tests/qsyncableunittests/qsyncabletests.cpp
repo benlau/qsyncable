@@ -321,14 +321,14 @@ void QSyncableTests::tree_balance()
 
         int height = qFloor(log2(inserted));
 
-        int diff = qAbs(tree.height() - height);
+        bool valid = QSTree::validate(tree.root());
 
-        if (diff > 2) {
+        if (!valid) {
             qDebug() << tree;
             qDebug() << tree.height() << height;
         }
 
-        QVERIFY(diff <= 2);
+        QVERIFY(valid);
     }
 
     remove = src;
@@ -341,15 +341,18 @@ void QSyncableTests::tree_balance()
 
         int height = qFloor(log2(remove.size()));
 
-        int diff = qAbs(tree.height() - height);
+        if (tree.isNull()) {
+            break;
+        }
 
-        if (diff > 2) {
+        bool valid = QSTree::validate(tree.root());
+
+        if (!valid) {
             qDebug() << tree;
             qDebug() << tree.height() << height;
         }
 
-        QVERIFY(diff <= 2);
-
+        QVERIFY(valid);
     }
 
 

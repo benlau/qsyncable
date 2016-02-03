@@ -34,6 +34,9 @@ public:
 
     int countLessThan(QSTreeNode* node) const;
 
+    // Validate is it a balanced tree of node
+    static bool validate(QSTreeNode* node);
+
 private:
 
     void insert(QSTreeNode* node);

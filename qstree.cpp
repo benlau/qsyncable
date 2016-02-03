@@ -240,6 +240,36 @@ int QSTree::countLessThan(QSTreeNode *node) const
     return sum;
 }
 
+bool QSTree::validate(QSTreeNode* node)
+{
+
+    if (node == 0) {
+        return false;
+    }
+
+    bool invalid;
+
+    int balance = qAbs(node->balance());
+
+    invalid = (balance >= 2);
+
+    if (invalid) {
+        qWarning() << QString("Node[%1] is not balanced").arg(node->key());
+    } else {
+
+        if (node->hasLeft()) {
+            invalid |= !validate(node->left());
+        }
+
+        if (node->hasRight()) {
+            invalid |= !validate((node->right()));
+        }
+
+    }
+
+    return !invalid;
+}
+
 void QSTree::insert(QSTreeNode *node)
 {
     if (m_root == 0) {
@@ -403,16 +433,19 @@ QDebug operator<<(QDebug dbg, const QSTree& tree) {
     QQueue<QSTreeNode*> queue;
     QStringList links;
 
+    int height = -1;
+
     if (tree.root() != 0) {
         queue.enqueue(tree.root());
         links.append(QString("[%1]").arg(tree.root()->key()));
+        height = tree.root()->height();
     }
 
     while (queue.size() > 0) {
         QSTreeNode* node = queue.dequeue();
 
         if (node->parent() != 0) {
-            links << QString("%1 -> %2").arg(node->parent()->key()).arg(node->key());
+            links << QString("%1->%2").arg(node->parent()->key()).arg(node->key());
         }
 
         if (node->hasLeft()) {
@@ -425,7 +458,7 @@ QDebug operator<<(QDebug dbg, const QSTree& tree) {
 
     }
 
-    dbg << links.join(",");
+    dbg << links.join(" , ");
     return dbg;
 }
 

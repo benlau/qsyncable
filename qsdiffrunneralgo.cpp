@@ -133,7 +133,7 @@ void QSDiffRunnerAlgo::buildHashTable()
         }
         state.posF = i;
         state.posT = -1;
-        hash[key] = state;
+        hash.insert(key, state);
     }
 
     for (int i = skipped; i < toSize ; i++) {
@@ -141,12 +141,12 @@ void QSDiffRunnerAlgo::buildHashTable()
         key = item[m_keyField].toString();
 
         if (hash.contains(key)) {
-            state = hash[key];
+            hash[key].posT = i;
         } else {
             state.posF = -1;
+            state.posT = i;
+            hash.insert(key, state);
         }
-        state.posT = i;
-        hash[key] = state;
     }
 
 }
