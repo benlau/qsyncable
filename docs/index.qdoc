@@ -1,0 +1,19 @@
+/*!
+    \page index.html
+    \title QSyncable
+
+C++ Classes
+
+    \list
+      \li \l QSDiffRunner
+      \li \l QSListModel
+      \li \l QSPatch
+      \li \l QSPatchSet
+    \endlist
+
+QML Components
+    \list
+      \li \l JsonListModel
+    \endlist
+
+ */

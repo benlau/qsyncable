@@ -135,6 +135,65 @@ void BenchmarkTests::removeOne_data()
     setup();
 }
 
+void BenchmarkTests::moveAll()
+{
+    QFETCH(int, size);
+
+    QVariantList from = create(size);
+    QVERIFY(from.size() == size);
+    QVariantList to = from;
+
+    for (int i = 0 , k = 1; i < from.size() ; i++ , k++) {
+        int j = (i + k) % from.size();
+        to.move(j,i);
+    }
+
+    QList<QSPatch> patches;
+
+    QBENCHMARK {
+        QSDiffRunner runner;
+        runner.setKeyField("id");
+        patches = runner.compare(from, to);
+    }
+
+    qDebug() << "Total no. of moves" << patches.size();
+}
+
+void BenchmarkTests::moveAll_data()
+{
+    setup();
+}
+
+void BenchmarkTests::reverse()
+{
+    QFETCH(int, size);
+
+    QVariantList from = create(size);
+    QVERIFY(from.size() == size);
+    QVariantList to;
+    to.reserve(from.size());
+
+    for (int i = from.size() - 1 ; i >= 0 ; i--) {
+        to << from.at(i);
+    }
+
+    QList<QSPatch> patches;
+
+    QBENCHMARK {
+        QSDiffRunner runner;
+        runner.setKeyField("id");
+        patches = runner.compare(from, to);
+    }
+
+    QCOMPARE(patches.size() , to.size() - 1);
+
+}
+
+void BenchmarkTests::reverse_data()
+{
+    setup();
+}
+
 void BenchmarkTests::setup()
 {
     QTest::addColumn<int>("size");

@@ -18,26 +18,37 @@ private slots:
 
     void hashing();
 
+    // O(n)
+
     void noChange();
     void noChange_data();
 
     void changeOne();
     void changeOne_data();
 
-    void moveOne();
-    void moveOne_data();
-
-    void insertAll();
-    void insertAll_data();
-
     void changeAll();
     void changeAll_data();
 
-    void removeAll();
-    void removeAll_data();
+    void moveOne();
+    void moveOne_data();
 
     void removeOne();
     void removeOne_data();
+
+    // O(n + m log m)
+
+    void moveAll();
+    void moveAll_data();
+
+    void reverse();
+    void reverse_data();
+
+    // O(1)
+    void insertAll();
+    void insertAll_data();
+
+    void removeAll();
+    void removeAll_data();
 
 private:
     void setup();
