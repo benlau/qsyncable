@@ -3,6 +3,7 @@ url = https://github.com/benlau/qsyncable
 description = Synchronize data between models
 sourcedirs = ./
 sourcedirs += ../
+headerdirs += ../
 exampledirs += ../examples/faketrello
 sources.fileextensions = "*.qml *.qdoc *.cpp"
 headers.fileextensions = "*.h"
