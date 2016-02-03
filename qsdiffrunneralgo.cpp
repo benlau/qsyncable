@@ -78,11 +78,13 @@ int QSDiffRunnerAlgo::preprocess(const QVariantList &from, const QVariantList &t
 {
     int index = 0;
     int min = qMin(from.size(), to.size());
+    QVariantMap f;
+    QVariantMap t;
 
     for (index = 0 ; index < min ;index++) {
 
-        QVariantMap f = from[index].toMap();
-        QVariantMap t = to[index].toMap();
+        f = from[index].toMap();
+        t = to[index].toMap();
 
         if (f[m_keyField] != t[m_keyField]) {
             break;
@@ -224,19 +226,20 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
 
     indexF = skipped;
     indexT = skipped;
+    int fromSize = from.size();
+    int toSize = to.size();
 
-    QVariantMap fItem,tItem;
+    State state;
 
-    while (indexF < from.size() || indexT < to.size()) {
-        State state;
+    while (indexF < fromSize || indexT < toSize) {
 
-        fKey.clear();
+        keyF.clear();
 
-        while (indexF < from.size()) {
+        while (indexF < fromSize) {
             // Find non-removed item / moved item
-            fItem = from.at(indexF).toMap();
-            fKey = fItem[m_keyField].toString();
-            state = hash[fKey]; // It mush obtain the key value
+            itemF = from.at(indexF).toMap();
+            keyF = itemF[m_keyField].toString();
+            state = hash[keyF]; // It mush obtain the key value
 
             if (state.posT < 0) {
                 markItemAtFromList(Remove, state);
@@ -250,23 +253,23 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
             }
         }
 
-        if (indexF >= from.size() && indexT < to.size()) {
+        if (indexF >= fromSize && indexT < toSize) {
             // The rest in "to" list is new items
-            appendPatch(createInsertPatch(indexT, to.size() - 1, to), false);
+            appendPatch(createInsertPatch(indexT, toSize - 1, to), false);
             return combine();
         }
 
-        while (indexT < to.size() ) {
-            tItem = to.at(indexT).toMap();
-            tKey = tItem[m_keyField].toString();
-            state = hash[tKey];
+        while (indexT < toSize ) {
+            itemT = to.at(indexT).toMap();
+            keyT = itemT[m_keyField].toString();
+            state = hash[keyT];
 
             if (state.posF < 0) {
                 // new item
                 markItemAtToList(Insert, state);
                 indexT++;
             } else {
-                if (tKey != fKey) {
+                if (keyT != keyF) {
                     markItemAtToList(Move, state);
                     indexT++;
                 } else {
@@ -283,7 +286,6 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
     markItemAtToList(NoMove, dummy);
     markItemAtFromList(NoMove, dummy);
 
-    //@TODO - combine should update move patch
     return combine();
 }
 
@@ -310,7 +312,7 @@ void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, State &st
     }
 
     state.posF = indexF;
-    hash[fKey] = state;
+    hash[keyF] = state;
 }
 
 void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, State& state)
@@ -344,7 +346,7 @@ void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, State& stat
         }
 
         state.isMoved = true;
-        hash[tKey] = state;
+        hash[keyT] = state;
     }
 
     if (type != QSDiffRunnerAlgo::Move && !pendingMovePatch.isNull()) {
@@ -353,9 +355,8 @@ void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, State& stat
     }
 
     if (indexT < to.size() && (type == QSDiffRunnerAlgo::Move || type == QSDiffRunnerAlgo::NoMove)) {
-        QVariantMap itemF = from[state.posF].toMap();
-        QVariantMap itemT = to[state.posT].toMap();
-        QVariantMap diff = compareMap(itemF, itemT);
+        QVariantMap tmpItemF = from[state.posF].toMap();
+        QVariantMap diff = compareMap(tmpItemF, itemT);
         if (diff.size()) {
             updatePatches << QSPatch(QSPatch::Update, indexT, indexT, 1, diff);
         }

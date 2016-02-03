@@ -101,9 +101,11 @@ public:
     // A no. of item could be skipped found preprocess().
     int skipped;
 
-    QString fKey,tKey;
+    QString keyF,keyT;
 
     int indexF,indexT;
+
+    QVariantMap itemF,itemT;
 
     int removing;
 
