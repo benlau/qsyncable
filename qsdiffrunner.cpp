@@ -13,6 +13,10 @@
   \class QSDiffRunner
   \inmodule QSyncable
 
+QSDiffRunner compares two QVariantList to produce a patch for transforming one of the list to another list with minimum no. of steps. \
+The result can be applied on a QSListModel via QSPatchable interface.
+QSDiffRunner use an average O(n) algorithm and therefore it should be fast enough for regular UI application.
+
 */
 
 

@@ -9,11 +9,17 @@ C++ Classes
       \li \l QSListModel
       \li \l QSPatch
       \li \l QSPatchSet
+      \li \l QSPatchable
     \endlist
 
 QML Components
     \list
       \li \l JsonListModel
     \endlist
+
+Singleton QML Components
+    \list
+      \li \l Uuid
+   \endlist
 
  */
