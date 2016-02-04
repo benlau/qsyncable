@@ -28,13 +28,7 @@ public:
 
     Q_INVOKABLE void insert(int index,const QVariantMap& value);
 
-    virtual void insert(int index, const QVariantList &value);
-
-    Q_INVOKABLE void move(int from, int to, int count = 1);
-
     Q_INVOKABLE void clear();
-
-    Q_INVOKABLE void remove(int i , int count  = 1);
 
     int count() const;
 
@@ -44,8 +38,6 @@ public:
 
     Q_INVOKABLE void set(int index,QVariantMap data);
 
-    /// Apply the changes to a record at index. Only modified value will be set.
-    void setProperties(int index,QVariantMap changes);
 
     QHash<int, QByteArray> roleNames() const;
 
@@ -56,6 +48,17 @@ public:
     void setStorage(const QVariantList& value);
 
     QVariantList storage() const;
+
+    /* QSPatchable */
+
+    /// Apply the changes to a record at index. Only modified value will be set.
+    void setProperties(int index,QVariantMap changes);
+
+    virtual void insert(int index, const QVariantList &value);
+
+    Q_INVOKABLE void move(int from, int to, int count = 1);
+
+    Q_INVOKABLE void remove(int i , int count  = 1);
 
     /* Extra API */
 
