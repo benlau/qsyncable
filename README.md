@@ -40,13 +40,17 @@ QObject list model is definitely a bad idea. It is terrible to manage their life
 
 Using a variant list model is better, but it is not C++ friendly. And it is difficult to handle nested list model.
 
-In fact, the problem will be simple if you separate “updates” and “queries” into different components. First of all, you don’t even need to consider QObject list model approach.
+In fact, the problem will be simple if you separate “updates” and “queries” into different components.
+First of all, you don’t even need to consider QObject list model approach.
 It has no any advantage of using QObject list model if you use other component for update.
 
 Moreover, it is not necessary to use a variant list model as a central data source. You may use any data structure you like. Leave variant list model for presentation only.
 
 QSyncable takes a step further. It simplifies the process to update the variant list model from a data source by combining insertion, removal, move and change operations into a single process - patching, while maintaining the correctness of UI response. It solves not only the problem of C++ and QML data sharing, but also a solution of nested list model within QML.
 
+Reference:
+
+1. [What the Flux? (On Flux, DDD, and CQRS) — Jack Hsu](http://jaysoo.ca/2015/02/06/what-the-flux/)
 
 Why use QSyncable for C++?
 --------------------------

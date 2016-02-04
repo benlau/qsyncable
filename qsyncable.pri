@@ -8,8 +8,8 @@ HEADERS += \
     $$PWD/qsjsonmodel.h \
     $$PWD/qsuuid.h \
     $$PWD/priv/qsdiffrunneralgo_p.h \
-    $$PWD/qstree.h \
-    $$PWD/qstreenode.h
+    $$PWD/priv/qstree.h \
+    $$PWD/priv/qstreenode.h
 
 SOURCES += \
     $$PWD/qsdiffrunner.cpp \

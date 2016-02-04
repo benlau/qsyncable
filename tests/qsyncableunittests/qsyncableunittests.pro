@@ -31,4 +31,5 @@ include(../../qsyncable.pri)
 
 DISTFILES += \
     tst_jsonModel.qml \
-    tst_uuid.qml
+    tst_uuid.qml \
+    ../../README.md

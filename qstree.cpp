@@ -1,5 +1,5 @@
 #include <QtCore>
-#include "qstree.h"
+#include "priv/qstree.h"
 
 QSTree::QSTree()
 {

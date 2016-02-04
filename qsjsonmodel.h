@@ -11,6 +11,7 @@ class QSJsonModel : public QSListModel, public QQmlParserStatus
     Q_PROPERTY(QString keyField READ keyField WRITE setKeyField NOTIFY keyFieldChanged)
     Q_PROPERTY(QVariantList source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(QStringList fieldNames READ fieldNames WRITE setFieldNames NOTIFY fieldNamesChanged)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     explicit QSJsonModel(QObject *parent = 0);

@@ -1,5 +1,5 @@
 #include <QtCore>
-#include "qstreenode.h"
+#include "priv/qstreenode.h"
 
 QSTreeNode::QSTreeNode()
 {

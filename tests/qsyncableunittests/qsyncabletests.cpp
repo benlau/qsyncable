@@ -3,7 +3,7 @@
 #include "qsdiffrunner.h"
 #include "qsyncabletests.h"
 #include "qslistmodel.h"
-#include "qstree.h"
+#include "priv/qstree.h"
 #include "math.h"
 
 static QStringList convert(const QVariantList& list) {
