@@ -1,11 +1,10 @@
-#ifndef QSJSONMODEL_H
-#define QSJSONMODEL_H
+#pragma once
 
 #include <QObject>
 #include <QQmlParserStatus>
 #include "qslistmodel.h"
 
-class QSJsonModel : public QSListModel, public QQmlParserStatus
+class QSJsonListModel : public QSListModel, public QQmlParserStatus
 {
     Q_OBJECT
     Q_PROPERTY(QString keyField READ keyField WRITE setKeyField NOTIFY keyFieldChanged)
@@ -14,7 +13,7 @@ class QSJsonModel : public QSListModel, public QQmlParserStatus
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    explicit QSJsonModel(QObject *parent = 0);
+    explicit QSJsonListModel(QObject *parent = 0);
 
     QString keyField() const;
 
@@ -53,5 +52,3 @@ private:
 
     bool componentCompleted;
 };
-
-#endif // QSJSONMODEL_H

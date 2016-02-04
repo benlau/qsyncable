@@ -13,7 +13,7 @@ QSUuid::QSUuid(QObject *parent) : QObject(parent)
 
 }
 
-/*! \qmlmethod Uuid::create()
+/*! \qmlmethod string Uuid::create()
 
   Call this function to generate a random Uuid in string format.
   It use the result from QUuid::createUuid().

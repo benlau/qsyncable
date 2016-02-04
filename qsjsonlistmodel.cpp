@@ -1,29 +1,29 @@
 #include <QtQml>
 #include "qsdiffrunner.h"
-#include "qsjsonmodel.h"
+#include "qsjsonlistmodel.h"
 
-QSJsonModel::QSJsonModel(QObject *parent) : QSListModel(parent)
+QSJsonListModel::QSJsonListModel(QObject *parent) : QSListModel(parent)
 {
     componentCompleted = false;
 }
 
-QString QSJsonModel::keyField() const
+QString QSJsonListModel::keyField() const
 {
     return m_keyField;
 }
 
-void QSJsonModel::setKeyField(const QString &keyField)
+void QSJsonListModel::setKeyField(const QString &keyField)
 {
     m_keyField = keyField;
     emit keyFieldChanged();
 }
 
-QVariantList QSJsonModel::source() const
+QVariantList QSJsonListModel::source() const
 {
     return m_source;
 }
 
-void QSJsonModel::setSource(const QVariantList &source)
+void QSJsonListModel::setSource(const QVariantList &source)
 {
     m_source = source;
 
@@ -35,24 +35,24 @@ void QSJsonModel::setSource(const QVariantList &source)
 
 }
 
-QStringList QSJsonModel::fieldNames() const
+QStringList QSJsonListModel::fieldNames() const
 {
     return m_fieldNames;
 }
 
-void QSJsonModel::setFieldNames(const QStringList &roleNames)
+void QSJsonListModel::setFieldNames(const QStringList &roleNames)
 {
     m_fieldNames = roleNames;
     setRoleNames(roleNames);
     emit fieldNamesChanged();
 }
 
-void QSJsonModel::classBegin()
+void QSJsonListModel::classBegin()
 {
 
 }
 
-void QSJsonModel::componentComplete()
+void QSJsonListModel::componentComplete()
 {
     componentCompleted = true;
 
@@ -61,7 +61,7 @@ void QSJsonModel::componentComplete()
     }
 }
 
-void QSJsonModel::sync()
+void QSJsonListModel::sync()
 {
     QSDiffRunner runner;
     runner.setKeyField(m_keyField);
@@ -77,7 +77,7 @@ class QSJsonModelRegistionHelper {
 
 public:
     QSJsonModelRegistionHelper() {
-        qmlRegisterType<QSJsonModel>("QSyncable", 1, 0, "JsonModel");
+        qmlRegisterType<QSJsonListModel>("QSyncable", 1, 0, "JsonListModel");
     }
 };
 

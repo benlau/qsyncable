@@ -39,7 +39,7 @@ views/CardList.qml
 
 ```
 
-model: JsonModel {
+model: JsonListModel {
     keyField: "uuid"
     source: cardList.cards
 }

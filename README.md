@@ -81,7 +81,7 @@ No matter what kind of update happen, just convert your data structure to QVaria
 Why use QSyncable for QML?
 --------------------------
 
-(1) Use JsonModel to wrap your Javascript object.
+(1) Use JsonListModel to wrap your Javascript object.
 
 (2) Able to work as a nested list model.
 

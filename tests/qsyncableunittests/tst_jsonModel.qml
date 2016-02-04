@@ -12,7 +12,7 @@ Item {
 
         Component {
             id: jsonModelCreator1
-            JsonModel {
+            JsonListModel {
                 keyField: "id"
                 fieldNames: [
                     "id",
@@ -51,7 +51,7 @@ Item {
 
         Component {
             id: jsonModelCreator2
-            JsonModel {
+            JsonListModel {
                 keyField: "id"
 
                 source: [

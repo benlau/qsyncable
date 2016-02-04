@@ -9,7 +9,6 @@ C++ Classes
       \li \l QSListModel
       \li \l QSPatch
       \li \l QSPatchSet
-      \li \l QSPatchable
     \endlist
 
 QML Components

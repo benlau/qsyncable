@@ -56,9 +56,9 @@ public:
 
     virtual void insert(int index, const QVariantList &value);
 
-    Q_INVOKABLE void move(int from, int to, int count = 1);
+    Q_INVOKABLE virtual void move(int from, int to, int count = 1);
 
-    Q_INVOKABLE void remove(int i , int count  = 1);
+    Q_INVOKABLE virtual void remove(int i , int count  = 1);
 
     /* Extra API */
 
