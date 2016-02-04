@@ -12,7 +12,7 @@ public:
 
     virtual void remove(int i , int count  = 1) = 0;
 
-    virtual void setProperties(int index, QVariantMap diff) = 0;
+    virtual void set(int index, QVariantMap dict) = 0;
 };
 
 #endif // QSPATCHABLE

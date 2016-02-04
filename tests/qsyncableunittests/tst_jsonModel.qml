@@ -32,7 +32,7 @@ Item {
             var jsonModel = jsonModelCreator1.createObject();
             compare(jsonModel.count, 0);
 
-            jsonModel.append({ id: "a", value: 1});
+            jsonModel.set(0, { id: "a", value: 1});
             compare(jsonModel.count, 1);
             var item = jsonModel.get(0);
             compare(item.id , "a");
@@ -44,6 +44,9 @@ Item {
             jsonModel.source = [ { id:"a", value:2 },  { id:"b", value:3 }]
             compare(jsonModel.count, 2);
             compare(repeater1.count, 2);
+
+            item = repeater1.itemAt(0);
+            compare(item.value, 2);
 
             item = repeater1.itemAt(1);
             compare(item.value, 3);

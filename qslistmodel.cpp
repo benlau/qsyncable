@@ -26,14 +26,24 @@
 /*! \fn  void QSPatchable::remove(int i , int count = 1);
 
     Deletes the content at index from the model. You may specific the no. of items to be removed by count argument.
-   */
+ */
 
-/*! \fn  void QSPatchable::setProperties(int index, QVariantMap changes) = 0;
+/*! \fn  void QSPatchable::set(int index, QVariantMap changes) = 0;
 
-    Apply the changes to a record at index. Only modified value will be set.
+    Changes the item at index in the list model with the values in changes. Properties not appearing in changes are left unchanged.
+
+    If index is equal to count() then a new item is appended to the list. Otherwise, index must be an element in the list.
  */
 
 /*! \class QSListModel
+   \inmodule QSyncable
+
+QSListModel is an implementation of QAbstactItemModel.
+It stores data in a list of QVariantMap.
+Moreover, it has implemented the QSPatchable interface.
+You may use QSDiffRunner to patch QSListModel,
+and it will emit insert, remove, move and data changed signals according to the patch applied.
+
  */
 
 QSListModel::QSListModel(QObject *parent) :
@@ -151,6 +161,11 @@ void QSListModel::insert(int index, const QVariantList &value)
     emit countChanged();
 }
 
+/*! \fn void QSListModel::move(int from, int to, int n)
+
+    Moves n items from one position to another.
+ */
+
 void QSListModel::move(int from, int to, int count)
 {
 
@@ -214,6 +229,11 @@ void QSListModel::clear()
 
 }
 
+/*! \fn  void QSListModel::remove(int i , int count = 1);
+
+    Deletes the content at index from the model. You may specific the no. of items to be removed by count argument.
+ */
+
 void QSListModel::remove(int i, int count)
 {
     if (count < 1 || i + count > m_storage.size()) {
@@ -267,6 +287,7 @@ void QSListModel::setProperty(int idx, QString property, QVariant value)
 {
     if (idx < 0 || idx >= m_storage.size())
         return;
+
     QVector<int> roles;
     QVariantMap item = get(idx);
 
@@ -290,35 +311,39 @@ void QSListModel::setProperty(int idx, QString property, QVariant value)
 
 void QSListModel::set(int idx, QVariantMap data)
 {
-    if (idx < 0 || idx >= m_storage.size())
+    if (idx < 0 || idx > m_storage.size()) {
         return;
+    }
+
+    if (idx == m_storage.size()) {
+        append(data);
+        return;
+    }
 
     QVector<int> roles;
-    QHashIterator<int, QByteArray> i(m_roles);
-    while (i.hasNext()) {
-        i.next();
-        roles << i.key();
-    }
-    m_storage[idx] = data;
 
-    emit dataChanged(index(idx,0),
-                     index(idx,0),
-                     roles);
-}
+    QVariantMap original = get(idx);
 
-void QSListModel::setProperties(int index, QVariantMap changes)
-{
-    QVariantMap original = get(index);
-
-    QMapIterator<QString, QVariant> iter(changes);
+    QMapIterator<QString, QVariant> iter(data);
 
     while (iter.hasNext()) {
         iter.next();
         if (!original.contains(iter.key()) ||
              original[iter.key()] != iter.value()) {
-            setProperty(index,iter.key(),iter.value());
+
+            if (m_rolesLookup.contains(iter.key())) {
+                roles << m_rolesLookup[iter.key()];
+            }
+
+            original[iter.key()] = iter.value();
         }
     }
+
+    m_storage[idx] = original;
+
+    emit dataChanged(index(idx,0),
+                     index(idx,0),
+                     roles);
 }
 
 /*! \fn QHash<int, QByteArray> QSListModel::roleNames() const
@@ -340,15 +365,17 @@ This function allows mapping of role identifiers to role property names in scrip
 void QSListModel::setRoleNames(const QVariantMap &value)
 {
     m_roles.clear();
+    m_rolesLookup.clear();
+
     QMapIterator<QString,QVariant> iter(value);
 
     int role = Qt::UserRole;
 
     while (iter.hasNext()) {
         iter.next();
-        m_roles[role++] = iter.key().toLocal8Bit();
+        m_roles[role] = iter.key().toLocal8Bit();
+        m_rolesLookup[iter.key()] = role++;
     }
-
 }
 
 /*! \fn void QSListModel::setRoleNames(const QStringList& list)
@@ -361,10 +388,14 @@ This function allows mapping of role identifiers to role property names in scrip
 void QSListModel::setRoleNames(const QStringList& list)
 {
     m_roles.clear();
+    m_rolesLookup.clear();
+
     int role = Qt::UserRole;
 
     for (int i = 0 ; i < list.size();i++) {
-        m_roles[role++] = list.at(i).toLocal8Bit();
+        QString name = list.at(i);
+        m_roles[role] = name.toLocal8Bit();
+        m_rolesLookup[name] = role++;
     }
 }
 

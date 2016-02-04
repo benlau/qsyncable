@@ -88,7 +88,7 @@ bool QSDiffRunner::patch(QSPatchable *patchable, const QSPatchSet& patches) cons
             if (patch.data().size() > 0) {
                 diff = patch.data().at(0).toMap();
             }
-            patchable->setProperties(patch.from(), diff);
+            patchable->set(patch.from(), diff);
             break;
         default:
             break;

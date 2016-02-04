@@ -37,8 +37,6 @@ public:
 
     QVariantList storage() const;
 
-    void setProperties(int index,QVariantMap changes);
-
     virtual void insert(int index, const QVariantList &value);
 
 
@@ -70,6 +68,7 @@ public slots:
 private:
 
     QHash<int, QByteArray> m_roles;
+    QHash<QString, int> m_rolesLookup;
 
     QVariantList m_storage;
 };
