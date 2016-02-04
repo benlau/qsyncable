@@ -96,14 +96,14 @@ But it is not the worst case time complexity. It is O(n + m log m), where m is t
 However, unless you are doing a reverse or random shuffle.
 Moving a single block of items, regardless of the number, from one to another place will remain in O(n) time complexity.
 
-If you really need to do a reverse of a list or random shuffle with large amount of data, you may consider to moving it to a thread or turn off the key field checking.
+If you really need to do a reverse of a list or random shuffle with large amount of data, you may consider to move it to a thread or turn off the key field checking.
 Just don’t set the key field on QSDiffRunner, then it will ignore the insertion, removal and moving checking.
 
 | Condition                    | Time Complexity             |
 |------------------------------|-----------------------------|
 | Insert to an empty list      | O(1)                        |
 | Clear the list               | O(1)                        |
-| Append items to any position | O(n)                        |
+| Insert items to any position | O(n)                        |
 | Remove a block of items      | O(n)                        |
 | Move a block of items        | O(n)                        |
 | Reverse the list             | O(n + m log m)              |
@@ -116,7 +116,7 @@ Installation
 Class Reference
 ---------------
 
-Under construction
+[QSyncable - Class Reference](http://benlau.github.io/qsyncable/)
 
 Example
 -------
