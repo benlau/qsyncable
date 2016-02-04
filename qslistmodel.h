@@ -24,19 +24,7 @@ public:
 
     QVariant data(const QModelIndex &index, int role) const;
 
-    Q_INVOKABLE void append(const QVariantMap&value);
-
-    Q_INVOKABLE void insert(int index,const QVariantMap& value);
-
-    Q_INVOKABLE void clear();
-
     int count() const;
-
-    Q_INVOKABLE QVariantMap get(int i) const;
-
-    Q_INVOKABLE void setProperty(int index,QString property ,QVariant value);
-
-    Q_INVOKABLE void set(int index,QVariantMap data);
 
 
     QHash<int, QByteArray> roleNames() const;
@@ -49,20 +37,30 @@ public:
 
     QVariantList storage() const;
 
-    /* QSPatchable */
-
-    /// Apply the changes to a record at index. Only modified value will be set.
     void setProperties(int index,QVariantMap changes);
 
     virtual void insert(int index, const QVariantList &value);
 
-    Q_INVOKABLE virtual void move(int from, int to, int count = 1);
 
-    Q_INVOKABLE virtual void remove(int i , int count  = 1);
+public slots:
 
-    /* Extra API */
+    void append(const QVariantMap&value);
 
-    Q_INVOKABLE int indexOf(QString field,QVariant value) const;
+    void insert(int index,const QVariantMap& value);
+
+    void clear();
+
+    virtual void move(int from, int to, int count = 1);
+
+    virtual void remove(int i , int count  = 1);
+
+    int indexOf(QString field,QVariant value) const;
+
+    QVariantMap get(int i) const;
+
+    void setProperty(int index,QString property ,QVariant value);
+
+    void set(int index,QVariantMap data);
 
 signals:
     void countChanged();
