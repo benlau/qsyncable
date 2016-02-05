@@ -9,7 +9,7 @@ class QSJsonListModel : public QSListModel, public QQmlParserStatus
     Q_OBJECT
     Q_PROPERTY(QString keyField READ keyField WRITE setKeyField NOTIFY keyFieldChanged)
     Q_PROPERTY(QVariantList source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(QStringList fieldNames READ fieldNames WRITE setFieldNames NOTIFY fieldNamesChanged)
+    Q_PROPERTY(QStringList fields READ fields WRITE setFields NOTIFY fieldsChanged)
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -23,9 +23,9 @@ public:
 
     void setSource(const QVariantList &source);
 
-    QStringList fieldNames() const;
+    QStringList fields() const;
 
-    void setFieldNames(const QStringList &roleNames);
+    void setFields(const QStringList &roleNames);
 
 signals:
 
@@ -33,7 +33,7 @@ signals:
 
     void sourceChanged();
 
-    void fieldNamesChanged();
+    void fieldsChanged();
 
 public slots:
 
@@ -48,7 +48,7 @@ private:
 
     QVariantList m_source;
 
-    QStringList m_fieldNames;
+    QStringList m_fields;
 
     bool componentCompleted;
 };

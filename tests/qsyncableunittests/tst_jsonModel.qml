@@ -14,7 +14,7 @@ Item {
             id: jsonModelCreator1
             JsonListModel {
                 keyField: "id"
-                fieldNames: [
+                fields: [
                     "id",
                     "value"
                 ]
@@ -61,7 +61,7 @@ Item {
                     { "id": "a", "field1": 1, "field2": 2}
                 ]
 
-                fieldNames: [
+                fields: [
                     "id", "field1"
                 ]
             }
