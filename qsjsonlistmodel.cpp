@@ -40,17 +40,17 @@ It will emit signals of insertion, removal and moving automatically.
 
  */
 
-/*! \fn  void JsonListModel::remove(int i , int count = 1);
+/*! \qmlmethod  void JsonListModel::remove(int i , int count = 1);
 
     Deletes the content at index from the model. You may specific the no. of items to be removed by count argument.
  */
 
-/*! \fn void JsonListModel::move(int from, int to, int n)
+/*! \qmlmethod void JsonListModel::move(int from, int to, int n)
 
     Moves n items from one position to another.
  */
 
-/*! \fn void JsonListModel::append(const QVariantMap &value)
+/*! \qmlmethod void JsonListModel::append(const QVariantMap &value)
 
   Append an items at the end of list
 
