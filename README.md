@@ -111,6 +111,10 @@ QSDiffRunner will ignore the insertion , removal, and moving checking if key fie
 Installation
 ------------
 
+Download a release and bundle the folder within your source tree.
+
+Or:
+
 ```
 qpm install com.github.benlau.qsyncable
 ```
