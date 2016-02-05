@@ -1,0 +1,22 @@
+{
+  "name": "com.github.benlau.qsyncable",
+  "description": "",
+  "author": {
+    "name": "Ben Lau",
+    "email": "xbenlau@gmail.com"
+  },
+  "repository": {
+    "type": "GITHUB",
+    "url": "https://github.com/benlau/qsyncable.git"
+  },
+  "version": {
+    "label": "1.0.0",
+    "revision": "",
+    "fingerprint": ""
+  },
+  "dependencies": [
+  ],
+  "license": "APACHE_2_0",
+  "pri_filename": "qsyncable.pri",
+  "webpage": ""
+}

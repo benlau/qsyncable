@@ -7,8 +7,6 @@ An immediate benefit of using QSycnable is the simplification of data pipeline. 
 
 Moreover, QSyncable could also be used as a solution for the nested list model.
 
-**Remarks: This project is still under development. Do not use it.**
-
 How it works?
 -------------
 
@@ -113,6 +111,9 @@ QSDiffRunner will ignore the insertion , removal, and moving checking if key fie
 Installation
 ------------
 
+```
+qpm install com.github.benlau.qsyncable
+```
 
 Class Reference
 ---------------
