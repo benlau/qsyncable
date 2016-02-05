@@ -5,6 +5,21 @@
 */
 #include "qspatch.h"
 
+/*! \class QSPatch
+  \inmodule QSyncable
+
+  QSPatch is a data structure to hold the changes to be applied on other QSPatchable object.
+Usually you don't need to manipulate this object directly.
+
+ */
+
+/*!
+    \typedef QSPatchSet
+    \relates QSPatch
+
+    Synonym for QList<QSPatch>.
+*/
+
 class QSPatchPriv : public QSharedData
 {
 public:
