@@ -1,6 +1,6 @@
 {
   "name": "com.github.benlau.qsyncable",
-  "description": "",
+  "description": "Synchronize data between models",
   "author": {
     "name": "Ben Lau",
     "email": "xbenlau@gmail.com"
