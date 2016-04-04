@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qspatch.cpp -->
+  <title>QSPatch Class | QSyncable 1.0</title>
+  <link rel="stylesheet" type="text/css" href="style/offline.css" />
+</head>
+<body>
+<li>QSPatch</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#static-public-members">Static Public Members</a></li>
+<li class="level1"><a href="#related-non-members">Related Non-Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QSPatch Class</h1>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QSPatch&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="qspatch-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-types"></a>
+<h2 id="public-types">Public Types</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#Type-enum">Type</a></b> { Null, Insert, Remove, Update, Move }</td></tr>
+</table></div>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#QSPatch">QSPatch</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#QSPatch-2">QSPatch</a></b>(Type<i> type</i>, int<i> from</i> = 0, int<i> to</i> = 0, int<i> count</i> = 0)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#QSPatch-3">QSPatch</a></b>(Type<i> type</i>, int<i> from</i>, int<i> to</i>, int<i> count</i>, const QVariantMap &amp;<i> data</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#QSPatch-4">QSPatch</a></b>(Type<i> type</i>, int<i> from</i>, int<i> to</i>, int<i> count</i>, const QVariantList &amp;<i> data</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#QSPatch-5">QSPatch</a></b>(const QSPatch &amp;)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#dtor.QSPatch">~QSPatch</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#canMerge">canMerge</a></b>(const QSPatch &amp;<i> other</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#count">count</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariantList </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#data">data</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#from">from</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#isNull">isNull</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QSPatch &amp; </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#merge">merge</a></b>(const QSPatch &amp;<i> other</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QSPatch </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#merged">merged</a></b>(const QSPatch &amp;<i> other</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#setCount">setCount</a></b>(int<i> count</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#setData">setData</a></b>(const QVariantList &amp;<i> data</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#setData-2">setData</a></b>(const QVariantMap &amp;<i> data</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#setFrom">setFrom</a></b>(int<i> from</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#setTo">setTo</a></b>(int<i> to</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#setType">setType</a></b>(const QSPatch::Type &amp;<i> type</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#to">to</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QSPatch::Type </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#type">type</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QSPatch &amp; </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#operator-eq">operator=</a></b>(const QSPatch &amp;)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#operator-eq-eq">operator==</a></b>(const QSPatch &amp;<i> rhs</i>) const</td></tr>
+</table></div>
+<a name="static-public-members"></a>
+<h2 id="static-public-members">Static Public Members</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> QSPatch </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#createRemove">createRemove</a></b>(int<i> from</i>, int<i> to</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QSPatch </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#createUpdate">createUpdate</a></b>(int<i> index</i>, const QVariantMap &amp;<i> diff</i>)</td></tr>
+</table></div>
+<a name="related-non-members"></a>
+<h2 id="related-non-members">Related Non-Members</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> typedef </td><td class="memItemRight bottomAlign"><b><a href="qspatch.html#QSPatchSet-typedef">QSPatchSet</a></b></td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$QSPatch-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="qspatch.html">QSPatch</a> is a data structure to hold the changes to be applied on other <a href="qspatchable.html">QSPatchable</a> object. Usually you don't need to manipulate this object directly.</p>
+</div>
+<!-- @@@QSPatch -->
+<div class="types">
+<h2>Member Type Documentation</h2>
+<!-- $$$Type$$$Null$$$Insert$$$Remove$$$Update$$$Move -->
+<h3 class="fn" id="Type-enum"><a name="Type-enum"></a>enum QSPatch::<span class="name">Type</span></h3>
+<!-- @@@Type -->
+</div>
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$QSPatch[overload1]$$$QSPatch -->
+<h3 class="fn" id="QSPatch"><a name="QSPatch"></a>QSPatch::<span class="name">QSPatch</span>()</h3>
+<!-- @@@QSPatch -->
+<!-- $$$QSPatch$$$QSPatchTypeintintint -->
+<h3 class="fn" id="QSPatch-2"><a name="QSPatch-2"></a>QSPatch::<span class="name">QSPatch</span>(<span class="type"><a href="qspatch.html#Type-enum">Type</a></span><i> type</i>, <span class="type">int</span><i> from</i> = 0, <span class="type">int</span><i> to</i> = 0, <span class="type">int</span><i> count</i> = 0)</h3>
+<!-- @@@QSPatch -->
+<!-- $$$QSPatch$$$QSPatchTypeintintintconstQVariantMap& -->
+<h3 class="fn" id="QSPatch-3"><a name="QSPatch-3"></a>QSPatch::<span class="name">QSPatch</span>(<span class="type"><a href="qspatch.html#Type-enum">Type</a></span><i> type</i>, <span class="type">int</span><i> from</i>, <span class="type">int</span><i> to</i>, <span class="type">int</span><i> count</i>, const <span class="type">QVariantMap</span> &amp;<i> data</i>)</h3>
+<!-- @@@QSPatch -->
+<!-- $$$QSPatch$$$QSPatchTypeintintintconstQVariantList& -->
+<h3 class="fn" id="QSPatch-4"><a name="QSPatch-4"></a>QSPatch::<span class="name">QSPatch</span>(<span class="type"><a href="qspatch.html#Type-enum">Type</a></span><i> type</i>, <span class="type">int</span><i> from</i>, <span class="type">int</span><i> to</i>, <span class="type">int</span><i> count</i>, const <span class="type">QVariantList</span> &amp;<i> data</i>)</h3>
+<!-- @@@QSPatch -->
+<!-- $$$QSPatch$$$QSPatchconstQSPatch& -->
+<h3 class="fn" id="QSPatch-5"><a name="QSPatch-5"></a>QSPatch::<span class="name">QSPatch</span>(const <span class="type"><a href="qspatch.html#QSPatch">QSPatch</a></span> &amp;)</h3>
+<!-- @@@QSPatch -->
+<!-- $$$~QSPatch[overload1]$$$~QSPatch -->
+<h3 class="fn" id="dtor.QSPatch"><a name="dtor.QSPatch"></a>QSPatch::<span class="name">~QSPatch</span>()</h3>
+<!-- @@@~QSPatch -->
+<!-- $$$canMerge[overload1]$$$canMergeconstQSPatch& -->
+<h3 class="fn" id="canMerge"><a name="canMerge"></a><span class="type">bool</span> QSPatch::<span class="name">canMerge</span>(const <span class="type"><a href="qspatch.html#QSPatch">QSPatch</a></span> &amp;<i> other</i>) const</h3>
+<!-- @@@canMerge -->
+<!-- $$$count[overload1]$$$count -->
+<h3 class="fn" id="count"><a name="count"></a><span class="type">int</span> QSPatch::<span class="name">count</span>() const</h3>
+<p><b>See also </b><a href="qspatch.html#setCount">setCount</a>().</p>
+<!-- @@@count -->
+<!-- $$$createRemove[overload1]$$$createRemoveintint -->
+<h3 class="fn" id="createRemove"><a name="createRemove"></a><code>[static] </code><span class="type"><a href="qspatch.html#QSPatch">QSPatch</a></span> QSPatch::<span class="name">createRemove</span>(<span class="type">int</span><i> from</i>, <span class="type">int</span><i> to</i>)</h3>
+<!-- @@@createRemove -->
+<!-- $$$createUpdate[overload1]$$$createUpdateintconstQVariantMap& -->
+<h3 class="fn" id="createUpdate"><a name="createUpdate"></a><code>[static] </code><span class="type"><a href="qspatch.html#QSPatch">QSPatch</a></span> QSPatch::<span class="name">createUpdate</span>(<span class="type">int</span><i> index</i>, const <span class="type">QVariantMap</span> &amp;<i> diff</i>)</h3>
+<!-- @@@createUpdate -->
+<!-- $$$data[overload1]$$$data -->
+<h3 class="fn" id="data"><a name="data"></a><span class="type">QVariantList</span> QSPatch::<span class="name">data</span>() const</h3>
+<p><b>See also </b><a href="qspatch.html#setData">setData</a>().</p>
+<!-- @@@data -->
+<!-- $$$from[overload1]$$$from -->
+<h3 class="fn" id="from"><a name="from"></a><span class="type">int</span> QSPatch::<span class="name">from</span>() const</h3>
+<p><b>See also </b><a href="qspatch.html#setFrom">setFrom</a>().</p>
+<!-- @@@from -->
+<!-- $$$isNull[overload1]$$$isNull -->
+<h3 class="fn" id="isNull"><a name="isNull"></a><span class="type">bool</span> QSPatch::<span class="name">isNull</span>() const</h3>
+<!-- @@@isNull -->
+<!-- $$$merge[overload1]$$$mergeconstQSPatch& -->
+<h3 class="fn" id="merge"><a name="merge"></a><span class="type"><a href="qspatch.html#QSPatch">QSPatch</a></span> &amp; QSPatch::<span class="name">merge</span>(const <span class="type"><a href="qspatch.html#QSPatch">QSPatch</a></span> &amp;<i> other</i>)</h3>
+<!-- @@@merge -->
+<!-- $$$merged[overload1]$$$mergedconstQSPatch& -->
+<h3 class="fn" id="merged"><a name="merged"></a><span class="type"><a href="qspatch.html#QSPatch">QSPatch</a></span> QSPatch::<span class="name">merged</span>(const <span class="type"><a href="qspatch.html#QSPatch">QSPatch</a></span> &amp;<i> other</i>) const</h3>
+<!-- @@@merged -->
+<!-- $$$setCount[overload1]$$$setCountint -->
+<h3 class="fn" id="setCount"><a name="setCount"></a><span class="type">void</span> QSPatch::<span class="name">setCount</span>(<span class="type">int</span><i> count</i>)</h3>
+<p><b>See also </b><a href="qspatch.html#count">count</a>().</p>
+<!-- @@@setCount -->
+<!-- $$$setData[overload1]$$$setDataconstQVariantList& -->
+<h3 class="fn" id="setData"><a name="setData"></a><span class="type">void</span> QSPatch::<span class="name">setData</span>(const <span class="type">QVariantList</span> &amp;<i> data</i>)</h3>
+<p><b>See also </b><a href="qspatch.html#data">data</a>().</p>
+<!-- @@@setData -->
+<!-- $$$setData$$$setDataconstQVariantMap& -->
+<h3 class="fn" id="setData-2"><a name="setData-2"></a><span class="type">void</span> QSPatch::<span class="name">setData</span>(const <span class="type">QVariantMap</span> &amp;<i> data</i>)</h3>
+<!-- @@@setData -->
+<!-- $$$setFrom[overload1]$$$setFromint -->
+<h3 class="fn" id="setFrom"><a name="setFrom"></a><span class="type">void</span> QSPatch::<span class="name">setFrom</span>(<span class="type">int</span><i> from</i>)</h3>
+<p><b>See also </b><a href="qspatch.html#from">from</a>().</p>
+<!-- @@@setFrom -->
+<!-- $$$setTo[overload1]$$$setToint -->
+<h3 class="fn" id="setTo"><a name="setTo"></a><span class="type">void</span> QSPatch::<span class="name">setTo</span>(<span class="type">int</span><i> to</i>)</h3>
+<p><b>See also </b><a href="qspatch.html#to">to</a>().</p>
+<!-- @@@setTo -->
+<!-- $$$setType[overload1]$$$setTypeconstQSPatch::Type& -->
+<h3 class="fn" id="setType"><a name="setType"></a><span class="type">void</span> QSPatch::<span class="name">setType</span>(const <span class="type"><a href="qspatch.html#Type-enum">QSPatch::Type</a></span> &amp;<i> type</i>)</h3>
+<p><b>See also </b><a href="qspatch.html#type">type</a>().</p>
+<!-- @@@setType -->
+<!-- $$$to[overload1]$$$to -->
+<h3 class="fn" id="to"><a name="to"></a><span class="type">int</span> QSPatch::<span class="name">to</span>() const</h3>
+<p><b>See also </b><a href="qspatch.html#setTo">setTo</a>().</p>
+<!-- @@@to -->
+<!-- $$$type[overload1]$$$type -->
+<h3 class="fn" id="type"><a name="type"></a><span class="type"><a href="qspatch.html#Type-enum">QSPatch::Type</a></span> QSPatch::<span class="name">type</span>() const</h3>
+<p><b>See also </b><a href="qspatch.html#setType">setType</a>().</p>
+<!-- @@@type -->
+<!-- $$$operator=[overload1]$$$operator=constQSPatch& -->
+<h3 class="fn" id="operator-eq"><a name="operator-eq"></a><span class="type"><a href="qspatch.html#QSPatch">QSPatch</a></span> &amp; QSPatch::<span class="name">operator=</span>(const <span class="type"><a href="qspatch.html#QSPatch">QSPatch</a></span> &amp;)</h3>
+<!-- @@@operator= -->
+<!-- $$$operator==[overload1]$$$operator==constQSPatch& -->
+<h3 class="fn" id="operator-eq-eq"><a name="operator-eq-eq"></a><span class="type">bool</span> QSPatch::<span class="name">operator==</span>(const <span class="type"><a href="qspatch.html#QSPatch">QSPatch</a></span> &amp;<i> rhs</i>) const</h3>
+<!-- @@@operator== -->
+</div>
+<div class="relnonmem">
+<h2>Related Non-Members</h2>
+<!-- $$$QSPatchSet -->
+<h3 class="fn" id="QSPatchSet-typedef"><a name="QSPatchSet-typedef"></a>typedef <span class="name">QSPatchSet</span></h3>
+<p>Synonym for QList&lt;<a href="qspatch.html">QSPatch</a>&gt;.</p>
+<!-- @@@QSPatchSet -->
+</div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qsjsonlistmodel.cpp -->
+  <title>JsonListModel QML Type | QSyncable 1.0</title>
+  <link rel="stylesheet" type="text/css" href="style/offline.css" />
+</head>
+<body>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#properties">Properties</a></li>
+<li class="level1"><a href="#methods">Methods</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">JsonListModel QML Type</h1>
+<span class="subtitle"></span>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Import Statement:</td><td class="memItemRight bottomAlign"> import  .</td></tr></table></div><ul>
+<li><a href="qml-jsonlistmodel-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="properties"></a>
+<h2 id="properties">Properties</h2>
+<ul>
+<li class="fn"><b><b><a href="qml-jsonlistmodel.html#count-prop">count</a></b></b> : int</li>
+<li class="fn"><b><b><a href="qml-jsonlistmodel.html#fields-prop">fields</a></b></b> : array</li>
+<li class="fn"><b><b><a href="qml-jsonlistmodel.html#keyField-prop">keyField</a></b></b> : string</li>
+<li class="fn"><b><b><a href="qml-jsonlistmodel.html#source-prop">source</a></b></b> : array</li>
+</ul>
+<a name="methods"></a>
+<h2 id="methods">Methods</h2>
+<ul>
+<li class="fn">void <b><b><a href="qml-jsonlistmodel.html#append-method">append</a></b></b>(const QVariantMap &amp; <i> value</i>)</li>
+<li class="fn">QVariantMap <b><b><a href="qml-jsonlistmodel.html#get-method">get</a></b></b>(int <i> i</i>)</li>
+<li class="fn">int <b><b><a href="qml-jsonlistmodel.html#indexOf-method">indexOf</a></b></b>(QString <i> field</i>, QVariant <i> value</i>)</li>
+<li class="fn">void <b><b><a href="qml-jsonlistmodel.html#insert-method">insert</a></b></b>(int <i> index</i>, const QVariantMap &amp; <i> value</i>)</li>
+<li class="fn">void <b><b><a href="qml-jsonlistmodel.html#move-method">move</a></b></b>(int <i> from</i>, int <i> to</i>, int <i> n</i>)</li>
+<li class="fn">void <b><b><a href="qml-jsonlistmodel.html#remove-method">remove</a></b></b>(int <i> i</i>, int <i> count</i>)</li>
+<li class="fn">void <b><b><a href="qml-jsonlistmodel.html#set-method">set</a></b></b>(int <i> index</i>, QVariantMap <i> changes</i>)</li>
+<li class="fn">void <b><b><a href="qml-jsonlistmodel.html#setProperty-method">setProperty</a></b></b>(int <i> index</i>, QString <i> property</i>, QVariant <i> value</i>)</li>
+</ul>
+<!-- $$$JsonListModel-description -->
+<a name="details"></a>
+<h2 id="details">Detailed Description</h2>
+<p><a href="qml-jsonlistmodel.html">JsonListModel</a> is a syncable list model. It could be used as a wrapper of other Javascript array object. Whatever the source is updated, it will trigger synchronization automatically. It will emit signals of insertion, removal and moving automatically.</p>
+<!-- @@@JsonListModel -->
+<h2>Property Documentation</h2>
+<!-- $$$count -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="count-prop"><td class="tblQmlPropNode"><p><a name="count-prop"></a><span class="name">count</span> : <span class="type">int</span></p></td></tr></table></div></div><div class="qmldoc"><p>No. of items in this list model.</p>
+</div></div><!-- @@@count -->
+<br/>
+<!-- $$$fields -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="fields-prop"><td class="tblQmlPropNode"><p><a name="fields-prop"></a><span class="name">fields</span> : <span class="type">array</span></p></td></tr></table></div></div><div class="qmldoc"><p>Define the available fields of this model. If it is not assigned, <a href="qml-jsonlistmodel.html">JsonListModel</a> will use the first appended record. Then you are not able to change afterward.</p>
+<p>Example:</p>
+<pre class="cpp">JsonListModel {
+    keyField: <span class="string">&quot;id&quot;</span>
+    fields: <span class="operator">[</span>
+        <span class="string">&quot;id&quot;</span><span class="operator">,</span>
+        <span class="string">&quot;value&quot;</span>
+    <span class="operator">]</span>
+}</pre>
+</div></div><!-- @@@fields -->
+<br/>
+<!-- $$$keyField -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="keyField-prop"><td class="tblQmlPropNode"><p><a name="keyField-prop"></a><span class="name">keyField</span> : <span class="type">string</span></p></td></tr></table></div></div><div class="qmldoc"><p>Set the key field of data source. The value in key field should be unique.</p>
+<p>If it is not set, <a href="qml-jsonlistmodel.html">JsonListModel</a> won't be able to identify insertion, removal and moving changes.</p>
+</div></div><!-- @@@keyField -->
+<br/>
+<!-- $$$source -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="source-prop"><td class="tblQmlPropNode"><p><a name="source-prop"></a><span class="name">source</span> : <span class="type">array</span></p></td></tr></table></div></div><div class="qmldoc"><p><a href="qml-jsonlistmodel.html">JsonListModel</a> is a wrapper of another Javascript array. Update this property will trigger the synchronization and emit changes according to the difference.</p>
+<p>Example:</p>
+<pre class="cpp">JsonListModel {
+    keyField: <span class="string">&quot;id&quot;</span>
+
+    source: <span class="operator">[</span>
+        { <span class="string">&quot;id&quot;</span>: <span class="string">&quot;a&quot;</span><span class="operator">,</span> <span class="string">&quot;value&quot;</span>: <span class="number">1</span>}<span class="operator">,</span>
+        { <span class="string">&quot;id&quot;</span>: <span class="string">&quot;b&quot;</span><span class="operator">,</span> <span class="string">&quot;value&quot;</span>: <span class="number">2</span>}
+    <span class="operator">]</span>
+
+    fields: <span class="operator">[</span>
+        <span class="string">&quot;id&quot;</span><span class="operator">,</span>
+        <span class="string">&quot;value&quot;</span>
+    <span class="operator">]</span>
+}</pre>
+</div></div><!-- @@@source -->
+<br/>
+<h2>Method Documentation</h2>
+<!-- $$$append -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="append-method"><td class="tblQmlFuncNode"><p><a name="append-method"></a><span class="type">void</span> <span class="name">append</span>(const <span class="type">QVariantMap</span> &amp;<i> value</i>)</p></td></tr></table></div></div><div class="qmldoc"><p>Append an items at the end of list</p>
+</div></div><!-- @@@append -->
+<br/>
+<!-- $$$get -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="get-method"><td class="tblQmlFuncNode"><p><a name="get-method"></a><span class="type">QVariantMap</span> <span class="name">get</span>(<span class="type">int</span><i> i</i>) const</p></td></tr></table></div></div><div class="qmldoc"><p>Returns the item at index in the list model.</p>
+</div></div><!-- @@@get -->
+<br/>
+<!-- $$$indexOf -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="indexOf-method"><td class="tblQmlFuncNode"><p><a name="indexOf-method"></a><span class="type">int</span> <span class="name">indexOf</span>(<span class="type">QString</span><i> field</i>, <span class="type">QVariant</span><i> value</i>)</p></td></tr></table></div></div><div class="qmldoc"><p>Get the index of the given record which is equal to input value on given field.</p>
+<p>If it is not found, it will return -1.</p>
+</div></div><!-- @@@indexOf -->
+<br/>
+<!-- $$$insert -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="insert-method"><td class="tblQmlFuncNode"><p><a name="insert-method"></a><span class="type">void</span> <span class="name">insert</span>(<span class="type">int</span><i> index</i>, const <span class="type">QVariantMap</span> &amp;<i> value</i>)</p></td></tr></table></div></div><div class="qmldoc"><p>Inserts an item at index position.</p>
+</div></div><!-- @@@insert -->
+<br/>
+<!-- $$$move -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="move-method"><td class="tblQmlFuncNode"><p><a name="move-method"></a><span class="type">void</span> <span class="name">move</span>(<span class="type">int</span><i> from</i>, <span class="type">int</span><i> to</i>, <span class="type">int</span><i> n</i>)</p></td></tr></table></div></div><div class="qmldoc"><p>Moves n items from one position to another.</p>
+</div></div><!-- @@@move -->
+<br/>
+<!-- $$$remove -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="remove-method"><td class="tblQmlFuncNode"><p><a name="remove-method"></a><span class="type">void</span> <span class="name">remove</span>(<span class="type">int</span><i> i</i>, <span class="type">int</span><i> count</i> = 1)</p></td></tr></table></div></div><div class="qmldoc"><p>Deletes the content at index from the model. You may specific the no. of items to be removed by count argument.</p>
+</div></div><!-- @@@remove -->
+<br/>
+<!-- $$$set -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="set-method"><td class="tblQmlFuncNode"><p><a name="set-method"></a><span class="type">void</span> <span class="name">set</span>(<span class="type">int</span><i> index</i>, <span class="type">QVariantMap</span><i> changes</i>)</p></td></tr></table></div></div><div class="qmldoc"><p>Changes the item at index in the list model with the values in changes. Properties not appearing in changes are left unchanged.</p>
+<p>If index is equal to count() then a new item is appended to the list. Otherwise, index must be an element in the list.</p>
+</div></div><!-- @@@set -->
+<br/>
+<!-- $$$setProperty -->
+<div class="qmlitem"><div class="qmlproto"><div class="table"><table class="qmlname"><tr valign="top" class="odd" id="setProperty-method"><td class="tblQmlFuncNode"><p><a name="setProperty-method"></a><span class="type">void</span> <span class="name">setProperty</span>(<span class="type">int</span><i> index</i>, <span class="type">QString</span><i> property</i>, <span class="type">QVariant</span><i> value</i>)</p></td></tr></table></div></div><div class="qmldoc"><p>Apply the changes to a record at index. Only modified value will be set.</p>
+</div></div><!-- @@@setProperty -->
+<br/>
+</body>
+</html>
