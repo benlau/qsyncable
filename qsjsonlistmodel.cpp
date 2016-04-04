@@ -56,6 +56,13 @@ It will emit signals of insertion, removal and moving automatically.
 
  */
 
+/*! \qmlmethod int JsonListModel::indexOf(QString field, QVariant value)
+
+  Get the index of the given record which is equal to input value on given field.
+
+  If it is not found, it will return -1.
+ */
+
 QSJsonListModel::QSJsonListModel(QObject *parent) : QSListModel(parent)
 {
     componentCompleted = false;
