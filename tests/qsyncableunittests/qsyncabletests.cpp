@@ -414,7 +414,7 @@ void QSyncableTests::diffRunner()
     }
     QVERIFY(modelList == current);
 
-    model->deleteLater();
+    delete model;
 }
 
 void QSyncableTests::diffRunner_data()
