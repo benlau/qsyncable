@@ -857,6 +857,10 @@ void QSyncableTests::listModel_roleNames()
     item["id"] = "test";
     item["value"] = "test";
 
+    QVariantMap item2;
+    item2 = item;
+    item2["order"] = 3;
+
     model = new QSListModel();
     model->append(item);
     QCOMPARE(model->roleNames().size(), 2);
@@ -870,6 +874,19 @@ void QSyncableTests::listModel_roleNames()
     model = new QSListModel();
     model->insert(0, QVariantList() << item << item);
     QCOMPARE(model->roleNames().size(), 2);
+    delete model;
+
+    QVariantList list;
+    list.append(item);
+    model = new QSListModel();
+    model->setStorage(list);
+    QCOMPARE(model->roleNames().size(), 2);
+
+    list.clear();
+    list.append(item2);
+    model->setStorage(list);
+    QCOMPARE(model->roleNames().size(), 2);
+
     delete model;
 }
 

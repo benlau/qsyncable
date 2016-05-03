@@ -406,6 +406,10 @@ void QSListModel::setRoleNames(const QStringList& list)
 
 void QSListModel::setStorage(const QVariantList &value)
 {
+    if (m_roles.isEmpty() && value.size() > 0) {
+        setRoleNames(value.at(0).toMap());
+    }
+
     int oldCount = m_storage.count();
     beginResetModel();
     m_storage = value;
