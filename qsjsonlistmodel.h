@@ -4,6 +4,12 @@
 #include <QQmlParserStatus>
 #include "qslistmodel.h"
 
+/* QSJsonListModel is a data model that combine QSListModel and QSDiffRunner
+ * into a single class. It may take a Javascript array object as source input,
+ * it will compare with previous input then update the model according to
+ * the diff.
+ */
+
 class QSJsonListModel : public QSListModel, public QQmlParserStatus
 {
     Q_OBJECT
