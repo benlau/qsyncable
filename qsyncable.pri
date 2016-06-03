@@ -9,7 +9,9 @@ HEADERS += \
     $$PWD/priv/qsdiffrunneralgo_p.h \
     $$PWD/priv/qstree.h \
     $$PWD/priv/qstreenode.h \
-    $$PWD/qsjsonlistmodel.h
+    $$PWD/qsjsonlistmodel.h \
+    $$PWD/QSDiffRunner \
+    $$PWD/QSListModel
 
 SOURCES += \
     $$PWD/qsdiffrunner.cpp \

@@ -1,8 +1,8 @@
 #include <QVariantList>
 #include <QTest>
-#include "qsdiffrunner.h"
+#include <QSDiffRunner>
+#include <QSListModel>
 #include "qsyncabletests.h"
-#include "qslistmodel.h"
 #include "priv/qstree.h"
 #include "math.h"
 

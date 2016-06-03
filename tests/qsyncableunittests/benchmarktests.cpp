@@ -1,7 +1,7 @@
 #include <QTest>
 #include <QUuid>
+#include <QSDiffRunner>
 #include "benchmarktests.h"
-#include "qsdiffrunner.h"
 
 static QVariantList create(int size) {
 
