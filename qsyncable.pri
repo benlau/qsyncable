@@ -21,4 +21,5 @@ SOURCES += \
     $$PWD/qsdiffrunneralgo.cpp \
     $$PWD/qstree.cpp \
     $$PWD/qstreenode.cpp \
-    $$PWD/qsjsonlistmodel.cpp
+    $$PWD/qsjsonlistmodel.cpp \
+    $$PWD/qsyncableqmltypes.cpp

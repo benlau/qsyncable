@@ -190,13 +190,3 @@ void QSJsonListModel::sync()
         runner.patch(this, patches);
     }
 }
-
-class QSJsonModelRegistionHelper {
-
-public:
-    QSJsonModelRegistionHelper() {
-        qmlRegisterType<QSJsonListModel>("QSyncable", 1, 0, "JsonListModel");
-    }
-};
-
-static QSJsonModelRegistionHelper registerHelper;
