@@ -6,7 +6,7 @@
 #include "testrunner.h"
 #include "qsyncabletests.h"
 #include "benchmarktests.h"
-
+#include "integrationtests.h"
 
 void handleBacktrace(int sig) {
   void *array[100];
@@ -30,6 +30,7 @@ int main(int argc, char* argv[]) {
 
     runner.add<QSyncableTests>();
     runner.add(QString(SRCDIR));
+    runner.add<IntegrationTests>();
     runner.add<BenchmarkTests>();
 
     bool error = runner.exec(app.arguments());
