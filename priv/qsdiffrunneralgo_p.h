@@ -8,6 +8,16 @@
 class QSDiffRunnerAlgo {
 
 public:
+    QSDiffRunnerAlgo();
+
+    QSPatchSet compare(const QVariantList& from, const QVariantList& to);
+
+    QString keyField() const;
+
+    void setKeyField(const QString &keyField);
+
+private:
+
     enum Type {
         NoMove,
         Insert,
@@ -52,16 +62,12 @@ public:
         int count;
     };
 
-    QSDiffRunnerAlgo();
-
     // Combine all the processing patches into a single list. It will clear the processing result too.
     QSPatchSet combine();
 
     static QList<QSPatch> compareWithoutKey(const QVariantList& from, const QVariantList& to);
 
     static QVariantMap compareMap(const QVariantMap& prev, const QVariantMap& current);
-
-    QSPatchSet compare(const QVariantList& from, const QVariantList& to);
 
     // Preprocess the list, stop until the key is different. It will also handle common pattern (like append to end , remove from end)
     int preprocess(const QVariantList& from, const QVariantList& to);
@@ -77,6 +83,10 @@ public:
 
     static QSPatch createInsertPatch(int from, int to, const QVariantList& source );
 
+    void appendMovePatch(MoveOp& patch);
+
+    void updateTree();
+
     QVariantList from;
 
     QVariantList to;
@@ -86,8 +96,6 @@ public:
 
     // Update patches
     QList<QSPatch> updatePatches;
-
-    QString m_keyField;
 
     // Hash table
     QHash<QString, State> hash;
@@ -115,9 +123,9 @@ public:
     // Tree of move patch
     QSTree tree;
 
-    void appendMovePatch(MoveOp& patch);
+    QString m_keyField;
 
-    void updateTree();
+
 };
 
 

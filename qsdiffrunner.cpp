@@ -58,7 +58,7 @@ void QSDiffRunner::setKeyField(const QString &keyField)
 QSPatchSet QSDiffRunner::compare(const QVariantList &from, const QVariantList &to)
 {
     QSDiffRunnerAlgo algo;
-    algo.m_keyField = m_keyField;
+    algo.setKeyField(m_keyField);
     return algo.compare(from, to);
 }
 

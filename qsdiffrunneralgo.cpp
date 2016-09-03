@@ -20,6 +20,16 @@ QSDiffRunnerAlgo::QSDiffRunnerAlgo()
     removing = 0;
 }
 
+QString QSDiffRunnerAlgo::keyField() const
+{
+    return m_keyField;
+}
+
+void QSDiffRunnerAlgo::setKeyField(const QString &keyField)
+{
+    m_keyField = keyField;
+}
+
 QSPatchSet QSDiffRunnerAlgo::combine()
 {
     if (updatePatches.size() > 0) {
