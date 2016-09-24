@@ -2,6 +2,8 @@
 #include <QSListModel>
 #include <QSortFilterProxyModel>
 #include <QSDiffRunner>
+#include "QQmlApplicationEngine"
+#include "automator.h"
 #include "integrationtests.h"
 
 IntegrationTests::IntegrationTests(QObject *parent) : QObject(parent)
@@ -68,3 +70,30 @@ void IntegrationTests::sortFilterProxyModel()
     QCOMPARE(proxyModel.data(proxyModel.index(0,0),roles.key("id")).toInt(), 4);
 
 }
+
+
+void IntegrationTests::test_assign()
+{
+    QQmlApplicationEngine engine;
+
+    engine.load(QUrl(QString(SRCDIR) + "/test_Assign.qml"));
+    Automator automator(&engine);
+
+    QObject* root = automator.findObject("Root");
+    QVERIFY(root);
+
+    QVariantMap data;
+    QSyncable::assign(data, root);
+
+    QVERIFY(data["objectName"] == "Root");
+    QVERIFY(data["value1"].toInt() == 1);
+    QVERIFY(data["value2"].toString() == "2");
+    QVERIFY(data["value3"].toBool());
+
+    QVERIFY(data["value4"].type() == QVariant::Map);
+    QVERIFY(data["value4"].toMap()["value1"].toInt() == 5);
+
+
+}
+
+

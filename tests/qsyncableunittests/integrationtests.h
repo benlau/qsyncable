@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+/// Test integration with other component
 class IntegrationTests : public QObject
 {
     Q_OBJECT
@@ -14,7 +15,9 @@ signals:
 public slots:
 
 private slots:
+
     void sortFilterProxyModel();
+    void test_assign();
 };
 
 #endif // INTEGRATIONTESTS_H
