@@ -93,6 +93,14 @@ void IntegrationTests::test_assign()
     QVERIFY(data["value4"].type() == QVariant::Map);
     QVERIFY(data["value4"].toMap()["value1"].toInt() == 5);
 
+    data.clear();
+    QSyncable::assign(data, root, QStringList() << "value1" << "value4");
+
+    QCOMPARE(data.size(), 2);
+    QVERIFY(data.contains("value1"));
+    QVERIFY(!data.contains("value2"));
+    QVERIFY(data.contains("value4"));
+
 
 }
 
