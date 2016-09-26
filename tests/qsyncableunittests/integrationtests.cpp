@@ -101,6 +101,16 @@ void IntegrationTests::test_assign()
     QVERIFY(!data.contains("value2"));
     QVERIFY(data.contains("value4"));
 
+    /* assign(QObject, data) */
+    data.clear();
+    data["value1"] = 99;
+    QVariantMap value4;
+    value4["value1"] = 32;
+    data["value4"] = value4;
+
+    QSyncable::assign(root, data);
+    QVERIFY(root->property("value1").toInt() == 99);
+    QVERIFY(root->property("value4").value<QObject*>()->property("value1").toInt() == 32);
 
 }
 

@@ -10,6 +10,8 @@ namespace QSyncable {
     void assign(QVariantMap& dest,
                 const QObject*source, const QStringList properties = QStringList());
 
+    void assign(QObject* dest, const QVariantMap& source);
+
 }
 
 #endif // QSYNCABLEFUNCTIONS_H
