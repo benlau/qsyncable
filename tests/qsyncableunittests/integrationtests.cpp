@@ -158,4 +158,26 @@ void IntegrationTests::test_set()
     QVERIFY(value4.toMap()["value1"].toInt() == 3);
 }
 
+void IntegrationTests::test_pick()
+{
+    QQmlApplicationEngine engine;
+
+    engine.load(QUrl(QString(SRCDIR) + "/SampleData1.qml"));
+    Automator automator(&engine);
+
+    QObject* root = automator.findObject("Root");
+    QVERIFY(root);
+
+    QVariantMap data = QSyncable::pick(root, QStringList()
+                                       << "value1"
+                                       << "value4.value1");
+
+    QCOMPARE(data.size(), 2);
+    QVERIFY(data.contains("value1"));
+    QVERIFY(!data.contains("value2"));
+    QVERIFY(data.contains("value4"));
+
+    QVERIFY(data["value4"].toMap()["value1"].toInt() == 5);
+}
+
 

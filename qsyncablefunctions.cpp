@@ -126,3 +126,16 @@ void QSyncable::set(QVariantMap &data, const QStringList &path, const QVariant &
         data[key] = map;
     }
 }
+
+QVariantMap QSyncable::pick(QObject *object, const QStringList &paths)
+{
+    QVariantMap data;
+    foreach (QString path, paths) {
+        QVariant value = get(object, path);
+        if (value.isNull()) {
+            continue;
+        }
+        set(data, path, value);
+    }
+    return data;
+}

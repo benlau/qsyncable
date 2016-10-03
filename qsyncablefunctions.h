@@ -32,8 +32,15 @@ namespace QSyncable {
 
      */
     void set(QVariantMap& data, const QString& path, const QVariant& value);
+
     void set(QVariantMap& data, const QStringList& path, const QVariant& value);
 
+    /// Creates an QVariantMap composed of the picked object properties at paths.
+    /*
+      pick(object, QStringList() << "a" << "b.c");
+     */
+
+    QVariantMap pick(QObject* object, const QStringList& paths);
 }
 
 #endif // QSYNCABLEFUNCTIONS_H

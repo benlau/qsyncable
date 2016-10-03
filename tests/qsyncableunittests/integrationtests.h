@@ -24,6 +24,8 @@ private slots:
 
     void test_set();
 
+    void test_pick();
+
 };
 
 #endif // INTEGRATIONTESTS_H
