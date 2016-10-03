@@ -2,23 +2,13 @@
 #include <QtQml>
 #include "qsyncablefunctions.h"
 
-void QSyncable::assign(QVariantMap &dest, const QObject *source, const QStringList properties)
+void QSyncable::assign(QVariantMap &dest, const QObject *source)
 {
     const QMetaObject* meta = source->metaObject();
-
-    QMap<QString,bool> index;
-
-    foreach (QString property, properties) {
-        index[property] = true;
-    }
 
     for (int i = 0 ; i < meta->propertyCount(); i++) {
         const QMetaProperty property = meta->property(i);
         QString p = property.name();
-
-        if (properties.size() > 0 && !index.contains(p)) {
-            continue;
-        }
 
         QVariant value = source->property(property.name());
 

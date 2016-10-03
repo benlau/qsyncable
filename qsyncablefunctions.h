@@ -7,8 +7,7 @@ namespace QSyncable {
 
     /// Assign properties from source object to the destination object.
     /// If proeprties is not empty, it will only assign the specificed properties. Otherwise, it will assign all the properties.
-    void assign(QVariantMap& dest,
-                const QObject*source, const QStringList properties = QStringList());
+    void assign(QVariantMap& dest, const QObject*source);
 
     void assign(QObject* dest, const QVariantMap& source);
 
