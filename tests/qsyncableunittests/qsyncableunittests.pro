@@ -35,4 +35,4 @@ DISTFILES += \
     tst_jsonModel.qml \
     tst_uuid.qml \
     ../../README.md \
-    test_Assign.qml
+    SampleData1.qml

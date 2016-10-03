@@ -76,7 +76,7 @@ void IntegrationTests::test_assign()
 {
     QQmlApplicationEngine engine;
 
-    engine.load(QUrl(QString(SRCDIR) + "/test_Assign.qml"));
+    engine.load(QUrl(QString(SRCDIR) + "/SampleData1.qml"));
     Automator automator(&engine);
 
     QObject* root = automator.findObject("Root");
@@ -118,7 +118,7 @@ void IntegrationTests::test_get()
 {
     QQmlApplicationEngine engine;
 
-    engine.load(QUrl(QString(SRCDIR) + "/test_Assign.qml"));
+    engine.load(QUrl(QString(SRCDIR) + "/SampleData1.qml"));
     Automator automator(&engine);
 
     QObject* root = automator.findObject("Root");
@@ -129,6 +129,33 @@ void IntegrationTests::test_get()
 
     value = QSyncable::get(root,"value4.valueX", QString("Not Found"));
     QVERIFY(value.toString() == "Not Found");
+}
+
+void IntegrationTests::test_set()
+{
+    QVariantMap data;
+    QSyncable::set(data,"value1", 1);
+    QVERIFY(data.contains("value1"));
+    QVERIFY(data["value1"].toInt() == 1);
+
+    QSyncable::set(data,"value2","value2");
+    QVERIFY(data.contains("value1"));
+    QVERIFY(data["value1"].toInt() == 1);
+    QVERIFY(data.contains("value2"));
+    QVERIFY(data["value2"].toString() == "value2");
+
+    QSyncable::set(data,"value3.value1",2);
+
+    QVariantMap value3 = data["value3"].toMap();
+    QVERIFY(value3["value1"].toInt() == 2);
+
+    /* Override value */
+    data["value4"] = true;
+    QSyncable::set(data,"value4.value1",3);
+    QVariant value4 = data["value4"];
+    QVERIFY(value4.canConvert<QVariantMap>());
+
+    QVERIFY(value4.toMap()["value1"].toInt() == 3);
 }
 
 

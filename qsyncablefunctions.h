@@ -24,6 +24,16 @@ namespace QSyncable {
 
     QVariant get(QObject* object, const QStringList& path, const QVariant& defaultValue = QVariant());
 
+    /// Sets the value at path of object. If a portion of path doesn't exist, it's created.
+    /*
+     Example:
+
+     set(data, "a.b", 3); // data["a"] will be a QVariantMap that contains a key of "b".
+
+     */
+    void set(QVariantMap& data, const QString& path, const QVariant& value);
+    void set(QVariantMap& data, const QStringList& path, const QVariant& value);
+
 }
 
 #endif // QSYNCABLEFUNCTIONS_H

@@ -83,7 +83,7 @@ static QVariant _get(QObject* object, const QStringList &path, const QVariant& d
     }
 
     QStringList nextPath = path;
-    nextPath.takeFirst();
+    nextPath.removeFirst();
 
     if (value.canConvert<QObject*>()) {
         return _get(qvariant_cast<QObject*>(value), nextPath, defaultValue);
@@ -103,3 +103,26 @@ QVariant QSyncable::get(QObject *object, const QStringList &path, const QVariant
     return _get(object, path, defaultValue);
 }
 
+
+void QSyncable::set(QVariantMap &data, const QString &path, const QVariant &value)
+{
+    return set(data, path.split("."), value);
+}
+
+void QSyncable::set(QVariantMap &data, const QStringList &path, const QVariant &value)
+{
+    QString key = path[0];
+
+    if (path.size() == 1) {
+        data[key] = value;
+    } else {
+        if (!data.contains(key) || !data[key].canConvert<QVariantMap>()) {
+            data[key] = QVariantMap();
+        }
+        QStringList nextPath = path;
+        nextPath.removeFirst();
+        QVariantMap map = data[key].toMap();
+        set(map, nextPath, value);
+        data[key] = map;
+    }
+}

@@ -17,8 +17,13 @@ public slots:
 private slots:
 
     void sortFilterProxyModel();
+
     void test_assign();
+
     void test_get();
+
+    void test_set();
+
 };
 
 #endif // INTEGRATIONTESTS_H
