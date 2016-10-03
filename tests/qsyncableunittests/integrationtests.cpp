@@ -114,4 +114,21 @@ void IntegrationTests::test_assign()
 
 }
 
+void IntegrationTests::test_get()
+{
+    QQmlApplicationEngine engine;
+
+    engine.load(QUrl(QString(SRCDIR) + "/test_Assign.qml"));
+    Automator automator(&engine);
+
+    QObject* root = automator.findObject("Root");
+    QVERIFY(root);
+
+    QVariant value = QSyncable::get(root, "value4.value1");
+    QCOMPARE(value.toInt(), 5);
+
+    value = QSyncable::get(root,"value4.valueX", QString("Not Found"));
+    QVERIFY(value.toString() == "Not Found");
+}
+
 

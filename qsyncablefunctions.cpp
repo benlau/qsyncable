@@ -64,5 +64,42 @@ void QSyncable::assign(QObject *dest, const QVariantMap & source)
 
         iter++;
     }
-
 }
+
+static QVariant _get(QObject* object, const QStringList &path, const QVariant& defaultValue) {
+
+    QString key = path[0];
+
+    const QMetaObject* meta = object->metaObject();
+
+    if (meta->indexOfProperty(key.toUtf8().constData()) < 0) {
+        return defaultValue;
+    }
+
+    QVariant value = object->property(key.toUtf8().constData());
+
+    if (path.size() == 1) {
+        return value;
+    }
+
+    QStringList nextPath = path;
+    nextPath.takeFirst();
+
+    if (value.canConvert<QObject*>()) {
+        return _get(qvariant_cast<QObject*>(value), nextPath, defaultValue);
+    } else {
+        return defaultValue;
+    }
+}
+
+
+QVariant QSyncable::get(QObject *object, const QString &path, const QVariant& defaultValue)
+{
+    return get(object, path.split("."), defaultValue);
+}
+
+QVariant QSyncable::get(QObject *object, const QStringList &path, const QVariant& defaultValue)
+{
+    return _get(object, path, defaultValue);
+}
+

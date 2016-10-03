@@ -12,6 +12,18 @@ namespace QSyncable {
 
     void assign(QObject* dest, const QVariantMap& source);
 
+
+    /// Gets the value at path of object. If the path is not found, the defaultValue is returned.
+    /*
+     Example:
+
+     get(object, "a.b.c");
+
+    */
+    QVariant get(QObject* object, const QString& path, const QVariant& defaultValue = QVariant());
+
+    QVariant get(QObject* object, const QStringList& path, const QVariant& defaultValue = QVariant());
+
 }
 
 #endif // QSYNCABLEFUNCTIONS_H

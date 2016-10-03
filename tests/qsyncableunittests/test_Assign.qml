@@ -12,7 +12,7 @@ QtObject {
 
     // Nested object
     property var value4: QtObject {
-        property var value1 : 4 + 1
+        property int value1 : 4 + 1
     }
 
 }
