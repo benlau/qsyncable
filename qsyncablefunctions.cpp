@@ -136,3 +136,31 @@ QVariantMap QSyncable::pick(QObject *object, const QStringList &paths)
     }
     return data;
 }
+
+QVariantMap QSyncable::omit(const QVariantMap &source, const QVariantMap &properties)
+{
+
+    QMap<QString,QVariant>::const_iterator iter = source.begin();
+    QVariantMap result;
+
+    while (iter != source.end()) {
+
+        if (properties.contains(iter.key())) {
+            iter++;
+            continue;
+        }
+
+        QVariant value = source[iter.key()];
+
+        if (value.canConvert<QObject*>()) {
+            QVariantMap map;
+            assign(map, value.value<QObject*>());
+            value = map;
+        }
+
+        result[iter.key()] = value;
+        iter++;
+    }
+
+    return result;
+}

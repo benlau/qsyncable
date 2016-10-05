@@ -173,8 +173,35 @@ void IntegrationTests::test_pick()
 
     QVERIFY(data["value4"].toMap()["value1"].toInt() == 5);
 
+    // Pick an QObject
     data = QSyncable::pick(root, QStringList() << "value4");
     QVERIFY(data["value4"].type() == QVariant::Map);
+}
+
+void IntegrationTests::test_omit()
+{
+    QQmlApplicationEngine engine;
+
+    engine.load(QUrl(QString(SRCDIR) + "/SampleData1.qml"));
+    Automator automator(&engine);
+
+    QObject* root = automator.findObject("Root");
+    QVERIFY(root);
+
+    QVariantMap data1;
+
+    QSyncable::assign(data1, root);
+    QVariantMap properties;
+    properties["value1"] = true;
+    properties["value3"] = false; // omit do not care the content
+
+    QVariantMap data2 = QSyncable::omit(data1, properties);
+
+    QVERIFY(!data2.contains("value1"));
+    QVERIFY(data2.contains("value2"));
+    QVERIFY(!data2.contains("value3"));
+    QVERIFY(data2.contains("value4"));
+    QVERIFY(data2["value4"].type() == QVariant::Map);
 }
 
 

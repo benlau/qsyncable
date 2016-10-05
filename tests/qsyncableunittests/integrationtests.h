@@ -26,6 +26,8 @@ private slots:
 
     void test_pick();
 
+    void test_omit();
+
 };
 
 #endif // INTEGRATIONTESTS_H

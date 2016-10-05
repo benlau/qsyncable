@@ -40,13 +40,22 @@ namespace QSyncable {
 
          pick(object, QStringList() << "a" << "b.c");
 
-     If a property is a QObject pointer, it will be converted to QVariantMap.
+     If a property contains QObject pointer, it will be converted to QVariantMap.
 
      In case you need to obtain a QObject pointer, please use get().
 
      */
 
     QVariantMap pick(QObject* object, const QStringList& paths);
+
+    /// The opposite of pick(), this method creates an QVariantMap composed of the own properties that are not omitted.
+    /*
+     If a property contains QObject pointer, it will be converted to QVariantMap.
+
+     In case you need to obtain a QObject pointer, please use get().
+     */
+    QVariantMap omit(const QVariantMap& source, const QVariantMap& properties);
+
 }
 
 #endif // QSYNCABLEFUNCTIONS_H
