@@ -172,6 +172,9 @@ void IntegrationTests::test_pick()
     QVERIFY(data.contains("value4"));
 
     QVERIFY(data["value4"].toMap()["value1"].toInt() == 5);
+
+    data = QSyncable::pick(root, QStringList() << "value4");
+    QVERIFY(data["value4"].type() == QVariant::Map);
 }
 
 

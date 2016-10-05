@@ -125,6 +125,13 @@ QVariantMap QSyncable::pick(QObject *object, const QStringList &paths)
         if (value.isNull()) {
             continue;
         }
+
+        if (value.canConvert<QObject*>()) {
+            QVariantMap map;
+            assign(map, value.value<QObject*>());
+            value = map;
+        }
+
         set(data, path, value);
     }
     return data;

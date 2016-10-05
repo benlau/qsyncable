@@ -36,7 +36,14 @@ namespace QSyncable {
 
     /// Creates an QVariantMap composed of the picked object properties at paths.
     /*
-      pick(object, QStringList() << "a" << "b.c");
+     Example:
+
+         pick(object, QStringList() << "a" << "b.c");
+
+     If a property is a QObject pointer, it will be converted to QVariantMap.
+
+     In case you need to obtain a QObject pointer, please use get().
+
      */
 
     QVariantMap pick(QObject* object, const QStringList& paths);
