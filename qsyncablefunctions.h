@@ -19,9 +19,14 @@ namespace QSyncable {
      get(object, "a.b.c");
 
     */
-    QVariant get(QObject* object, const QString& path, const QVariant& defaultValue = QVariant());
+    QVariant get(const QObject* object, const QString& path, const QVariant& defaultValue = QVariant());
 
-    QVariant get(QObject* object, const QStringList& path, const QVariant& defaultValue = QVariant());
+    QVariant get(const QObject* object, const QStringList& path, const QVariant& defaultValue = QVariant());
+
+    QVariant get(const QVariantMap& source, const QString& path, const QVariant& defaultValue = QVariant());
+
+    QVariant get(const QVariantMap& source, const QStringList& path, const QVariant& defaultValue = QVariant());
+
 
     /// Sets the value at path of object. If a portion of path doesn't exist, it's created.
     /*

@@ -56,7 +56,9 @@ void QSyncable::assign(QObject *dest, const QVariantMap & source)
     }
 }
 
-static QVariant _get(QObject* object, const QStringList &path, const QVariant& defaultValue) {
+static QVariant _get(const QVariantMap& object, const QStringList &path, const QVariant& defaultValue) ;
+
+static QVariant _get(const QObject* object, const QStringList &path, const QVariant& defaultValue) {
 
     QString key = path[0];
 
@@ -77,22 +79,58 @@ static QVariant _get(QObject* object, const QStringList &path, const QVariant& d
 
     if (value.canConvert<QObject*>()) {
         return _get(qvariant_cast<QObject*>(value), nextPath, defaultValue);
+    } else if (value.type() == QVariant::Map) {
+        return _get(value.toMap(), nextPath, defaultValue);
     } else {
         return defaultValue;
     }
 }
 
+static QVariant _get(const QVariantMap& object, const QStringList &path, const QVariant& defaultValue) {
 
-QVariant QSyncable::get(QObject *object, const QString &path, const QVariant& defaultValue)
+    QString key = path[0];
+
+    if (!object.contains(key)) {
+        return defaultValue;
+    }
+
+    QVariant value = object[key];
+
+    if (path.size() == 1) {
+        return value;
+    }
+
+    QStringList nextPath = path;
+    nextPath.removeFirst();
+
+    if (value.canConvert<QObject*>()) {
+        return _get(qvariant_cast<QObject*>(value), nextPath, defaultValue);
+    } else if (value.type() == QVariant::Map) {
+        return _get(value.toMap(), nextPath, defaultValue);
+    } else {
+        return defaultValue;
+    }
+}
+
+QVariant QSyncable::get(const QObject *object, const QString &path, const QVariant& defaultValue)
 {
     return get(object, path.split("."), defaultValue);
 }
 
-QVariant QSyncable::get(QObject *object, const QStringList &path, const QVariant& defaultValue)
+QVariant QSyncable::get(const QObject *object, const QStringList &path, const QVariant& defaultValue)
 {
     return _get(object, path, defaultValue);
 }
 
+QVariant QSyncable::get(const QVariantMap &source, const QString &path, const QVariant &defaultValue)
+{
+    return get(source, path.split("."), defaultValue);
+}
+
+QVariant QSyncable::get(const QVariantMap &source, const QStringList &path, const QVariant &defaultValue)
+{
+    return _get(source, path, defaultValue);
+}
 
 void QSyncable::set(QVariantMap &data, const QString &path, const QVariant &value)
 {

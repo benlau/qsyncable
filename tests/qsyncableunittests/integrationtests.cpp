@@ -6,6 +6,8 @@
 #include "automator.h"
 #include "integrationtests.h"
 
+using namespace QSyncable;
+
 IntegrationTests::IntegrationTests(QObject *parent) : QObject(parent)
 {
 
@@ -118,11 +120,23 @@ void IntegrationTests::test_get()
     QObject* root = automator.findObject("Root");
     QVERIFY(root);
 
+    /* get(QObject*, QString) */
     QVariant value = QSyncable::get(root, "value4.value1");
     QCOMPARE(value.toInt(), 5);
 
     value = QSyncable::get(root,"value4.valueX", QString("Not Found"));
     QVERIFY(value.toString() == "Not Found");
+
+    /* get(QVarnaintMap, QString) */
+
+    QVariantMap source;
+    assign(source, root);
+    value = QSyncable::get(source, "value2");
+    QVERIFY(value.toString() == "2");
+
+    value = QSyncable::get(source, "valueX");
+    QVERIFY(value.isNull());
+
 }
 
 void IntegrationTests::test_set()
