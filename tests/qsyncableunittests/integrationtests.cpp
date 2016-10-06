@@ -176,6 +176,8 @@ void IntegrationTests::test_pick()
     QObject* root = automator.findObject("Root");
     QVERIFY(root);
 
+    /* QSyncable::pick(QObject*, paths) */
+
     QVariantMap data = QSyncable::pick(root, QStringList()
                                        << "value1"
                                        << "value4.value1");
@@ -190,6 +192,20 @@ void IntegrationTests::test_pick()
     // Pick an QObject
     data = QSyncable::pick(root, QStringList() << "value4");
     QVERIFY(data["value4"].type() == QVariant::Map);
+
+    /* QSyncable::pick(QVariant, paths) */
+    QVariantMap source;
+    QSyncable::assign(source, root);
+
+    data = QSyncable::pick(source, QStringList() << "value1" << "value4.value1");
+
+    QCOMPARE(data.size(), 2);
+    QVERIFY(data.contains("value1"));
+    QVERIFY(!data.contains("value2"));
+    QVERIFY(data.contains("value4"));
+
+    QVERIFY(data["value4"].toMap()["value1"].toInt() == 5);
+
 }
 
 void IntegrationTests::test_omit()

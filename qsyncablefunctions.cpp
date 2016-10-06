@@ -175,6 +175,32 @@ QVariantMap QSyncable::pick(QObject *object, const QStringList &paths)
     return data;
 }
 
+
+QVariantMap QSyncable::pick(QVariantMap source, const QStringList &paths)
+{
+    QVariantMap data;
+    foreach (QString path, paths) {
+        QVariant value = get(source, path);
+        if (value.isNull()) {
+            continue;
+        }
+
+        if (value.canConvert<QObject*>()) {
+            QVariantMap map;
+            assign(map, value.value<QObject*>());
+            value = map;
+        }
+
+        set(data, path, value);
+    }
+    return data;
+}
+
+QVariantMap QSyncable::pick(QVariantMap source, const QVariantMap &paths)
+{
+    return pick(source, paths.keys());
+}
+
 QVariantMap QSyncable::omit(const QVariantMap &source, const QVariantMap &properties)
 {
 
