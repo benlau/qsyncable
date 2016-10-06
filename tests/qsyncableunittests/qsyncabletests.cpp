@@ -824,6 +824,56 @@ void QSyncableTests::diffRunner_randomMove()
 
 }
 
+void QSyncableTests::diffRunner_complex()
+{
+    QFETCH(QStringList, from);
+    QFETCH(QStringList, to);
+
+    QVariantList fromList, toList;
+
+    fromList = convert(from);
+    toList = convert(to);
+
+    QSListModel listModel;
+    listModel.setStorage(fromList);
+
+    QSDiffRunner runner;
+    runner.setKeyField("id");
+
+    QList<QSPatch> patches = runner.compare(fromList, toList);
+
+    runner.patch(&listModel, patches);
+
+    QList<QSPatch> patches2 = runner.compare(toList, listModel.storage());
+
+    if (patches2.size() > 0) {
+        qDebug() << "from" << from;
+        qDebug() << "toList" << to;
+        qDebug() << "actual" << convert(listModel.storage()).join(",");
+        qDebug() << patches;
+
+        qDebug() << "Result";
+        qDebug() << to;
+        qDebug() << listModel.storage();
+        qDebug() << patches2;
+    }
+
+    QVERIFY(patches2.size() == 0);
+}
+
+void QSyncableTests::diffRunner_complex_data()
+{
+    QTest::addColumn<QStringList >("from");
+    QTest::addColumn<QStringList >("to");
+    QStringList from, to;
+
+    // Data set 1 - Move and remove last item //
+    from = QString("0,1,2,3,4,5,6,7,8,9").split(",");
+    to = QString("3,0,1,2,4,5,6,8,11,10").split(",");
+    QTest::newRow("Data1") << from << to;
+
+}
+
 void QSyncableTests::listModel_insert()
 {
     QSListModel* model = new QSListModel();

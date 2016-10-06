@@ -74,16 +74,18 @@ private:
 
     void buildHashTable();
 
-    void appendPatch(const QSPatch& patch, bool merge = true);
-
     // Mark an item for insert, remove, move
-    void markItemAtFromList(Type type, State &mapper);
+    void markItemAtFromList(Type type, State &state);
 
     void markItemAtToList(Type type, State& state);
 
     static QSPatch createInsertPatch(int from, int to, const QVariantList& source );
 
+    void appendPatch(const QSPatch& patch, bool merge = true);
+
     void appendMovePatch(MoveOp& patch);
+
+    void appendRemovePatches();
 
     void updateTree();
 
@@ -103,6 +105,9 @@ private:
     // The start position of remove block
     int removeStart;
 
+    // No. of item removing
+    int removing;
+
     // The start position of insertion block
     int insertStart;
 
@@ -114,8 +119,6 @@ private:
     int indexF,indexT;
 
     QVariantMap itemF,itemT;
-
-    int removing;
 
     /* Move Patches */
     MoveOp pendingMovePatch;

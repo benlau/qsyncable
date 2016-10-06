@@ -40,6 +40,9 @@ private slots:
     void diffRunner_random();
     void diffRunner_randomMove();
 
+    void diffRunner_complex();
+    void diffRunner_complex_data();
+
     void listModel_insert();
     void listModel_roleNames();
 

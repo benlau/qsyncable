@@ -202,6 +202,15 @@ void QSDiffRunnerAlgo::appendMovePatch(MoveOp &moveOp)
     appendPatch(patch);
 }
 
+void QSDiffRunnerAlgo::appendRemovePatches()
+{
+    appendPatch(QSPatch::createRemove(indexT,
+                                      indexT + removing - 1), false);
+
+    removeStart = -1;
+    removing = 0;
+}
+
 void QSDiffRunnerAlgo::updateTree()
 {
     while (tree.root() != 0 && tree.min() <= indexF) {
@@ -243,10 +252,11 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
         keyF.clear();
 
         while (indexF < fromSize) {
-            // Find non-removed item / moved item
+            // Process until it found an item that remain in origianl position (neither removd / moved).
             itemF = from.at(indexF).toMap();
             keyF = itemF[m_keyField].toString();
             state = hash[keyF]; // It mush obtain the key value
+
 
             if (state.posT < 0) {
                 markItemAtFromList(Remove, state);
@@ -256,6 +266,7 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
                 indexF++;
             } else {
                 markItemAtFromList(NoMove, state);
+                // The item remain in original position.
                 break;
             }
         }
@@ -299,12 +310,7 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
 void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, State &state)
 {
     if (removeStart >= 0 && type != QSDiffRunnerAlgo::Remove) {
-
-        appendPatch(QSPatch::createRemove(indexT,
-                                          indexT + removing - 1), false);
-
-        removeStart = -1;
-        removing = 0;
+        appendRemovePatches();
     }
 
     if (type == QSDiffRunnerAlgo::Remove) {
@@ -312,6 +318,11 @@ void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, State &st
             removeStart = indexF;
         }
         removing++;
+
+        if (indexF == from.size() - 1) {
+            // It is the last item
+            appendRemovePatches();
+        }
     }
 
     if (type == Move) {
