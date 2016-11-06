@@ -1,0 +1,8 @@
+{
+    "value1": 10,
+    "value2": "11",
+    "value3" : false,
+    "value4" : {
+        "value1" : 21
+    }
+}

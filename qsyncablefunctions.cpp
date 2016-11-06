@@ -56,6 +56,39 @@ void QSyncable::assign(QObject *dest, const QVariantMap & source)
     }
 }
 
+void QSyncable::assign(QObject *dest, const QJSValue &source)
+{
+    const QMetaObject* meta = dest->metaObject();
+    QJSValueIterator iter(source);
+
+    while (iter.hasNext()) {
+        iter.next();
+        QByteArray key = iter.name().toLocal8Bit();
+        int index = meta->indexOfProperty(key.constData());
+        if (index < 0) {
+            qWarning() << QString("QSyncable::assign:assign a non-existed property: %1").arg(iter.name());
+            continue;
+        }
+
+        QVariant orig = dest->property(key.constData());
+
+        if (orig.canConvert<QObject*>()) {
+            if (!iter.value().isObject()) {
+                qWarning() << QString("QSyncable::assign:expect a object property but it is not: %1");
+            } else {
+                assign(orig.value<QObject*>(), iter.value());
+            }
+            continue;
+        }
+
+        QVariant value = iter.value().toVariant();
+        if (orig != value) {
+            dest->setProperty(key.constData(), value);
+        }
+    }
+
+}
+
 static QVariant _get(const QVariantMap& object, const QStringList &path, const QVariant& defaultValue) ;
 
 static QVariant _get(const QObject* object, const QStringList &path, const QVariant& defaultValue) {
@@ -228,3 +261,4 @@ QVariantMap QSyncable::omit(const QVariantMap &source, const QVariantMap &proper
 
     return result;
 }
+

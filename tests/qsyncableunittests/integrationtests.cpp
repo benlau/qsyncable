@@ -2,6 +2,7 @@
 #include <QSListModel>
 #include <QSortFilterProxyModel>
 #include <QSDiffRunner>
+#include <QtShell>
 #include "QQmlApplicationEngine"
 #include "automator.h"
 #include "integrationtests.h"
@@ -84,7 +85,7 @@ void IntegrationTests::test_assign()
     QObject* root = automator.findObject("Root");
     QVERIFY(root);
 
-    /* assign(map, object) */
+    /* assign(map, QObject) */
 
     QVariantMap data;
     QSyncable::assign(data, root);
@@ -108,6 +109,16 @@ void IntegrationTests::test_assign()
     QVERIFY(root->property("value1").toInt() == 99);
     QVERIFY(root->property("value4").value<QObject*>()->property("value1").toInt() == 32);
 
+    /* assign(QObject, QJSvalue)*/
+    QString content = QtShell::cat(QString(SRCDIR) + "/SampleData1.json");
+    QJSValue value = engine.evaluate(content);
+
+    QSyncable::assign(root, value);
+
+    QCOMPARE(root->property("value1").toInt(), 10);
+    QVERIFY(root->property("value2").toString() == "11");
+    QVERIFY(root->property("value3").toBool() == false);
+    QCOMPARE(root->property("value4").value<QObject*>()->property("value1").toInt(), 21);
 }
 
 void IntegrationTests::test_get()

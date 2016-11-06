@@ -2,6 +2,7 @@
 #define QSYNCABLEFUNCTIONS_H
 
 #include <QObject>
+#include <QJSValue>
 
 namespace QSyncable {
 
@@ -10,6 +11,7 @@ namespace QSyncable {
 
     void assign(QObject* dest, const QVariantMap& source);
 
+    void assign(QObject* dest, const QJSValue& source);
 
     /// Gets the value at path of object. If the path is not found, the defaultValue is returned.
     /*
