@@ -13,7 +13,7 @@ before_install:
     - sudo apt-get install --force-yes -qq qt55quickcontrols  qt55declarative qt55script qt55graphicaleffects qpm valgrind
     - sh -e /etc/init.d/xvfb start
 script:
-    - source /opt/qt53/bin/qt53-env.sh 
+    - source /opt/qt55/bin/qt55-env.sh 
     - cd tests/qsyncableunittests
     - qpm install
     - qmake
