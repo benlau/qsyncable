@@ -28,4 +28,5 @@ DISTFILES += \
     tst_uuid.qml \
     ../../README.md \
     SampleData1.qml \
-    SampleData1.json
+    SampleData1.json \
+    tst_QSyncable.qml

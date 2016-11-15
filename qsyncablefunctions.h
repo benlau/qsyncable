@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QJSValue>
+#include <QVariant>
 
 namespace QSyncable {
 
