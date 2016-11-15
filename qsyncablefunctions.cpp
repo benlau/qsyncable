@@ -58,6 +58,10 @@ void QSyncable::assign(QObject *dest, const QVariantMap & source)
 
 void QSyncable::assign(QObject *dest, const QJSValue &source)
 {
+    if (dest == 0) {
+        return;
+    }
+
     const QMetaObject* meta = dest->metaObject();
     QJSValueIterator iter(source);
 
