@@ -129,4 +129,11 @@ Example
 
 [faketrello](https://github.com/benlau/qsyncable/tree/master/examples/faketrello) - Simulate a Trello card board.
 
+Future Development
+===================
 
+1) FastDiffRunner
+
+It is a diff runner to work with implicit sharing class (Immutable data type). It is able to achieve an O(1) comparison if data is not changed and it is not necessary to convert to QVariantMap type before comparison. It will be much faster than the original DiffRunner.
+
+Status: Not started as the priority is low when compared to another project.
