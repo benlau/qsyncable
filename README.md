@@ -1,45 +1,43 @@
 QSyncable - Synchronize data between models
 ===========================================
 
-QSyncable provides an QML friendly list model (based on QAbstractItemModel) as a wrapper of any data structure from C++ / Javascript. Instead to access data from original source per query, it duplicates a copy of data locally, and keep updated by an average O(n) synchronization algorithm. Every update is carried by passing a full copy of data snapshot. It will find out the diff and transform into a list of change operations like insertion, removal and move. It will guarantee the behaviour is identical to the original QML ListModel. Therefore, UI components could react to the changes correctly.
+QSyncable provides a QML friendly list model (based on QAbstractItemModel) as a wrapper of any data structure from C++ / Javascript. Instead, to access data from the original source per query, it duplicates a copy of data locally, and keep updated by an average O(n) synchronization algorithm. Every update is carried by passing a full copy of data snapshot. It will find out the diff and transform into a list of change operations like insertion, removal and move. It will guarantee the behaviour is identical to the original QML ListModel. Therefore, UI components could react to the changes correctly.
 
-An immediate benefit of using QSycnable is the simplification of data pipeline. If you need your UI to respond for changes like insertion / removal correctly, you must update the ListModel by the corresponding method explicitly. QSyncable combines all kinds of update methods into a single way. Such that user doesn’t need to care about their differences and setup data binding by just a single connection.
+An immediate benefit of using QSycnable is the simplification of the data pipeline. If you need your UI to respond to changes like insertion/removal correctly, you must update the ListModel by the corresponding method explicitly. QSyncable combines all kinds of update methods into a single way. Such that user doesn’t need to care about their differences and setup data binding by just a single connection.
 
 Moreover, QSyncable could also be used as a solution for the nested list model.
 
-How it works?
+How does it work?
 -------------
 
 ![Workflow](https://raw.githubusercontent.com/benlau/qsyncable/master/docs/qsyncable-workflow.png)
 
-**DiffRunner (QSDiffRunner)** compares two QVariantList to produce a patch for transforming one of the list to another list with minimum no. of steps. The result can be applied on a QSListModel. DiffRunner use an average O(n) algorithm and therefore it should be fast enough for regular UI application.
+**DiffRunner (QSDiffRunner)** compares two QVariantList to produce a patch for transforming one of a list to another list with minimum no. of steps. The result can be applied on a QSListModel. DiffRunner uses an average O(n) algorithm and therefore it should be fast enough for regular UI application.
 
 **ListModel (QSListModel)** is an implementation of QAbstactItemModel. It stores data in a list of QVariantMap. It will emit insert, remove, move and data changed signals according to the patch applied.
 
+QSyncable provides the two classes above for a user to convert their own data structure to a QML friendly list model. Usually, there are several ways to update a list model. QSyncable combines all of the update methods into a single process - patching.
 
-
-QSyncable provides the two classes above for user to convert their own data structure to a QML friendly list model. Usually there are several ways to update a list model. QSyncable combines all of update methods into a single process - patching.
-
-Whatever the data source has been changed, regardless of update method, user converts it into a QVariantList and pass it to DiffRunner to compare with current snapshot. Then apply the generated patch on QSListModel. UI component will be refreshed according to the emitted signals from QSListModel.
-
+Whatever the data source has been changed, regardless of update method, the user converts it into a QVariantList and pass it to DiffRunner to compare with the current snapshot. Then apply the generated patch on QSListModel. UI component will be refreshed according to the emitted signals from QSListModel.
 
 The diagram below shows an example application architecture using QSyncable:
 
 ![QSyncable Application Architecture](https://raw.githubusercontent.com/benlau/qsyncable/master/docs/qsyncable-application-architecture-example.png)
 
-In QSyncable application, ListModel only keep a copy of the data. it is meaningless for UI components to modify it. Instead, UI components should ask to update the data source and trigger synchronization afterward. The component for “updates” and “queries” is in fact separated. (More information in this [article](https://medium.com/@benlaud/action-dispatcher-design-pattern-for-qml-c350b1d2a7e7#.mi3b8hbuv) )
+In QSyncable application, ListModel only keeps a copy of the data. it is meaningless for UI components to modify it. Instead, UI components should ask to update the data source and trigger synchronization afterwards. The component for “updates” and “queries” is in fact separated. (More information in this [article](https://medium.com/@benlaud/action-dispatcher-design-pattern-for-qml-c350b1d2a7e7#.mi3b8hbuv) )
 
 Design Principle - Separation of "updates" and "queries"
 ----------
 
 QSyncable is designed to solve a fundamental problem of C++ & QML application: How to share data between C++ and QML?
 
-QObject list model is definitely a bad idea. It is terrible to manage their life cycle and ownership (QML / C++ scope). You should beaware of garbage collection in your QObject list model even it is written by C++.
+QObject list model is definitely a bad idea. It is terrible to manage their life cycle and ownership (QML / C++ scope). You should be aware of garbage collection in your QObject list model even it is written in C++.
 
 Using a variant list model is better, but it is not C++ friendly. And it is difficult to handle nested list model.
 
 In fact, the problem will be simple if you separate “updates” and “queries” into different components.
 First of all, you don’t even need to consider QObject list model approach.
+It has no any advantage of using QObject list model if you use another component for the update.First of all, you don’t even need to consider QObject list model approach.
 It has no any advantage of using QObject list model if you use other component for update.
 
 Moreover, it is not necessary to use a variant list model as a central data source. You may use any data structure you like. Leave variant list model for presentation only.
@@ -94,8 +92,8 @@ But it is not the worst case time complexity. It is O(n + m log m), where m is t
 However, unless you are doing a reverse or random shuffle.
 Moving a single block of items, regardless of the number, from one to another place will remain in O(n) time complexity.
 
-If you really need to do a reverse of a list or random shuffle with large amount of data, you may consider to move it to a thread or set the key field to null.
-QSDiffRunner will ignore the insertion , removal, and moving checking if key field is not set.
+If you really need to do a reverse of a list or random shuffle with a large amount of data, you may consider to move it to a thread or set the key field to null.
+QSDiffRunner will ignore the insertion, removal, and move checking if the key field is not set.
 
 | Condition                    | Time Complexity             |
 |------------------------------|-----------------------------|
@@ -136,4 +134,7 @@ Future Development
 
 It is a diff runner to work with implicit sharing class (Immutable data type). It is able to achieve an O(1) comparison if data is not changed and it is not necessary to convert to QVariantMap type before comparison. It will be much faster than the original DiffRunner.
 
+Link: [FastDiffRunner Proposal](https://github.com/benlau/qsyncable/wiki/FastDiffRunner-Proposal)
+
 Status: Not started as the priority is low when compared to another project.
+
