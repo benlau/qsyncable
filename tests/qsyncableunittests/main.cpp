@@ -24,6 +24,7 @@ void handleBacktrace(int sig) {
 
 int main(int argc, char* argv[]) {
     signal(SIGSEGV, handleBacktrace);
+    qputenv("QML_DISABLE_DISK_CACHE", "1");
 
     QGuiApplication app(argc, argv);
     TestRunner runner;

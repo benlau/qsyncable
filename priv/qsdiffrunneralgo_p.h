@@ -2,6 +2,7 @@
 #define QSDIFFRUNNERALGO_H
 
 #include <QString>
+#include "priv/qsalgotypes_p.h"
 #include "qspatch.h"
 #include "qstree.h"
 
@@ -18,49 +19,6 @@ public:
 
 private:
 
-    enum Type {
-        NoMove,
-        Insert,
-        Remove,
-        Move
-    };
-
-    class State {
-    public:
-        State(int from = -1 , int to = -1);
-
-        // The position in "from" list
-        int posF;
-
-        // The position in "to" list
-        int posT;
-
-        // Is it moved?
-        bool isMoved;
-    };
-
-    // Move data storage
-    class MoveOp {
-    public:
-        MoveOp(int posF = -1, int from = -1, int to = -1, int count = 1);
-
-        bool isNull() const;
-
-        bool canMerge(const MoveOp& other) const;
-
-        void merge(const MoveOp& other);
-
-        void clear();
-
-        // The absolute position in "from"
-        int posF;
-
-        int from;
-
-        int to;
-
-        int count;
-    };
 
     // Combine all the processing patches into a single list. It will clear the processing result too.
     QSPatchSet combine();
@@ -75,15 +33,15 @@ private:
     void buildHashTable();
 
     // Mark an item for insert, remove, move
-    void markItemAtFromList(Type type, State &state);
+    void markItemAtFromList(QSAlgoTypes::Type type, QSAlgoTypes::State &state);
 
-    void markItemAtToList(Type type, State& state);
+    void markItemAtToList(QSAlgoTypes::Type type, QSAlgoTypes::State& state);
 
     static QSPatch createInsertPatch(int from, int to, const QVariantList& source );
 
     void appendPatch(const QSPatch& patch, bool merge = true);
 
-    void appendMovePatch(MoveOp& patch);
+    void appendMovePatch(QSAlgoTypes::MoveOp& patch);
 
     void appendRemovePatches();
 
@@ -100,7 +58,7 @@ private:
     QList<QSPatch> updatePatches;
 
     // Hash table
-    QHash<QString, State> hash;
+    QHash<QString, QSAlgoTypes::State> hash;
 
     // The start position of remove block
     int removeStart;
@@ -121,7 +79,7 @@ private:
     QVariantMap itemF,itemT;
 
     /* Move Patches */
-    MoveOp pendingMovePatch;
+    QSAlgoTypes::MoveOp pendingMovePatch;
 
     // Tree of move patch
     QSTree tree;

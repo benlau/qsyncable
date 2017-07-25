@@ -2,11 +2,7 @@
 
 #define MISSING_KEY_WARNING "QSDiffRunner.compare() - Duplicated or missing key."
 
-QSDiffRunnerAlgo::State::State(int from, int to) {
-    this->posF = from;
-    this->posT = to;
-    isMoved = false;
-}
+using namespace QSAlgoTypes;
 
 QSDiffRunnerAlgo::QSDiffRunnerAlgo()
 {
@@ -185,7 +181,7 @@ QSPatch QSDiffRunnerAlgo::createInsertPatch(int from, int to, const QVariantList
     return QSPatch(QSPatch::Insert, from, to, count, source.mid(from, count));
 }
 
-void QSDiffRunnerAlgo::appendMovePatch(MoveOp &moveOp)
+void QSDiffRunnerAlgo::appendMovePatch(QSAlgoTypes::MoveOp &moveOp)
 {
 
     QSPatch patch(QSPatch::Move, moveOp.from, moveOp.to, moveOp.count);
@@ -307,13 +303,13 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
     return combine();
 }
 
-void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, State &state)
+void QSDiffRunnerAlgo::markItemAtFromList(QSAlgoTypes::Type type, State &state)
 {
-    if (removeStart >= 0 && type != QSDiffRunnerAlgo::Remove) {
+    if (removeStart >= 0 && type != QSAlgoTypes::Remove) {
         appendRemovePatches();
     }
 
-    if (type == QSDiffRunnerAlgo::Remove) {
+    if (type == QSAlgoTypes::Remove) {
         if (removeStart < 0) {
             removeStart = indexF;
         }
@@ -333,23 +329,23 @@ void QSDiffRunnerAlgo::markItemAtFromList(QSDiffRunnerAlgo::Type type, State &st
     hash[keyF] = state;
 }
 
-void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, State& state)
+void QSDiffRunnerAlgo::markItemAtToList(QSAlgoTypes::Type type, State& state)
 {
 
-    if (insertStart >= 0 && type != QSDiffRunnerAlgo::Insert) {
+    if (insertStart >= 0 && type != QSAlgoTypes::Insert) {
         /* Insert */
         appendPatch(createInsertPatch(insertStart,
                                      indexT - 1, to), false);
         insertStart = -1;
     }
 
-    if (type == QSDiffRunnerAlgo::Insert) {
+    if (type == QSAlgoTypes::Insert) {
         if (insertStart < 0) {
             insertStart = indexT;
         }
     }
 
-    if (type == QSDiffRunnerAlgo::Move) {
+    if (type == QSAlgoTypes::Move) {
         MoveOp change(state.posF,
                       indexT + state.posF - indexF,
                       indexT);
@@ -367,12 +363,12 @@ void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, State& stat
         hash[keyT] = state;
     }
 
-    if (type != QSDiffRunnerAlgo::Move && !pendingMovePatch.isNull()) {
+    if (type != QSAlgoTypes::Move && !pendingMovePatch.isNull()) {
         appendMovePatch(pendingMovePatch);
         pendingMovePatch.clear();
     }
 
-    if (indexT < to.size() && (type == QSDiffRunnerAlgo::Move || type == QSDiffRunnerAlgo::NoMove)) {
+    if (indexT < to.size() && (type == QSAlgoTypes::Move || type == QSAlgoTypes::NoMove)) {
         QVariantMap tmpItemF = from[state.posF].toMap();
         QVariantMap diff = compareMap(tmpItemF, itemT);
         if (diff.size()) {
@@ -380,28 +376,3 @@ void QSDiffRunnerAlgo::markItemAtToList(QSDiffRunnerAlgo::Type type, State& stat
         }
     }
 }
-
-QSDiffRunnerAlgo::MoveOp::MoveOp(int indexF, int from, int to, int count) : posF(indexF) , from(from), to(to), count(count)
-{
-}
-
-bool QSDiffRunnerAlgo::MoveOp::canMerge(const QSDiffRunnerAlgo::MoveOp &other) const
-{
-    return posF + count == other.posF && to + count == other.to ;
-}
-
-void QSDiffRunnerAlgo::MoveOp::merge(const QSDiffRunnerAlgo::MoveOp &other)
-{
-    count += other.count;
-}
-
-bool QSDiffRunnerAlgo::MoveOp::isNull() const
-{
-    return posF < 0;
-}
-
-void QSDiffRunnerAlgo::MoveOp::clear()
-{
-    posF = from = to = -1;
-}
-

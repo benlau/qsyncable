@@ -13,7 +13,8 @@ HEADERS += \
     $$PWD/QSDiffRunner \
     $$PWD/QSListModel \
     $$PWD/qsyncablefunctions.h \
-    $$PWD/qsyncableqmlwrapper.h
+    $$PWD/qsyncableqmlwrapper.h \
+    $$PWD/priv/qsalgotypes_p.h
 
 SOURCES += \
     $$PWD/qsdiffrunner.cpp \
