@@ -7,6 +7,7 @@
 #include "qsyncabletests.h"
 #include "benchmarktests.h"
 #include "integrationtests.h"
+#include "fastdifftests.h"
 
 void handleBacktrace(int sig) {
   void *array[100];
@@ -33,6 +34,7 @@ int main(int argc, char* argv[]) {
     runner.add(QString(SRCDIR));
     runner.add<IntegrationTests>();
     runner.add<BenchmarkTests>();
+    runner.add<FastDiffTests>();
 
     bool error = runner.exec(app.arguments());
 

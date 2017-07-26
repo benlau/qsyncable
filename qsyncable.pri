@@ -14,7 +14,8 @@ HEADERS += \
     $$PWD/QSListModel \
     $$PWD/qsyncablefunctions.h \
     $$PWD/qsyncableqmlwrapper.h \
-    $$PWD/priv/qsalgotypes_p.h
+    $$PWD/priv/qsalgotypes_p.h \
+    $$PWD/priv/qsimmutablewrapper_p.h
 
 SOURCES += \
     $$PWD/qsdiffrunner.cpp \

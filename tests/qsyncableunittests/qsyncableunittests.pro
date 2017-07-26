@@ -11,14 +11,18 @@ SOURCES += \
     main.cpp \
     qsyncabletests.cpp \
     benchmarktests.cpp \
-    integrationtests.cpp
+    integrationtests.cpp \
+    fastdifftests.cpp \
+    immutabletype1.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 
 HEADERS += \
     qsyncabletests.h \
     benchmarktests.h \
-    integrationtests.h
+    integrationtests.h \
+    fastdifftests.h \
+    immutabletype1.h
 
 include(vendor/vendor.pri)
 include(../../qsyncable.pri)
