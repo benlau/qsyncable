@@ -33,11 +33,6 @@ ImmutableType1::~ImmutableType1()
 
 }
 
-bool ImmutableType1::isSharedWith(const ImmutableType1 &other) const
-{
-    return data == other.data;
-}
-
 int ImmutableType1::value1() const
 {
     return data->value1;
@@ -46,4 +41,9 @@ int ImmutableType1::value1() const
 void ImmutableType1::setValue1(int value1)
 {
     data->value1 = value1;
+}
+
+size_t ImmutableType1::immutableKey() const
+{
+    return (size_t) data.data();
 }

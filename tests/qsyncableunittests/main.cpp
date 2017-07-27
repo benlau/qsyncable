@@ -33,8 +33,8 @@ int main(int argc, char* argv[]) {
     runner.add<QSyncableTests>();
     runner.add(QString(SRCDIR));
     runner.add<IntegrationTests>();
-    runner.add<BenchmarkTests>();
     runner.add<FastDiffTests>();
+    runner.add<BenchmarkTests>();
 
     bool error = runner.exec(app.arguments());
 

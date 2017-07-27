@@ -13,9 +13,9 @@ void FastDiffTests::test_QSImmutable_wrapper()
 {
     {
         ImmutableType1 v1, v2;
-        QVERIFY(!v1.isSharedWith(v2));
+        QVERIFY(v1.immutableKey() != v2.immutableKey());
         v1 = v2;
-        QVERIFY(v1.isSharedWith(v2));
+        QVERIFY(v1.immutableKey() == v2.immutableKey());
     }
 
     {
@@ -42,7 +42,6 @@ void FastDiffTests::test_QSImmutable_wrapper()
         QVariantMap map = wrapper.convert(v1);
         QVERIFY(map == v1);
     }
-
 }
 
 void FastDiffTests::test_QSFastDiffRunnerAlgo()
