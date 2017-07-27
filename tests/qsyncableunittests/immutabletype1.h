@@ -17,7 +17,6 @@ public:
     ImmutableType1 &operator=(const ImmutableType1 &);
     ~ImmutableType1();
 
-
     size_t immutableKey() const;
 
     int value1() const;

@@ -17,6 +17,7 @@ private slots:
 
     void test_QSFastDiffRunnerAlgo();
 
+    void test_QSFastDiffRunner();
 };
 
 #endif // FASTDIFTESTS_H

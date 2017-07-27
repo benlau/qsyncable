@@ -16,7 +16,8 @@ HEADERS += \
     $$PWD/qsyncableqmlwrapper.h \
     $$PWD/priv/qsalgotypes_p.h \
     $$PWD/priv/qsimmutablewrapper_p.h \
-    $$PWD/priv/qsfastdiffrunneralgo_p.h
+    $$PWD/priv/qsfastdiffrunneralgo_p.h \
+    $$PWD/qsfastdiffrunner.h
 
 SOURCES += \
     $$PWD/qsdiffrunner.cpp \

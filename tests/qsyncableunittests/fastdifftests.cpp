@@ -1,8 +1,10 @@
 #include <QTest>
 #include "immutabletype1.h"
+#include "immutabletype2.h"
 #include "fastdifftests.h"
 #include "priv/qsimmutablewrapper_p.h"
 #include "priv/qsfastdiffrunneralgo_p.h"
+#include "qsfastdiffrunner.h"
 
 FastDiffTests::FastDiffTests(QObject *parent) : QObject(parent)
 {
@@ -48,5 +50,12 @@ void FastDiffTests::test_QSFastDiffRunnerAlgo()
 {
     QSFastDiffRunnerAlgo<QVariantMap> algo;
     Q_UNUSED(algo);
+
+}
+
+void FastDiffTests::test_QSFastDiffRunner()
+{
+    QSFastDiffRunner<ImmutableType2> runner;
+    Q_UNUSED(runner);
 
 }
