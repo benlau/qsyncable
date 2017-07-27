@@ -2,6 +2,7 @@
 #include "immutabletype1.h"
 #include "fastdifftests.h"
 #include "priv/qsimmutablewrapper_p.h"
+#include "priv/qsfastdiffrunneralgo_p.h"
 
 FastDiffTests::FastDiffTests(QObject *parent) : QObject(parent)
 {
@@ -41,5 +42,12 @@ void FastDiffTests::test_QSImmutable_wrapper()
         QVariantMap map = wrapper.convert(v1);
         QVERIFY(map == v1);
     }
+
+}
+
+void FastDiffTests::test_QSFastDiffRunnerAlgo()
+{
+    QSFastDiffRunnerAlgo<QVariantMap> algo;
+    Q_UNUSED(algo);
 
 }

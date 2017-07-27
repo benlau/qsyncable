@@ -235,6 +235,7 @@ QSPatchSet QSDiffRunnerAlgo::compare(const QVariantList &from, const QVariantLis
     }
 
     buildHashTable();
+    //@TODO - Discover duplicated key
 
     indexF = skipped;
     indexT = skipped;

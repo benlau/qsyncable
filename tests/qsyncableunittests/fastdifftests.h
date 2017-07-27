@@ -14,6 +14,9 @@ signals:
 
 private slots:
     void test_QSImmutable_wrapper();
+
+    void test_QSFastDiffRunnerAlgo();
+
 };
 
 #endif // FASTDIFTESTS_H
