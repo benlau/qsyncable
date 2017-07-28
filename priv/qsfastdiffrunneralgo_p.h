@@ -56,8 +56,9 @@ public:
 
             while (indexF < fromSize) {
                 // Process until it found an item that remain in origianl position (neither removd / moved).
-                itemF = wrapper.convert(from.at(indexF));
-                keyF = itemF[m_keyField].toString();
+                itemF = from.at(indexF);
+                keyF = wrapper.key(itemF).toString();
+
                 state = hash[keyF]; // It mush obtain the key value
 
                 if (state.posT < 0) {
@@ -80,8 +81,8 @@ public:
             }
 
             while (indexT < toSize ) {
-                itemT = to.at(indexT).toMap();
-                keyT = itemT[m_keyField].toString();
+                itemT = to.at(indexT);
+                keyT = wrapper.key(itemT).toString();
                 state = hash[keyT];
 
                 if (state.posF < 0) {
@@ -135,7 +136,7 @@ private:
 
         for (int i = 0 ; i < max ; i++) {
             if (i >= from.size()) {
-                patches << QSPatch(QSPatch::Insert, i, i, 1, to[i].toMap());
+                patches << QSPatch(QSPatch::Insert, i, i, 1, wrapper.convert(to[i]));
             } else if (i >= to.size() ) {
                 patches << QSPatch(QSPatch::Remove, i, i, 1);
             } else {
@@ -153,16 +154,15 @@ private:
     int preprocess(const QList<T>& from, const QList<T>& to) {
         int index = 0;
         int min = qMin(from.size(), to.size());
-        QVariantMap f;
-        QVariantMap t;
+        T f;
+        T t;
 
         for (index = 0 ; index < min ;index++) {
 
-            //@TODO Fast diff
-            f = from[index].toMap();
-            t = to[index].toMap();
+            f = from[index];
+            t = to[index];
 
-            if (f[m_keyField] != t[m_keyField]) {
+            if (wrapper.key(f) != wrapper.key(t)) {
                 break;
             }
 
@@ -202,8 +202,8 @@ private:
         int toSize = to.size();
 
         for (int i = skipped; i < fromSize ; i++) {
-            item = from.at(i).toMap();
-            key = item[m_keyField].toString();
+            item = from.at(i);
+            key = wrapper.key(item).toString();
             if (hash.contains(key)) {
                 qWarning() << "QSFastDiffRunner.compare() - Duplicated or missing key.";
                 //@TODO fail back to burte force mode
@@ -214,8 +214,8 @@ private:
         }
 
         for (int i = skipped; i < toSize ; i++) {
-            item = to.at(i).toMap();
-            key = item[m_keyField].toString();
+            item = to.at(i);
+            key = wrapper.key(item).toString();
 
             if (hash.contains(key)) {
                 hash[key].posT = i;
@@ -291,18 +291,23 @@ private:
         }
 
         if (indexT < to.size() && (type == QSAlgoTypes::Move || type == QSAlgoTypes::NoMove)) {
-            QVariantMap tmpItemF = from[state.posF].toMap();
-            QVariantMap diff = compareMap(tmpItemF, itemT);
+            T tmpItemF = from[state.posF];
+            QVariantMap diff = wrapper.diff(tmpItemF, itemT);
             if (diff.size()) {
                 updatePatches << QSPatch(QSPatch::Update, indexT, indexT, 1, diff);
             }
         }
     }
 
-    static QSPatch createInsertPatch(int from, int to, const QList<T>& source ) {
+    QSPatch createInsertPatch(int from, int to, const QList<T>& source ) {
         int count = to - from + 1;
+        QVariantList list;
+        list.reserve(count);
+        for (int i = from ; i < from + count;i++) {
+            list << wrapper.convert(source[i]);
+        }
 
-        return QSPatch(QSPatch::Insert, from, to, count, source.mid(from, count));
+        return QSPatch(QSPatch::Insert, from, to, count, list);
     }
 
     void appendPatch(const QSPatch& value, bool merge = true) {
@@ -376,7 +381,7 @@ private:
     // A no. of item could be skipped found preprocess().
     int skipped;
 
-    QVariant keyF,keyT;
+    QString keyF,keyT;
 
     int indexF,indexT;
 

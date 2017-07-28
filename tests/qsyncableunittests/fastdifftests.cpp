@@ -76,7 +76,6 @@ void FastDiffTests::test_QSFastDiffRunner()
 
     QSFastDiffRunner<ImmutableType2> runner;
 
-    /* Disabled. Until the migration is completed
 
     QList<QSPatch> result = runner.compare(previous, current);
 
@@ -96,7 +95,6 @@ void FastDiffTests::test_QSFastDiffRunner()
         }
         QVERIFY(expected == real);
     }
-    */
 
     /* @TODO - apply to model */
 }
