@@ -23,6 +23,11 @@ ImmutableType2 &ImmutableType2::operator=(const ImmutableType2 &rhs)
     return *this;
 }
 
+ImmutableType2::ImmutableType2(const QString &value): data(new ImmutableType2Data)
+{
+    data->value = value;
+}
+
 ImmutableType2::~ImmutableType2()
 {
 
@@ -38,7 +43,7 @@ void ImmutableType2::setValue(const QString &value)
     data->value = value;
 }
 
-size_t ImmutableType2::immutableKey() const
+bool ImmutableType2::isSharedWith(const ImmutableType2 &other) const
 {
-    return (size_t) data.data();
+    return data == other.data;
 }

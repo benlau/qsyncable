@@ -4,10 +4,10 @@ class ImmutableType1Data : public QSharedData
 {
 public:
     ImmutableType1Data() {
-        value1 = 0;
+        value1 = "";
     }
 
-    int value1;
+    QString value1;
 
 };
 
@@ -33,17 +33,22 @@ ImmutableType1::~ImmutableType1()
 
 }
 
-int ImmutableType1::value1() const
+QString ImmutableType1::value1() const
 {
     return data->value1;
 }
 
-void ImmutableType1::setValue1(int value1)
+void ImmutableType1::setValue1(QString value1)
 {
     data->value1 = value1;
 }
 
-size_t ImmutableType1::immutableKey() const
+QVariant ImmutableType1::key() const
 {
-    return (size_t) data.data();
+    return data->value1;
+}
+
+bool ImmutableType1::isSharedWith(const ImmutableType1 &other) const
+{
+    return data == other.data;
 }

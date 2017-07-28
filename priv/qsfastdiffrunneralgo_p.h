@@ -20,7 +20,7 @@ public:
         removing = 0;
     }
 
-    QSPatchSet compare(const QVariantList& from, const QVariantList& to) {
+    QSPatchSet compare(const QList<T>& from, const QList<T>& to) {
         patches.clear();
         updatePatches.clear();
 
@@ -56,10 +56,9 @@ public:
 
             while (indexF < fromSize) {
                 // Process until it found an item that remain in origianl position (neither removd / moved).
-                itemF = from.at(indexF).toMap();
+                itemF = wrapper.convert(from.at(indexF));
                 keyF = itemF[m_keyField].toString();
                 state = hash[keyF]; // It mush obtain the key value
-
 
                 if (state.posT < 0) {
                     markItemAtFromList(QSAlgoTypes::Remove, state);
@@ -129,7 +128,7 @@ private:
         return patches;
     }
 
-    static QList<QSPatch> compareWithoutKey(const QVariantList& from, const QVariantList& to) {
+    static QList<QSPatch> compareWithoutKey(const QList<T>& from, const QList<T>& to) {
         QList<QSPatch> patches;
 
         int max = qMax(from.size(), to.size());
@@ -171,7 +170,7 @@ private:
     }
 
     // Preprocess the list, stop until the key is different. It will also handle common pattern (like append to end , remove from end)
-    int preprocess(const QVariantList& from, const QVariantList& to) {
+    int preprocess(const QList<T>& from, const QList<T>& to) {
         int index = 0;
         int min = qMin(from.size(), to.size());
         QVariantMap f;
@@ -319,7 +318,7 @@ private:
         }
     }
 
-    static QSPatch createInsertPatch(int from, int to, const QVariantList& source ) {
+    static QSPatch createInsertPatch(int from, int to, const QList<T>& source ) {
         int count = to - from + 1;
 
         return QSPatch(QSPatch::Insert, from, to, count, source.mid(from, count));
@@ -369,9 +368,11 @@ private:
         }
     }
 
-    QVariantList from;
+    QSImmutableWrapper<T> wrapper;
 
-    QVariantList to;
+    QList<T> from;
+
+    QList<T> to;
 
     // Stored patches (without any update patches)
     QList<QSPatch> patches;

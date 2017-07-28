@@ -6,7 +6,7 @@ class QSImmutableWrapper {
 
 public:
     inline bool fastCompare(const T& v1, const T& v2) const {
-        return v1.immutableKey() == v2.immutableKey();
+        return v1.isSharedWith(v2);
     }
 
     inline QVariantMap convert(const T& object) {
@@ -22,6 +22,11 @@ public:
         }
 
         return data;
+    }
+
+    inline bool hasKey() {
+        const QMetaObject meta = T::staticMetaObject;
+        return meta.indexOfMethod("key()") >= 0;
     }
 };
 

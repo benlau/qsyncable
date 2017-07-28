@@ -3,13 +3,14 @@
 
 #include <QObject>
 #include <QSharedDataPointer>
+#include <QVariant>
 
 class ImmutableType1Data;
 
 class ImmutableType1
 {
     Q_GADGET
-    Q_PROPERTY(int value1 READ value1 WRITE setValue1)
+    Q_PROPERTY(QString value1 READ value1 WRITE setValue1)
 
 public:
     ImmutableType1();
@@ -17,11 +18,13 @@ public:
     ImmutableType1 &operator=(const ImmutableType1 &);
     ~ImmutableType1();
 
-    size_t immutableKey() const;
+    bool isSharedWith(const ImmutableType1& other) const;
 
-    int value1() const;
+    QString value1() const;
 
-    void setValue1(int value1);
+    void setValue1(QString value1);
+
+    Q_INVOKABLE QVariant key() const;
 
 private:
     QSharedDataPointer<ImmutableType1Data> data;
