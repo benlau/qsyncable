@@ -6,7 +6,7 @@ template <typename T>
 class QSImmutableWrapper {
 
 public:
-    inline bool fastCompare(const T& v1, const T& v2) const {
+    inline bool isShared(const T& v1, const T& v2) const {
         return v1.isSharedWith(v2);
     }
 
@@ -72,12 +72,19 @@ public:
 
         return res;
     }
+
+    QVariantMap fastDiff(const T& v1, const T& v2) {
+        if (isShared(v1,v2)) {
+            return QVariantMap();
+        }
+        return diff(v1, v2);
+    }
 };
 
 template<>
 class QSImmutableWrapper<QVariantMap> {
 public:
-    inline bool fastCompare(const QVariantMap& v1, const QVariantMap& v2) const {
+    inline bool isShared(const QVariantMap& v1, const QVariantMap& v2) const {
         Q_UNUSED(v1);
         Q_UNUSED(v2);
         /// QVariantMap do not support fast compare

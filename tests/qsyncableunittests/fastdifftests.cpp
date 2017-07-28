@@ -29,9 +29,9 @@ void FastDiffTests::test_QSImmutable_wrapper()
         ImmutableType1 v1, v2;
         ImmutableType3 v3;
 
-        QVERIFY(!wrapper1.fastCompare(v1,v2));
+        QVERIFY(!wrapper1.isShared(v1,v2));
         v1 = v2;
-        QVERIFY(wrapper1.fastCompare(v1,v2));
+        QVERIFY(wrapper1.isShared(v1,v2));
 
         v1.setValue("a");
         QVariantMap map = wrapper1.convert(v1);
@@ -55,10 +55,10 @@ void FastDiffTests::test_QSImmutable_wrapper()
     {
         QSImmutableWrapper<QVariantMap> wrapper;
         QVariantMap v1, v2;
-        QVERIFY(!wrapper.fastCompare(v1,v2));
+        QVERIFY(!wrapper.isShared(v1,v2));
         v1 = v2;
         // QVariantMap do not support fastCompare
-        QVERIFY(!wrapper.fastCompare(v1,v2));
+        QVERIFY(!wrapper.isShared(v1,v2));
 
         v1["value1"] = 10;
         QVariantMap map = wrapper.convert(v1);
@@ -75,13 +75,13 @@ void FastDiffTests::test_QSFastDiffRunnerAlgo()
 
 void FastDiffTests::test_QSFastDiffRunner()
 {
-    QFETCH(QList<ImmutableType2>, previous);
-    QFETCH(QList<ImmutableType2>, current);
+    QFETCH(QList<ImmutableType1>, previous);
+    QFETCH(QList<ImmutableType1>, current);
     QFETCH(QList<QSPatch>, changes);
 
     QList<QSPatch> expectedChanges = changes;
 
-    QSFastDiffRunner<ImmutableType2> runner;
+    QSFastDiffRunner<ImmutableType1> runner;
 
 
     QList<QSPatch> result = runner.compare(previous, current);
@@ -97,8 +97,8 @@ void FastDiffTests::test_QSFastDiffRunner()
         QSPatch expected = changes.at(i);
         QSPatch real = result.at(i);
         if (!(expected == real))  {
-            qDebug() << expectedChanges;
-            qDebug() << result;
+            qDebug() << "Expected" << expectedChanges;
+            qDebug() << "Actual" << result;
         }
         QVERIFY(expected == real);
     }
@@ -108,15 +108,15 @@ void FastDiffTests::test_QSFastDiffRunner()
 
 void FastDiffTests::test_QSFastDiffRunner_data()
 {
-    QTest::addColumn<QList<ImmutableType2>>("previous");
-    QTest::addColumn<QList<ImmutableType2>>("current");
+    QTest::addColumn<QList<ImmutableType1>>("previous");
+    QTest::addColumn<QList<ImmutableType1>>("current");
     QTest::addColumn<QList<QSPatch> >("changes");
 
-    QList<ImmutableType2> previous;
-    QList<ImmutableType2> current;
+    QList<ImmutableType1> previous;
+    QList<ImmutableType1> current;
     QList<QSPatch> changes;
 
-    ImmutableType2 a,b,c,d,e,f;
+    ImmutableType1 a,b,c,d,e,f;
     a.setValue("a");
     b.setValue("b");
     c.setValue("c");
@@ -124,10 +124,17 @@ void FastDiffTests::test_QSFastDiffRunner_data()
     e.setValue("e");
     f.setValue("f");
 
+    /* End of preparation */
+
     previous << a << b << c;
     current << a << b << c;
 
     QTest::newRow("No Changes") << previous << current << changes;
 
+    previous.clear();current.clear();changes.clear();
+    previous << a << b << c;
+    current << b << c;
+    changes << QSPatch(QSPatch::Remove, 0, 0, 1);
+    QTest::newRow("Remove first element") << previous << current << changes;
 
 }

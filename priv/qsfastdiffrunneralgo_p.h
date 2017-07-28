@@ -140,7 +140,7 @@ private:
             } else if (i >= to.size() ) {
                 patches << QSPatch(QSPatch::Remove, i, i, 1);
             } else {
-                QVariantMap diff = wrapper.diff(from[i], to[i]);
+                QVariantMap diff = wrapper.fastDiff(from[i], to[i]);
                 if (diff.size()) {
                     patches << QSPatch(QSPatch::Update, i, i, 1, diff);
                 }
@@ -162,11 +162,15 @@ private:
             f = from[index];
             t = to[index];
 
+            if (wrapper.isShared(f, t)) {
+                continue;
+            }
+
             if (wrapper.key(f) != wrapper.key(t)) {
                 break;
             }
 
-            QVariantMap diff = wrapper.diff(f,t);
+            QVariantMap diff = wrapper.fastDiff(f,t);
             if (diff.size()) {
                 //@TODO reserve in block size
                 updatePatches << QSPatch::createUpdate(index, diff);
@@ -292,7 +296,7 @@ private:
 
         if (indexT < to.size() && (type == QSAlgoTypes::Move || type == QSAlgoTypes::NoMove)) {
             T tmpItemF = from[state.posF];
-            QVariantMap diff = wrapper.diff(tmpItemF, itemT);
+            QVariantMap diff = wrapper.fastDiff(tmpItemF, itemT);
             if (diff.size()) {
                 updatePatches << QSPatch(QSPatch::Update, indexT, indexT, 1, diff);
             }
