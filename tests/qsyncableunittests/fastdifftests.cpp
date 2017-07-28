@@ -37,6 +37,12 @@ void FastDiffTests::test_QSImmutable_wrapper()
         QCOMPARE(wrapper2.hasKey(), false);
 
         QCOMPARE(wrapper1.key(v1).toString(), QString("a"));
+
+        v2.setValue("b");
+        QVariantMap diff = wrapper1.diff(v1,v2);
+        QCOMPARE(diff.size(), 1);
+        QCOMPARE(diff["value"].toString(), QString("b"));
+
     }
 
     {

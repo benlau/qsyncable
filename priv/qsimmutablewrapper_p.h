@@ -42,6 +42,25 @@ public:
         method.invokeOnGadget((void*) &value, Q_RETURN_ARG(QVariant, ret));
         return ret;
     }
+
+    QVariantMap diff(const T& v1, const T& v2) {
+        auto prev = convert(v1);
+        auto current = convert(v2);
+
+        QVariantMap res;
+        QMap<QString, QVariant>::const_iterator iter = current.begin();
+
+        while (iter != current.end()) {
+            QString key = iter.key();
+            if (!prev.contains(key) ||
+                 prev[key] != iter.value()) {
+                res[key] = iter.value();
+            }
+            iter++;
+        }
+
+        return res;
+    }
 };
 
 template<>

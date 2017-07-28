@@ -27,7 +27,7 @@ public:
         this->from = from;
         this->to = to;
 
-        if (m_keyField.isEmpty()) {
+        if (!wrapper.hasKey()) {
             return compareWithoutKey(from, to);
         }
 
@@ -41,7 +41,7 @@ public:
         }
 
         buildHashTable();
-        //@TODO - Discover duplicated key
+        //@TODO - Discover duplicated key. It should fallback to use compareWithoutKey
 
         indexF = skipped;
         indexT = skipped;
@@ -128,7 +128,7 @@ private:
         return patches;
     }
 
-    static QList<QSPatch> compareWithoutKey(const QList<T>& from, const QList<T>& to) {
+    QList<QSPatch> compareWithoutKey(const QList<T>& from, const QList<T>& to) {
         QList<QSPatch> patches;
 
         int max = qMax(from.size(), to.size());
@@ -139,7 +139,7 @@ private:
             } else if (i >= to.size() ) {
                 patches << QSPatch(QSPatch::Remove, i, i, 1);
             } else {
-                QVariantMap diff = compareMap(from[i].toMap(), to[i].toMap());
+                QVariantMap diff = wrapper.diff(from[i], to[i]);
                 if (diff.size()) {
                     patches << QSPatch(QSPatch::Update, i, i, 1, diff);
                 }
@@ -147,26 +147,6 @@ private:
         }
 
         return patches;
-    }
-
-    static QVariantMap compareMap(const QVariantMap& prev, const QVariantMap& current) {
-        // To make this function faster, it won't track removed fields from prev.
-        // Clear a field to null value should set it explicitly.
-
-        QVariantMap diff;
-
-        QMap<QString, QVariant>::const_iterator iter = current.begin();
-
-        while (iter != current.end()) {
-            QString key = iter.key();
-            if (!prev.contains(key) ||
-                 prev[key] != iter.value()) {
-                diff[key] = iter.value();
-            }
-            iter++;
-        }
-
-        return diff;
     }
 
     // Preprocess the list, stop until the key is different. It will also handle common pattern (like append to end , remove from end)
@@ -178,6 +158,7 @@ private:
 
         for (index = 0 ; index < min ;index++) {
 
+            //@TODO Fast diff
             f = from[index].toMap();
             t = to[index].toMap();
 
@@ -185,7 +166,7 @@ private:
                 break;
             }
 
-            QVariantMap diff = compareMap(f,t);
+            QVariantMap diff = wrapper.diff(f,t);
             if (diff.size()) {
                 //@TODO reserve in block size
                 updatePatches << QSPatch::createUpdate(index, diff);
@@ -215,7 +196,7 @@ private:
         hash.reserve( (qMax(to.size(), from.size()) - skipped) * 2 + 100);
 
         QSAlgoTypes::State state;
-        QVariantMap item;
+        T item;
         QString key;
         int fromSize = from.size();
         int toSize = to.size();
@@ -395,11 +376,11 @@ private:
     // A no. of item could be skipped found preprocess().
     int skipped;
 
-    QString keyF,keyT;
+    QVariant keyF,keyT;
 
     int indexF,indexT;
 
-    QVariantMap itemF,itemT;
+    T itemF,itemT;
 
     /* Move Patches */
     QSAlgoTypes::MoveOp pendingMovePatch;
