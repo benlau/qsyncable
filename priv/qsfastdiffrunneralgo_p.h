@@ -110,14 +110,6 @@ public:
         return combine();
     }
 
-    QString keyField() const {
-        return m_keyField;
-    }
-
-    void setKeyField(const QString &keyField) {
-        m_keyField = keyField;
-    }
-
 private:
 
     // Combine all the processing patches into a single list. It will clear the processing result too.
@@ -396,7 +388,4 @@ private:
 
     // Tree of move patch
     QSTree tree;
-
-    QString m_keyField;
-
 };

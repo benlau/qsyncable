@@ -32,12 +32,12 @@ ImmutableType1::~ImmutableType1()
 
 }
 
-QString ImmutableType1::value() const
+QString ImmutableType1::id() const
 {
     return data->value;
 }
 
-void ImmutableType1::setValue(QString value1)
+void ImmutableType1::setId(QString value1)
 {
     data->value = value1;
 }

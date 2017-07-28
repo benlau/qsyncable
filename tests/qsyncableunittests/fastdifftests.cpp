@@ -33,9 +33,9 @@ void FastDiffTests::test_QSImmutable_wrapper()
         v1 = v2;
         QVERIFY(wrapper1.isShared(v1,v2));
 
-        v1.setValue("a");
+        v1.setId("a");
         QVariantMap map = wrapper1.convert(v1);
-        QVERIFY(map["value"] == v1.value());
+        QVERIFY(map["id"] == v1.id());
 
         QCOMPARE(wrapper1.hasKey(), true);
         QCOMPARE(wrapper2.hasKey(), false);
@@ -45,10 +45,10 @@ void FastDiffTests::test_QSImmutable_wrapper()
         QCOMPARE(wrapper1.key(v1), QString("a"));
         QCOMPARE(wrapper3.key(v3), QString("10"));
 
-        v2.setValue("b");
+        v2.setId("b");
         QVariantMap diff = wrapper1.diff(v1,v2);
         QCOMPARE(diff.size(), 1);
-        QCOMPARE(diff["value"].toString(), QString("b"));
+        QCOMPARE(diff["id"].toString(), QString("b"));
 
     }
 
@@ -116,13 +116,24 @@ void FastDiffTests::test_QSFastDiffRunner_data()
     QList<ImmutableType1> current;
     QList<QSPatch> changes;
 
+    QSPatch c1;
+
     ImmutableType1 a,b,c,d,e,f;
-    a.setValue("a");
-    b.setValue("b");
-    c.setValue("c");
-    d.setValue("d");
-    e.setValue("e");
-    f.setValue("f");
+    a.setId("a");
+    b.setId("b");
+    c.setId("c");
+    d.setId("d");
+    e.setId("e");
+    f.setId("f");
+
+    auto convertList = [](QList<ImmutableType1> list) {
+        QVariantList res;
+        QSImmutableWrapper<ImmutableType1> wrapper;
+        for (int i = 0 ; i < list.size();i++) {
+            res << wrapper.convert(list[i]);
+        }
+        return res;
+    };
 
     /* End of preparation */
 
@@ -137,4 +148,24 @@ void FastDiffTests::test_QSFastDiffRunner_data()
     changes << QSPatch(QSPatch::Remove, 0, 0, 1);
     QTest::newRow("Remove first element") << previous << current << changes;
 
+    /* Remove all element */
+    previous.clear();current.clear();changes.clear();
+    c1 = QSPatch();
+    previous << a << b << c;
+    changes << QSPatch(QSPatch::Remove, 0, 2, 3);
+    QTest::newRow("Remove all element") << previous << current << changes;
+
+    /* Remove two elements from different position*/
+    previous.clear();current.clear();changes.clear();
+    previous << a << b << c << d << e;
+    current << a << c << e;
+    changes << QSPatch(QSPatch::Remove, 1, 1, 1)
+            << QSPatch(QSPatch::Remove, 2, 2, 1);
+    QTest::newRow("Remove two elements from different position") << previous << current << changes;
+
+    previous.clear();current.clear();changes.clear();
+
+    current << a << b << c;
+    changes << QSPatch(QSPatch::Insert,0,2,3, convertList(QList<ImmutableType1>() << a << b << c));
+    QTest::newRow("Add 3 elements to empty list") << previous << current << changes;
 }
