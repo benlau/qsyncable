@@ -29,12 +29,14 @@ void FastDiffTests::test_QSImmutable_wrapper()
         v1 = v2;
         QVERIFY(wrapper1.fastCompare(v1,v2));
 
-        v1.setValue1("a");
+        v1.setValue("a");
         QVariantMap map = wrapper1.convert(v1);
-        QVERIFY(map["value1"] == v1.value1());
+        QVERIFY(map["value"] == v1.value());
 
         QCOMPARE(wrapper1.hasKey(), true);
         QCOMPARE(wrapper2.hasKey(), false);
+
+        QCOMPARE(wrapper1.key(v1).toString(), QString("a"));
     }
 
     {

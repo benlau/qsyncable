@@ -33,12 +33,12 @@ ImmutableType1::~ImmutableType1()
 
 }
 
-QString ImmutableType1::value1() const
+QString ImmutableType1::value() const
 {
     return data->value1;
 }
 
-void ImmutableType1::setValue1(QString value1)
+void ImmutableType1::setValue(QString value1)
 {
     data->value1 = value1;
 }

@@ -10,7 +10,7 @@ class ImmutableType1Data;
 class ImmutableType1
 {
     Q_GADGET
-    Q_PROPERTY(QString value1 READ value1 WRITE setValue1)
+    Q_PROPERTY(QString value READ value WRITE setValue)
 
 public:
     ImmutableType1();
@@ -20,9 +20,9 @@ public:
 
     bool isSharedWith(const ImmutableType1& other) const;
 
-    QString value1() const;
+    QString value() const;
 
-    void setValue1(QString value1);
+    void setValue(QString value);
 
     Q_INVOKABLE QVariant key() const;
 

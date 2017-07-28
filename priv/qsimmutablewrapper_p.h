@@ -1,5 +1,6 @@
 #pragma once
 #include <QVariantMap>
+#include <QMetaMethod>
 
 template <typename T>
 class QSImmutableWrapper {
@@ -27,6 +28,19 @@ public:
     inline bool hasKey() {
         const QMetaObject meta = T::staticMetaObject;
         return meta.indexOfMethod("key()") >= 0;
+    }
+
+    QVariant key(const T& value) {
+        QVariant ret;
+        const QMetaObject meta = T::staticMetaObject;
+        int index = meta.indexOfMethod("key()");
+        if (index < 0) {
+            return ret;
+        }
+
+        QMetaMethod method = meta.method(index);
+        method.invokeOnGadget((void*) &value, Q_RETURN_ARG(QVariant, ret));
+        return ret;
     }
 };
 
