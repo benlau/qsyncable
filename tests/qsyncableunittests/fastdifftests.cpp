@@ -125,10 +125,10 @@ void FastDiffTests::test_QSFastDiffRunner_data()
     d.setId("d");
     e.setId("e");
     f.setId("f");
+    QSImmutableWrapper<ImmutableType1> wrapper;
 
-    auto convertList = [](QList<ImmutableType1> list) {
+    auto convertList = [&wrapper](QList<ImmutableType1> list) {
         QVariantList res;
-        QSImmutableWrapper<ImmutableType1> wrapper;
         for (int i = 0 ; i < list.size();i++) {
             res << wrapper.convert(list[i]);
         }
@@ -168,4 +168,103 @@ void FastDiffTests::test_QSFastDiffRunner_data()
     current << a << b << c;
     changes << QSPatch(QSPatch::Insert,0,2,3, convertList(QList<ImmutableType1>() << a << b << c));
     QTest::newRow("Add 3 elements to empty list") << previous << current << changes;
+
+    /* Add new element to end */
+
+    previous.clear();current.clear();changes.clear();
+    previous << a << b << c;
+    current << a << b << c << d;
+    changes << QSPatch(QSPatch::Insert, 3, 3, 1, wrapper.convert(d));
+    QTest::newRow("Add new element to end") << previous << current << changes;
+
+    /* Add 2 elements to middle */
+
+    previous.clear();current.clear();changes.clear();
+    previous << a << b;
+    current << a << c << d << b;
+    changes << QSPatch(QSPatch::Insert, 1, 2, 2, convertList(QList<ImmutableType1>() << c << d));
+    QTest::newRow("Add 2 elements to middle") << previous << current << changes;
+
+    /* Add 2 elements to differnt block */
+
+    previous.clear();current.clear();changes.clear();
+    previous << a << b << c;
+    current << a << d << b << e << c;
+    changes << QSPatch(QSPatch::Insert, 1, 1, 1, wrapper.convert(d))
+            << QSPatch(QSPatch::Insert, 3, 3, 1, wrapper.convert(e));
+    QTest::newRow("Add 2 elements to differnt block") << previous << current << changes;
+
+    /* Move from last to first */
+    previous.clear();
+    previous << a << b << c;
+    current.clear();
+    current << c << a << b;
+    changes.clear();
+    changes << QSPatch(QSPatch::Move,2,0,1);
+
+    QTest::newRow("Move from last to first") << previous << current << changes;
+
+
+    /* Move 2 from first to last */
+    previous.clear();
+    previous << a << b << c;
+    current.clear();
+    current << c << a << b;
+    changes.clear();
+    changes << QSPatch(QSPatch::Move,2,0,1);
+
+    QTest::newRow("Move 2 from first to last") << previous << current << changes;
+
+    /* Move 2 from last to first */
+    previous.clear();
+    previous << a << b << c;
+    current.clear();
+    current << b << c << a;
+    changes.clear();
+    changes << QSPatch(QSPatch::Move,1,0,2);
+
+    QTest::newRow("Move 2 from last to first") << previous << current << changes;
+
+    /* Move 2 from last to middle */
+    previous.clear();
+    previous << a << b << c << d;
+    current.clear();
+    current << a << c << d << b;
+    changes.clear();
+    changes << QSPatch(QSPatch::Move,2,1,2);
+
+    QTest::newRow("Move 2 from last to middle") << previous << current << changes;
+
+    /* Remove, Insert, Move */
+    previous.clear();
+    current.clear();
+    changes.clear();
+
+    previous << a << b << c << d << e;
+    current << a << f << d << e << c;
+    changes << QSPatch(QSPatch::Remove,1,1,1)
+            << QSPatch(QSPatch::Insert,1,1,1,wrapper.convert(f))
+            << QSPatch(QSPatch::Move,3,2,2);
+    QTest::newRow("Remove, Insert, Move") << previous << current << changes;
+
+    /* Update 2 elements */
+
+    changes.clear();
+    previous.clear();
+    previous << a << b << c;
+    a.setValue("a");
+    b.setValue("b");
+    current.clear();
+    current << a << b << c;
+
+    QVariantMap tmp;
+    tmp["value"] = "a";
+
+    changes.clear();
+    changes << QSPatch(QSPatch::Update,0,0,1,tmp);
+
+    tmp["value"] = "b";
+    changes  << QSPatch(QSPatch::Update,1,1,1,tmp);
+
+    QTest::newRow("Update 2 elements") << previous << current << changes;
 }

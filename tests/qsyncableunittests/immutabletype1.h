@@ -11,6 +11,7 @@ class ImmutableType1
 {
     Q_GADGET
     Q_PROPERTY(QString id READ id WRITE setId)
+    Q_PROPERTY(QString value READ value WRITE setValue)
 
 public:
     ImmutableType1();
@@ -25,6 +26,9 @@ public:
     void setId(QString id);
 
     Q_INVOKABLE QString key() const;
+
+    QString value() const;
+    void setValue(const QString &value);
 
 private:
     QSharedDataPointer<ImmutableType1Data> data;

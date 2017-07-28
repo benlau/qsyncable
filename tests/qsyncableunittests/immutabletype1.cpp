@@ -6,6 +6,7 @@ public:
     ImmutableType1Data() {
     }
 
+    QString id;
     QString value;
 
 };
@@ -34,17 +35,27 @@ ImmutableType1::~ImmutableType1()
 
 QString ImmutableType1::id() const
 {
-    return data->value;
+    return data->id;
 }
 
 void ImmutableType1::setId(QString value1)
 {
-    data->value = value1;
+    data->id = value1;
 }
 
 QString ImmutableType1::key() const
 {
+    return data->id;
+}
+
+QString ImmutableType1::value() const
+{
     return data->value;
+}
+
+void ImmutableType1::setValue(const QString &value)
+{
+    data->value = value;
 }
 
 bool ImmutableType1::isSharedWith(const ImmutableType1 &other) const
