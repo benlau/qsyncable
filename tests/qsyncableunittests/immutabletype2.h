@@ -7,6 +7,7 @@
 
 class ImmutableType2Data;
 
+/// Immutable type without key
 class ImmutableType2
 {
     Q_GADGET

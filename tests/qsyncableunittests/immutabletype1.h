@@ -24,7 +24,7 @@ public:
 
     void setValue(QString value);
 
-    Q_INVOKABLE QVariant key() const;
+    Q_INVOKABLE QString key() const;
 
 private:
     QSharedDataPointer<ImmutableType1Data> data;

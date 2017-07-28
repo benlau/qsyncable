@@ -4,6 +4,7 @@
 #include "fastdifftests.h"
 #include "priv/qsimmutablewrapper_p.h"
 #include "priv/qsfastdiffrunneralgo_p.h"
+#include "immutabletype3.h"
 #include "qsfastdiffrunner.h"
 
 FastDiffTests::FastDiffTests(QObject *parent) : QObject(parent)
@@ -23,8 +24,11 @@ void FastDiffTests::test_QSImmutable_wrapper()
     {
         QSImmutableWrapper<ImmutableType1> wrapper1;
         QSImmutableWrapper<ImmutableType2> wrapper2;
+        QSImmutableWrapper<ImmutableType3> wrapper3;
 
         ImmutableType1 v1, v2;
+        ImmutableType3 v3;
+
         QVERIFY(!wrapper1.fastCompare(v1,v2));
         v1 = v2;
         QVERIFY(wrapper1.fastCompare(v1,v2));
@@ -36,7 +40,10 @@ void FastDiffTests::test_QSImmutable_wrapper()
         QCOMPARE(wrapper1.hasKey(), true);
         QCOMPARE(wrapper2.hasKey(), false);
 
-        QCOMPARE(wrapper1.key(v1).toString(), QString("a"));
+        v3.setValue(10);
+
+        QCOMPARE(wrapper1.key(v1), QString("a"));
+        QCOMPARE(wrapper3.key(v3), QString("10"));
 
         v2.setValue("b");
         QVariantMap diff = wrapper1.diff(v1,v2);

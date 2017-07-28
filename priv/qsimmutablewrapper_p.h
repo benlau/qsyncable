@@ -30,8 +30,8 @@ public:
         return meta.indexOfMethod("key()") >= 0;
     }
 
-    QVariant key(const T& value) {
-        QVariant ret;
+    QString key(const T& value) {
+        QString ret;
         const QMetaObject meta = T::staticMetaObject;
         int index = meta.indexOfMethod("key()");
         if (index < 0) {
@@ -39,7 +39,18 @@ public:
         }
 
         QMetaMethod method = meta.method(index);
-        method.invokeOnGadget((void*) &value, Q_RETURN_ARG(QVariant, ret));
+
+        if (method.returnType() == QVariant::Int) {
+            int iRet;
+            method.invokeOnGadget((void*) &value, Q_RETURN_ARG(int, iRet));
+            ret = QString::number(iRet);
+
+        } else if (method.returnType() == QVariant::String) {
+            method.invokeOnGadget((void*) &value, Q_RETURN_ARG(QString, ret));
+        } else {
+            qWarning() << "QSyncable::Invalid key type";
+        }
+
         return ret;
     }
 

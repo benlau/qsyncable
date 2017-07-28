@@ -14,7 +14,8 @@ SOURCES += \
     integrationtests.cpp \
     fastdifftests.cpp \
     immutabletype1.cpp \
-    immutabletype2.cpp
+    immutabletype2.cpp \
+    immutabletype3.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 
@@ -24,7 +25,8 @@ HEADERS += \
     integrationtests.h \
     fastdifftests.h \
     immutabletype1.h \
-    immutabletype2.h
+    immutabletype2.h \
+    immutabletype3.h
 
 include(vendor/vendor.pri)
 include(../../qsyncable.pri)

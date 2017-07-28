@@ -42,7 +42,7 @@ void ImmutableType1::setValue(QString value1)
     data->value = value1;
 }
 
-QVariant ImmutableType1::key() const
+QString ImmutableType1::key() const
 {
     return data->value;
 }

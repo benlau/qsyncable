@@ -57,7 +57,7 @@ public:
             while (indexF < fromSize) {
                 // Process until it found an item that remain in origianl position (neither removd / moved).
                 itemF = from.at(indexF);
-                keyF = wrapper.key(itemF).toString();
+                keyF = wrapper.key(itemF);
 
                 state = hash[keyF]; // It mush obtain the key value
 
@@ -82,7 +82,7 @@ public:
 
             while (indexT < toSize ) {
                 itemT = to.at(indexT);
-                keyT = wrapper.key(itemT).toString();
+                keyT = wrapper.key(itemT);
                 state = hash[keyT];
 
                 if (state.posF < 0) {
@@ -203,7 +203,7 @@ private:
 
         for (int i = skipped; i < fromSize ; i++) {
             item = from.at(i);
-            key = wrapper.key(item).toString();
+            key = wrapper.key(item);
             if (hash.contains(key)) {
                 qWarning() << "QSFastDiffRunner.compare() - Duplicated or missing key.";
                 //@TODO fail back to burte force mode
@@ -215,7 +215,7 @@ private:
 
         for (int i = skipped; i < toSize ; i++) {
             item = to.at(i);
-            key = wrapper.key(item).toString();
+            key = wrapper.key(item);
 
             if (hash.contains(key)) {
                 hash[key].posT = i;
