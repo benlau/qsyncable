@@ -1,4 +1,5 @@
 #include <QTest>
+#include <qslistmodel.h>
 #include "immutabletype1.h"
 #include "immutabletype2.h"
 #include "fastdifftests.h"
@@ -7,9 +8,22 @@
 #include "immutabletype3.h"
 #include "qsfastdiffrunner.h"
 
+template <typename T>
+QVariantList convertList(QList<T> list) {
+    QSImmutableWrapper<T> wrapper;
+    QVariantList res;
+    for (int i = 0 ; i < list.size();i++) {
+        res << wrapper.convert(list[i]);
+    }
+    return res;
+};
+
 FastDiffTests::FastDiffTests(QObject *parent) : QObject(parent)
 {
-
+    auto ref = [=]() {
+          QTest::qExec(this, 0, 0); // Autotest detect available test cases of a QObject by looking for "QTest::qExec" in source code
+    };
+    Q_UNUSED(ref);
 }
 
 void FastDiffTests::test_QSImmutable_wrapper()
@@ -55,22 +69,20 @@ void FastDiffTests::test_QSImmutable_wrapper()
     {
         QSImmutableWrapper<QVariantMap> wrapper;
         QVariantMap v1, v2;
+        v1["value1"] = 9;
         QVERIFY(!wrapper.isShared(v1,v2));
         v1 = v2;
-        // QVariantMap do not support fastCompare
-        QVERIFY(!wrapper.isShared(v1,v2));
+        QVERIFY(wrapper.isShared(v1,v2));
 
         v1["value1"] = 10;
         QVariantMap map = wrapper.convert(v1);
         QVERIFY(map == v1);
+
+        QVERIFY(!wrapper.hasKey());
+        wrapper.keyField = "value1";
+        QVERIFY(wrapper.hasKey());
+        QCOMPARE(wrapper.key(v1), QString::number(10));
     }
-}
-
-void FastDiffTests::test_QSFastDiffRunnerAlgo()
-{
-    QSFastDiffRunnerAlgo<QVariantMap> algo;
-    Q_UNUSED(algo);
-
 }
 
 void FastDiffTests::test_QSFastDiffRunner()
@@ -84,26 +96,39 @@ void FastDiffTests::test_QSFastDiffRunner()
     QSFastDiffRunner<ImmutableType1> runner;
 
 
-    QList<QSPatch> result = runner.compare(previous, current);
+    QList<QSPatch> patches = runner.compare(previous, current);
 
-    if (changes.size() != result.size()) {
+    if (changes.size() != patches.size()) {
         qDebug() << expectedChanges;
-        qDebug() << result;
+        qDebug() << patches;
     }
 
-    QCOMPARE(expectedChanges.size(), result.size());
+    QCOMPARE(expectedChanges.size(), patches.size());
 
     for (int i = 0; i < changes.size(); i++) {
         QSPatch expected = changes.at(i);
-        QSPatch real = result.at(i);
+        QSPatch real = patches.at(i);
         if (!(expected == real))  {
             qDebug() << "Expected" << expectedChanges;
-            qDebug() << "Actual" << result;
+            qDebug() << "Actual" << patches;
         }
         QVERIFY(expected == real);
     }
 
-    /* @TODO - apply to model */
+    QSListModel model;
+    model.setStorage(convertList(previous));
+
+    runner.patch(&model, patches);
+
+    QVariant currentList = convertList(current);
+    if (currentList != model.storage()) {
+        qDebug() << "from" << convertList(previous);
+        qDebug() << "to" << currentList;
+        qDebug() << patches;
+    }
+
+    QVERIFY(currentList == model.storage());
+
 }
 
 void FastDiffTests::test_QSFastDiffRunner_data()
@@ -126,14 +151,6 @@ void FastDiffTests::test_QSFastDiffRunner_data()
     e.setId("e");
     f.setId("f");
     QSImmutableWrapper<ImmutableType1> wrapper;
-
-    auto convertList = [&wrapper](QList<ImmutableType1> list) {
-        QVariantList res;
-        for (int i = 0 ; i < list.size();i++) {
-            res << wrapper.convert(list[i]);
-        }
-        return res;
-    };
 
     /* End of preparation */
 

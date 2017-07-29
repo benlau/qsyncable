@@ -18,6 +18,8 @@ SOURCES += \
     immutabletype3.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
+DEFINES += QUICK_TEST_SOURCE_DIR=\\\"$$PWD\\\"
+
 
 HEADERS += \
     qsyncabletests.h \

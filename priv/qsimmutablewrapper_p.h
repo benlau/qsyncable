@@ -85,13 +85,58 @@ template<>
 class QSImmutableWrapper<QVariantMap> {
 public:
     inline bool isShared(const QVariantMap& v1, const QVariantMap& v2) const {
-        Q_UNUSED(v1);
-        Q_UNUSED(v2);
-        /// QVariantMap do not support fast compare
-        return false;
+        return v1.isSharedWith(v2);
     }
 
     inline QVariantMap convert(const QVariantMap& object) {
         return object;
     }
+
+    QVariantMap diff(const QVariantMap& v1, const QVariantMap& v2) {
+        auto prev = v1;
+        auto current = v2;
+
+        QVariantMap res;
+        QMap<QString, QVariant>::const_iterator iter = current.begin();
+
+        while (iter != current.end()) {
+            QString key = iter.key();
+            if (!prev.contains(key) ||
+                 prev[key] != iter.value()) {
+                res[key] = iter.value();
+            }
+            iter++;
+        }
+
+        return res;
+    }
+
+    QVariantMap fastDiff(const QVariantMap& v1, const QVariantMap& v2) {
+        if (isShared(v1,v2)) {
+            return QVariantMap();
+        }
+        return diff(v1, v2);
+    }
+
+    bool hasKey() {
+        return !keyField.isNull();
+    }
+
+    QString key(const QVariantMap& object) {
+        if (keyField.isNull()) {
+            return QString();
+        }
+
+        QString res;
+        QVariant value = object[keyField];
+        if (value.type() == QVariant::Int) {
+            res = QString::number(value.toInt());
+        } else if (value.type() == QVariant::String) {
+            res = value.toString();
+        }
+        return res;
+    }
+
+    QString keyField;
+
 };
