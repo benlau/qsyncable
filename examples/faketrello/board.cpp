@@ -109,9 +109,10 @@ void Board::removeCard(const QString& listUuid, const QString& cardUuid)
     }
 }
 
-void Board::load()
-{
+// NPM: original version of load(), now invoked from load() if persistence file missing or malformed
+void Board::failsafeLoad() {
     List list1 = list();
+
     list1 << card()
           << card()
           << card();
@@ -120,6 +121,55 @@ void Board::load()
     list2 << card() << card() << card() << card() << card();
 
     d->lists << list1 << list2;
+}
+
+// NPM: load persisted JSON board, or call failsafeload() above if first run or malformed persistence file.
+// see https://github.com/benlau/qsyncable/issues/2
+void Board::load(const QString& persistFilePath)
+{
+    QFile file(persistFilePath);
+    if(!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "NOTE: using default board because no persistence file found: "<< persistFilePath;
+        Board::failsafeLoad();
+    }
+    else {
+        QTextStream stream (&file);
+        QString text = stream.readAll();
+        file.close();
+
+        QJsonParseError error;
+        QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8(), &error);
+
+        if (error.error != QJsonParseError::NoError) {
+            qWarning() << "JSON::parse() error: "<< error.errorString();
+            qWarning() << "NOTE: using default board because persistence file is malformed: "<< persistFilePath;
+            Board::failsafeLoad();
+        }
+        else {
+            QVariantMap     map        = doc.object().toVariantMap();
+            QList<QVariant> lists      = map.value("lists").toList();
+            int             listsCount = lists.size();
+            for (int listsIdx = 0 ; listsIdx < listsCount ; listsIdx++) {
+                QMap<QString,QVariant> listsMap  = lists[listsIdx].toMap();
+                QString                listName  = listsMap.value("title").toString();
+                QList<QVariant>        listCards = listsMap.value("cards").toList();
+                int                    listNum   = listName.mid(5).toInt(); //"List %1" --> "%1"
+                if (d->nextListId <= listNum)
+                    d->nextListId = listNum + 1;
+                List cardsList(listName);
+                int cardsCount = listCards.size();
+                for (int cardIdx = 0 ; cardIdx < cardsCount ; cardIdx++) {
+                    QString cardName = listCards[cardIdx].toMap().value("text").toString();
+                    int     cardNum  = cardName.mid(5).toInt(); //"Card %1" --> "%1"
+                    if (d->nextCardId <= cardNum)
+                        d->nextCardId = cardNum + 1;
+                    Card card(cardName);
+                    cardsList << card;
+                }
+                d->lists << cardsList;
+            }
+        }
+    }
 }
 
 QVariantMap Board::toMap() const

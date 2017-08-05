@@ -11,10 +11,30 @@ AppDelegate::AppDelegate(QObject *parent) : QObject(parent)
 
 int AppDelegate::run()
 {
-    // Pretend to load from file, but now it just load dummy daa.
-    m_board.load();
+    // NPM: Find filesystem location for persistent storage
+    QString persistDir =
+#ifdef Q_OS_ANDROID /* for android, store data in a location that doesn't get erased each app update */
+            QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" //"/storage/emulated/0/"
+             + "faketrello.example.qtproject.org";
+#else
+            QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#endif /* Q_OS_ANDROID */
+
+    // NPM: Create application-specific directory for persistent storage if it doesn't exist
+    QDir path;
+    path.setPath(persistDir);
+    if (!path.exists()) {
+      path.mkpath(persistDir);
+    }
 
     QCoreApplication* app = QCoreApplication::instance();
+
+    // NPM: load board layout from persistence file,
+    // or load dummy data if no persistence file, or parse error.
+    QString persistFilePath = persistDir + "/persist.json";
+    m_board.load(persistFilePath);
+
+    m_engine.rootContext()->setContextProperty("PersistFilePath", persistFilePath);
 
     m_engine.rootContext()->setContextProperty("App", this);
 
@@ -71,3 +91,51 @@ void AppDelegate::sync()
     runner.patch(cardListStore, patches);
 }
 
+// NPM -- see https://github.com/benlau/qsyncable/issues/2
+QByteArray AppDelegate::stringifyModel()
+{
+    QVariantList lists;
+    int count = cardListStore->storage().size();
+    for (int i = 0 ; i < count ; i++) {
+        lists << cardListStore->get(i);
+    }
+
+    QVariantMap map;
+    map["lists"] = lists;
+    QJsonObject object = QJsonObject::fromVariantMap(map);
+
+    QJsonDocument doc;
+    doc.setObject(object);
+    QByteArray bytes = doc.toJson(QJsonDocument::Indented);
+
+    return bytes;
+}
+
+// NPM -- see https://github.com/benlau/qsyncable/issues/2
+void AppDelegate::persistModel(const QString& filePath) {
+    QFile file(filePath);
+    file.open(QIODevice::WriteOnly);
+    file.write(AppDelegate::stringifyModel());
+    file.close();
+}
+
+// NPM -- see https://github.com/benlau/qsyncable/issues/2
+QByteArray AppDelegate::stringifyBoard()
+{
+    QVariantMap map = m_board.toMap();
+    QJsonObject object = QJsonObject::fromVariantMap(map);
+
+    QJsonDocument doc;
+    doc.setObject(object);
+    QByteArray bytes = doc.toJson(QJsonDocument::Indented);
+
+    return bytes;
+}
+
+// NPM -- see https://github.com/benlau/qsyncable/issues/2
+void AppDelegate::persistBoard(const QString& filePath) {
+    QFile file(filePath);
+    file.open(QIODevice::WriteOnly);
+    file.write(AppDelegate::stringifyBoard());
+    file.close();
+}

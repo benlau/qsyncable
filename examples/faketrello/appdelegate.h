@@ -18,6 +18,11 @@ signals:
 
 public slots:
 
+    QByteArray stringifyModel(); //NPM
+    void persistModel(const QString& filePath); //NPM
+    QByteArray stringifyBoard(); //NPM
+    void persistBoard(const QString& filePath); //NPM
+
     void addList();
 
     void addCard(const QString& listUuid);

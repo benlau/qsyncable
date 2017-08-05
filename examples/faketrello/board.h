@@ -30,8 +30,11 @@ public:
 
     int indexOfList(const QString& listUuid);
 
-    // Load from file, but now it just load dummy data for demo
-    void load();
+    // NPM: Load persisted board from file.
+    void load(const QString &persistFilePath);
+
+    // NPM: Load initial board if persistence file missing or malformed.
+    void failsafeLoad();
 
     QVariantMap toMap() const;
 
