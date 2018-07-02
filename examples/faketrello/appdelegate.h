@@ -31,6 +31,9 @@ public slots:
 
     void moveCard(const QString& listUuid,const QString& fromCardUUid, const QString& toCardUuid);
 
+    void moveCard(const QString& fromListUuid,const QString& fromCardUUid, const QString& toListUuid, const QString& toCardUuid);
+
+
 private slots:
 
     void sync();

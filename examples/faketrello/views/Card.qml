@@ -4,23 +4,39 @@ import "../components"
 Item {
     id: card
 
-    height: 48
+    property int normalHeight: 48
+    height: (dropArea.containsDrag && !dropArea.sameList) ? normalHeight * 2 : normalHeight
 
     property string listUuid
     property string cardUuid
     property string text
+
+    Behavior on height {
+        NumberAnimation {
+            duration: 200
+            easing.type: Easing.OutQuad;
+        }
+    }
 
     MouseArea {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
         drag.target: container
+        onReleased: {
+            container.Drag.drop();
+        }
     }
 
     DropArea {
         id: dropArea
         anchors.fill: parent
+        property bool sameList: true
         onEntered: {
+
+            sameList = (card.listUuid  === drag.source.listUuid);
+            drag.accept(Qt.MoveAction);
+
             if (card.listUuid !== drag.source.listUuid) {
                 return;
             }
@@ -29,10 +45,20 @@ Item {
                 return;
             }
 
-            App.moveCard(listUuid,
+            App.moveCard(drag.source.listUuid,
                          drag.source.cardUuid,
+                         card.listUuid,
                          card.cardUuid);
+        }
 
+        onDropped: {
+            if (!sameList) {
+                drop.accept(Qt.MoveAction);
+                App.moveCard(drag.source.listUuid,
+                             drag.source.cardUuid,
+                             card.listUuid,
+                             card.cardUuid);
+            }
         }
     }
 
@@ -40,11 +66,12 @@ Item {
         id: container
         color: "#FFFFFF"
 
-        anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 8
 
         width: card.width - 16
-        height: card.height - 16
+        height: normalHeight - 16
 
         Drag.active: mouseArea.drag.active
         Drag.hotSpot.x: 32
@@ -107,12 +134,10 @@ Item {
                 target: container;
                 anchors.verticalCenter: undefined;
                 anchors.horizontalCenter: undefined;
+                anchors.bottom: undefined
             }
         }
 
     }
-
-
-
 }
 

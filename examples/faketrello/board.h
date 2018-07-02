@@ -28,6 +28,8 @@ public:
 
     void moveCard(const QString& listUuid,const QString& fromCardUUid, const QString& toCardUuid);
 
+    void moveCard(const QString& fromlistUuid,const QString& fromCardUUid, const QString& toListUuid, const QString& toCardUuid);
+
     int indexOfList(const QString& listUuid);
 
     // NPM: Load persisted board from file.
