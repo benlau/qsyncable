@@ -32,25 +32,6 @@ Item {
 
             anchors.fill: parent
 
-            add: Transition {
-
-                NumberAnimation {
-                    property: "opacity";
-                    from: 0;
-                    to: 1;
-                    duration: 200
-                    easing.type: Easing.OutQuad;
-                }
-            }
-
-            addDisplaced: Transition {
-                NumberAnimation {
-                    properties: "x,y";
-                    duration: 200
-                    easing.type: Easing.OutQuad;
-                }
-            }
-
             remove: Transition {
                 NumberAnimation {
                     property: "opacity";
@@ -62,22 +43,6 @@ Item {
             }
 
             removeDisplaced: Transition {
-                NumberAnimation {
-                    properties: "x,y";
-                    duration: 200
-                    easing.type: Easing.OutQuad;
-                }
-            }
-
-            move: Transition {
-                NumberAnimation {
-                    properties: "x,y";
-                    duration: 200
-                    easing.type: Easing.OutQuad;
-                }
-            }
-
-            moveDisplaced: Transition {
                 NumberAnimation {
                     properties: "x,y";
                     duration: 200
@@ -124,6 +89,7 @@ Item {
             }
 
             delegate: Card {
+                cardIndex : model.index
                 listUuid: cardList.listUuid
                 cardUuid: model.uuid
                 text: model.text

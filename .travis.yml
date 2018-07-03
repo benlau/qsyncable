@@ -4,10 +4,9 @@ env:
 compiler:
   - gcc
 before_install:
-    - cat /etc/apt/sources.list
-    - sudo add-apt-repository --yes ppa:beineri/opt-qt551
-    - sudo add-apt-repository --yes "deb http://download.opensuse.org/repositories/home:/benlau/xUbuntu_15.10 ./"
-    - cat /etc/apt/sources.list
+    - export GOPATH=`pwd`/gosrc
+    - export PATH=`pwd`/gosrc/bin:$PATH
+    - go get qpm.io/qpm    
     - sudo apt-get update
     - apt-cache search qt5
     - sudo apt-get install --force-yes -qq qt55quickcontrols  qt55declarative qt55script qt55graphicaleffects qpm valgrind
