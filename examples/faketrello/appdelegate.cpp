@@ -71,12 +71,6 @@ void AppDelegate::moveCard(const QString &listUuid, const QString &fromCardUUid,
     sync();
 }
 
-void AppDelegate::moveCard(const QString &fromListUuid, const QString &fromCardUUid, const QString &toListUuid, const QString &toCardUuid)
-{
-    m_board.moveCard(fromListUuid, fromCardUUid, toListUuid, toCardUuid);
-    sync();
-}
-
 void AppDelegate::sync()
 {
     // It is the only way to update QML model, you don't need

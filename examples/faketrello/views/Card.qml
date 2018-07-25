@@ -4,73 +4,35 @@ import "../components"
 Item {
     id: card
 
-    state: "Default"
-
-    property int normalHeight: 48
-    height: normalHeight
+    height: 48
 
     property string listUuid
     property string cardUuid
     property string text
-    property int cardIndex: -1
-
-    function inSameList(c1, c2) {
-        return c1.ListView.view === c2.ListView.view;
-    }
 
     MouseArea {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
         drag.target: container
-        onReleased: {
-            if (card.state === "Dragging") {
-                container.Drag.drop();
-                card.state = "Default";
-            }
-        }
     }
 
     DropArea {
         id: dropArea
         anchors.fill: parent
-        enabled: !container.Drag.active
         onEntered: {
-            if (card === drag.source) {
+            if (card.listUuid !== drag.source.listUuid) {
                 return;
             }
 
-            drag.accept(Qt.MoveAction);
-            drag.source.state = "Dragging";
-
-            if (inSameList(card, drag.source) && card.cardIndex >= drag.source.cardIndex) {
-                card.state = "DroppingAfter";
-            } else {
-                card.state = "DroppingBefore";
-            }
-        }
-
-        onExited: {
-            if (card === drag.source) {
+            if (card.cardUuid === drag.source.cardUuid) {
                 return;
             }
 
-            card.state = "Default";
-        }
-
-        onDropped: {
-            if (card === drag.source) {
-                return;
-            }
-
-            card.state = "Dropped"
-            card.state = "Default";
-            drag.source.state = "Default";
-
-            App.moveCard(drag.source.listUuid,
+            App.moveCard(listUuid,
                          drag.source.cardUuid,
-                         card.listUuid,
                          card.cardUuid);
+
         }
     }
 
@@ -78,13 +40,11 @@ Item {
         id: container
         color: "#FFFFFF"
 
+        anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 8
-        anchors.topMargin: 8
 
         width: card.width - 16
-        height: normalHeight - 16
+        height: card.height - 16
 
         Drag.active: mouseArea.drag.active
         Drag.hotSpot.x: 32
@@ -128,6 +88,7 @@ Item {
                     easing.type: Easing.OutQuad;
                 }
             }
+
         }
 
         states: State {
@@ -146,79 +107,12 @@ Item {
                 target: container;
                 anchors.verticalCenter: undefined;
                 anchors.horizontalCenter: undefined;
-                anchors.bottom: undefined
             }
         }
+
     }
 
-    states: [
-        State {
-            name: "Default"
-        },
-        State {
-            name: "DroppingBefore"
 
-            PropertyChanges {
-                target: card
-                height: normalHeight * 2
-            }
-        },
-        State {
-            name: "DroppingAfter"
-
-            PropertyChanges {
-                target: card
-                height: normalHeight * 2
-            }
-
-            AnchorChanges {
-                target: container
-                anchors.bottom: undefined
-                anchors.top: card.top
-            }
-        },
-        State {
-            name: "Dropped"
-        },
-        State {
-            name: "Dragging"
-            PropertyChanges {
-                target: card
-                height: 0
-            }
-        }
-    ]
-
-    onStateChanged: {
-        console.log(card.text, card.state)
-    }
-
-    transitions: [
-        Transition {
-            from: "Default"
-            to: "DroppingAfter,DroppingBefore"
-            reversible: true
-
-            NumberAnimation {
-                target: card
-                property: "height"
-                duration: 200
-                easing.type: Easing.Linear
-                alwaysRunToEnd: true
-            }
-        },
-        Transition {
-            from: "Default"
-            to: "Dragging"
-            NumberAnimation {
-                target: card
-                property: "height"
-                duration: 200
-                easing.type: Easing.Linear
-                alwaysRunToEnd: true
-            }
-        }
-    ]
 
 }
 

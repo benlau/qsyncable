@@ -85,33 +85,6 @@ void Board::moveCard(const QString &listUuid, const QString &fromCardUUid, const
     d->lists[index] = list;
 }
 
-void Board::moveCard(const QString &fromlistUuid, const QString &fromCardUUid, const QString &toListUuid, const QString &toCardUuid)
-{
-    if (fromlistUuid == toListUuid) {
-        moveCard(fromlistUuid, fromCardUUid, toCardUuid);
-        return;
-    }
-
-    int fIndex = indexOfList(fromlistUuid);
-    int tIndex = indexOfList(toListUuid);
-
-    if (fIndex < 0 || tIndex < 0) {
-        return;
-    }
-
-    List fromList = d->lists[fIndex];
-    List toList = d->lists[tIndex];
-
-    Card card = fromList.cards()[fromList.indexOfCard(fromCardUUid)];
-    fromList.removeCard(fromCardUUid);
-
-    int index = toList.indexOfCard(toCardUuid);
-
-    toList.insertCard(index, card);
-    d->lists[fIndex] = fromList;
-    d->lists[tIndex] = toList;
-}
-
 int Board::indexOfList(const QString &listUuid)
 {
 
