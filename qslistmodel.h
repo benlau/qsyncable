@@ -19,16 +19,16 @@ class QSListModel : public QAbstractListModel, public QSPatchable
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
-    explicit QSListModel(QObject *parent = 0);
+    explicit QSListModel(QObject *parent = nullptr);
 
-    int rowCount(const QModelIndex &parent) const;
+    int rowCount(const QModelIndex &parent) const override;
 
-    QVariant data(const QModelIndex &index, int role) const;
+    QVariant data(const QModelIndex &index, int role) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
     int count() const;
 
-
-    QHash<int, QByteArray> roleNames() const;
+    QHash<int, QByteArray> roleNames() const override;
 
     void setRoleNames(const QVariantMap& value);
 
@@ -38,7 +38,7 @@ public:
 
     QVariantList storage() const;
 
-    virtual void insert(int index, const QVariantList &value);
+    virtual void insert(int index, const QVariantList &value) override;
 
 
 public slots:
@@ -49,9 +49,9 @@ public slots:
 
     void clear();
 
-    virtual void move(int from, int to, int count = 1);
+    virtual void move(int from, int to, int count = 1) override;
 
-    virtual void remove(int i , int count  = 1);
+    virtual void remove(int i , int count  = 1) override;
 
     int indexOf(QString field,QVariant value) const;
 
@@ -59,12 +59,12 @@ public slots:
 
     void setProperty(int index,QString property ,QVariant value);
 
-    void set(int index,QVariantMap data);
+    void set(int index,QVariantMap data) override;
+
+
 
 signals:
     void countChanged();
-
-public slots:
 
 private:
 
