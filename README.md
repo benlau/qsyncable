@@ -121,6 +121,17 @@ Or:
 qpm install com.github.benlau.qsyncable
 ```
 
+CMake
+------------
+Add the downloaded folder as a subdirectory and add QSyncable to the application executable target:
+```cmake
+add_subdirectory("path_to/qsyncable")
+add_executable(myExample
+    main.cpp
+    $<TARGET_OBJECTS:QSyncable>
+    )
+```
+
 Class Reference
 ---------------
 
