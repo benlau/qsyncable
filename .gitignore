@@ -37,3 +37,4 @@ vendor
 build-*
 docs/html
 build
+*.txt.user
