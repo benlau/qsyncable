@@ -433,12 +433,9 @@ QDebug operator<<(QDebug dbg, const QSTree& tree) {
     QQueue<QSTreeNode*> queue;
     QStringList links;
 
-    int height = -1;
-
     if (tree.root() != 0) {
         queue.enqueue(tree.root());
         links.append(QString("[%1]").arg(tree.root()->key()));
-        height = tree.root()->height();
     }
 
     while (queue.size() > 0) {
