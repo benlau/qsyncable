@@ -64,8 +64,6 @@ public slots:
 signals:
     void countChanged();
 
-public slots:
-
 private:
 
     QHash<int, QByteArray> m_roles;
