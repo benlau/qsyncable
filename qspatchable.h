@@ -5,7 +5,7 @@
 
 class QSPatchable {
 public:
-    virtual ~QSPatchable() = 0;
+    virtual ~QSPatchable() {}
 
     virtual void insert(int index, const QVariantList &value) = 0;
 
