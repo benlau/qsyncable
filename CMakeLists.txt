@@ -51,5 +51,15 @@ set(SRC_FILES
 )
 
 add_library(${PROJECT_NAME} ${SRC_FILES})
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/priv)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/priv)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Qml project_options_and_warnings)
+
+
+option(ENABLE_EXAMPLES "Enable Test Builds" ON)
+
+if(ENABLE_EXAMPLES)
+  message(STATUS "Building Examples")
+  add_subdirectory(examples/faketrello)
+endif()
+
