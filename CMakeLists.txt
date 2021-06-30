@@ -79,7 +79,7 @@ set(INCLUDE_PRIV_FILES
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${INCLUDE_FILES}
                                    ${INCLUDE_PRIV_FILES})
 target_include_directories(
-  ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}
+  ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 # target_link_libraries(${PROJECT_NAME} PRIVATE project_options_and_warnings)
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core

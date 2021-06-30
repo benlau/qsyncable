@@ -21,6 +21,8 @@ find_package(
   COMPONENTS Core Quick Qml
   REQUIRED)
 
+find_package(QSyncable REQUIRED)
+
 set(SRC_FILES 
     ${CMAKE_CURRENT_SOURCE_DIR}/appdelegate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/appdelegate.h
@@ -40,7 +42,6 @@ target_compile_definitions(
   ${PROJECT_NAME}
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 
-add_dependencies(${PROJECT_NAME} QSyncable)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core
                                               Qt${QT_VERSION_MAJOR}::Quick
                                               QSyncable)
