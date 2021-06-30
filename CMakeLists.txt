@@ -66,6 +66,7 @@ set(INCLUDE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/qspatchable.h
     ${CMAKE_CURRENT_SOURCE_DIR}/qsuuid.h
     ${CMAKE_CURRENT_SOURCE_DIR}/qsyncablefunctions.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/QSListModel
     ${CMAKE_CURRENT_SOURCE_DIR}/qsyncableqmlwrapper.h)
 
 set(INCLUDE_PRIV_FILES
@@ -81,6 +82,7 @@ add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${INCLUDE_FILES}
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+
 # target_link_libraries(${PROJECT_NAME} PRIVATE project_options_and_warnings)
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core
                                              Qt${QT_VERSION_MAJOR}::Qml)
@@ -88,7 +90,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d)
 
 # Examples
-option(${PROJECT_NAME}_EXAMPLES "Enable Test Builds" ${IS_ROOT_PROJECT})
+option(${PROJECT_NAME}_EXAMPLES "Enable Test Builds" OFF)
 
 if(${PROJECT_NAME}_EXAMPLES)
   message(STATUS "Building Examples")
@@ -124,7 +126,7 @@ if(${PROJECT_NAME}_INSTALL)
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake
     INSTALL_DESTINATION cmake)
 
-  set(CONFIG_PACKAGE_LOCATION ${CMAKE_INSTALL_LIBDIR}/cmake/QuickFlux)
+  set(CONFIG_PACKAGE_LOCATION ${CMAKE_INSTALL_LIBDIR}/cmake/QSyncable)
 
   install(
     EXPORT ${PROJECT_NAME}Targets
