@@ -19,6 +19,9 @@ include(cmake/StandardProjectSettingsConfig.cmake)
 
 # standard compiler warnings
 include(cmake/CompilerOptionsAndWarningsConfig.cmake)
+set(project_options_and_warnings ${PROJECT_NAME}_project_options_and_warnings)
+add_library(${project_options_and_warnings} INTERFACE)
+set_project_options_and_warnings(${project_options_and_warnings})
 
 # enable doxygen
 include(cmake/DoxygenConfig.cmake)
@@ -77,12 +80,12 @@ set(INCLUDE_PRIV_FILES
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${INCLUDE_FILES}
                                    ${INCLUDE_PRIV_FILES})
 
-set_project_options_and_warnings(${PROJECT_NAME})
-
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${project_options_and_warnings})
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core
                                              Qt${QT_VERSION_MAJOR}::Qml)
 
@@ -97,8 +100,7 @@ if(${PROJECT_NAME}_EXAMPLES)
 endif()
 
 # Install script
-option(${PROJECT_NAME}_INSTALL "Enable Installing as Library"
-       ${IS_ROOT_PROJECT})
+option(${PROJECT_NAME}_INSTALL "Enable Installing as Library" OFF)
 
 if(${PROJECT_NAME}_INSTALL)
   # Offer the user the choice of overriding the installation directories

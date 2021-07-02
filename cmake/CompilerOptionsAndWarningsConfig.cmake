@@ -102,6 +102,7 @@ function(set_project_options_and_warnings project_name)
         "No compiler warnings set for '${CMAKE_CXX_COMPILER_ID}' compiler.")
   endif()
 
+  message(STATUS "Adding Compiler Options and Warnings to target: ${project_name}")
   target_compile_options(${project_name} INTERFACE ${PROJECT_WARNINGS}
                                                    ${PROJECT_OPTIONS})
 
