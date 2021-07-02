@@ -117,8 +117,42 @@ Download a release and bundle the folder within your source tree.
 
 Or:
 
-```
+```sh
 qpm install com.github.benlau.qsyncable
+```
+
+Using Cmake
+-----------
+
+Add the follow snippet to your CMakeFile
+
+```cmake
+include(FetchContent)
+
+FetchContent_Declare(
+  QSyncable
+  PREFIX "${PROJECT_BINARY_DIR}/QSyncable-build"
+      GIT_REPOSITORY "https://github.com/benlau/QSyncable.git"
+      CMAKE_ARGS "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}"
+                      "-DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}/QSyncable"
+                      "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/QSyncable/lib"
+                      "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                      )
+
+FetchContent_MakeAvailable(QSyncable)
+
+```
+
+Link it to your library
+
+```cmake
+target_link_libraries(${PROJECT_NAME} PRIVATE QSyncable)
+```
+
+In your main function you need to manually register the QML types
+
+```cpp
+    registerQSyncableTypes();
 ```
 
 Class Reference
