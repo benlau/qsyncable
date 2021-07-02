@@ -17,13 +17,8 @@ set(CMAKE_AUTOMOC ON)
 # compiler options
 include(cmake/StandardProjectSettingsConfig.cmake)
 
-set(project_options_and_warnings ${PROJECT_NAME}_project_options_and_warnings)
-
-add_library(project_options_and_warnings INTERFACE)
-
 # standard compiler warnings
 include(cmake/CompilerOptionsAndWarningsConfig.cmake)
-set_project_options_and_warnings(project_options_and_warnings)
 
 # enable doxygen
 include(cmake/DoxygenConfig.cmake)
@@ -81,18 +76,20 @@ set(INCLUDE_PRIV_FILES
 
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${INCLUDE_FILES}
                                    ${INCLUDE_PRIV_FILES})
+
+set_project_options_and_warnings(${PROJECT_NAME})
+
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE project_options_and_warnings)
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core
                                              Qt${QT_VERSION_MAJOR}::Qml)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d)
 
 # Examples
-option(${PROJECT_NAME}_EXAMPLES "Enable Test Builds" OFF)
+option(${PROJECT_NAME}_EXAMPLES "Enable Examples" OFF)
 
 if(${PROJECT_NAME}_EXAMPLES)
   message(STATUS "Building Examples")
