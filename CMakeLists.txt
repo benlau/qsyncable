@@ -17,6 +17,8 @@ set(CMAKE_AUTOMOC ON)
 # compiler options
 include(cmake/StandardProjectSettingsConfig.cmake)
 
+set(project_options_and_warnings ${PROJECT_NAME}_project_options_and_warnings)
+
 add_library(project_options_and_warnings INTERFACE)
 
 # standard compiler warnings
@@ -83,7 +85,7 @@ target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 
-# target_link_libraries(${PROJECT_NAME} PRIVATE project_options_and_warnings)
+target_link_libraries(${PROJECT_NAME} PRIVATE project_options_and_warnings)
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core
                                              Qt${QT_VERSION_MAJOR}::Qml)
 
