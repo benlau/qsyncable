@@ -1,10 +1,13 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += \
+    $$PWD/QSTableModel \
+    $$PWD/checkindex.h \
     $$PWD/qsdiffrunner.h \
     $$PWD/qspatch.h \
     $$PWD/qspatchable.h \
     $$PWD/qslistmodel.h \
+    $$PWD/qstablemodel.h \
     $$PWD/qsuuid.h \
     $$PWD/priv/qsdiffrunneralgo_p.h \
     $$PWD/priv/qstree.h \
@@ -23,6 +26,7 @@ SOURCES += \
     $$PWD/qsdiffrunner.cpp \
     $$PWD/qspatch.cpp \
     $$PWD/qslistmodel.cpp \
+    $$PWD/qstablemodel.cpp \
     $$PWD/qsuuid.cpp \
     $$PWD/qsdiffrunneralgo.cpp \
     $$PWD/qstree.cpp \
