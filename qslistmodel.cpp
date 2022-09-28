@@ -58,7 +58,7 @@ QSListModel::QSListModel(QObject *parent) :
 
 int QSListModel::rowCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent);
+    Q_UNUSED(parent)
     return count();
 }
 
@@ -81,6 +81,36 @@ QVariant QSListModel::data(const QModelIndex &index, int role) const
     }
 
     return v;
+}
+
+/*! \fn bool QSListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+
+Sets the role data for the item at index to value.
+Returns true if successful; otherwise returns false.
+The dataChanged() signal should be emitted if the data was successfully set.
+ */
+bool QSListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (index.row() < 0 || index.row() >= m_storage.size())
+            return false;
+
+    if (!m_roles.contains(role))
+    {
+        return false;
+    }
+
+    auto item = m_storage[index.row()].toMap();
+
+    if(item[m_roles[role]] == value)
+    {
+        // value was already correct, no need to update / emit change signal.
+        return true;
+    }
+
+    item[m_roles[role]] = value;
+    m_storage[index.row()] = item;
+    emit dataChanged(index, index, {role});
+    return true;
 }
 
 /*! \fn void QSListModel::append(const QVariantMap &value)
@@ -329,7 +359,7 @@ void QSListModel::set(int idx, QVariantMap data)
     while (iter.hasNext()) {
         iter.next();
         if (!original.contains(iter.key()) ||
-             original[iter.key()] != iter.value()) {
+                original[iter.key()] != iter.value()) {
 
             if (m_rolesLookup.contains(iter.key())) {
                 roles << m_rolesLookup[iter.key()];
