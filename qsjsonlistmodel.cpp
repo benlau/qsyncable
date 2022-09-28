@@ -168,6 +168,12 @@ void QSJsonListModel::setFields(const QStringList &roleNames)
     emit fieldsChanged();
 }
 
+/*! \qmlproperty array JsonListModel::synchronizeModelChangesToSource
+
+Propagate the changes in the Model back to the source property
+    Default is false.
+        */
+
 bool QSJsonListModel::synchronizeModelChangesToSource() const
 {
     return m_synchronizeModelChangesToSource;
