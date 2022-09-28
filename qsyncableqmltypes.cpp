@@ -5,8 +5,8 @@
 
 template <typename T>
 static QObject *provider(QQmlEngine *engine, QJSEngine *scriptEngine) {
-    Q_UNUSED(engine);
-    Q_UNUSED(scriptEngine);
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
 
     T* object = new T();
 

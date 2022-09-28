@@ -66,6 +66,10 @@ It will emit signals of insertion, removal and moving automatically.
 QSJsonListModel::QSJsonListModel(QObject *parent) : QSListModel(parent)
 {
     componentCompleted = false;
+    connect(this, &QAbstractItemModel::rowsInserted, this, &QSJsonListModel::handleRowsInserted);
+    connect(this, &QAbstractItemModel::rowsMoved, this, &QSJsonListModel::handleRowsMoved);
+    connect(this, &QAbstractItemModel::rowsRemoved, this, &QSJsonListModel::handleRowsRemoved);
+    connect(this, &QAbstractItemModel::dataChanged, this, &QSJsonListModel::handleDataChanged);
 }
 
 /*! \qmlproperty string JsonListModel::keyField
@@ -129,7 +133,6 @@ void QSJsonListModel::setSource(const QVariantList &source)
     }
 
     emit sourceChanged();
-
 }
 
 /*! \qmlproperty array JsonListModel::fields
@@ -165,6 +168,19 @@ void QSJsonListModel::setFields(const QStringList &roleNames)
     emit fieldsChanged();
 }
 
+bool QSJsonListModel::synchronizeModelChangesToSource() const
+{
+    return m_synchronizeModelChangesToSource;
+}
+
+void QSJsonListModel::setSynchronizeModelChangesToSource(bool synchronizeModelChangesToSource)
+{
+    if (m_synchronizeModelChangesToSource == synchronizeModelChangesToSource)
+        return;
+    m_synchronizeModelChangesToSource = synchronizeModelChangesToSource;
+    emit synchronizeModelChangesToSourceChanged();
+}
+
 void QSJsonListModel::classBegin()
 {
 
@@ -179,6 +195,30 @@ void QSJsonListModel::componentComplete()
     }
 }
 
+void QSJsonListModel::handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    if (synchronizeModelChangesToSource())
+        syncStorageToSource();
+}
+
+void QSJsonListModel::handleRowsInserted(const QModelIndex &parent, int first, int last)
+{
+    if (synchronizeModelChangesToSource())
+        syncStorageToSource();
+}
+
+void QSJsonListModel::handleRowsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int row)
+{
+    if (synchronizeModelChangesToSource())
+        syncStorageToSource();
+}
+
+void QSJsonListModel::handleRowsRemoved(const QModelIndex &parent, int first, int last)
+{
+    if (synchronizeModelChangesToSource())
+        syncStorageToSource();
+}
+
 void QSJsonListModel::sync()
 {
     QSDiffRunner runner;
@@ -189,4 +229,11 @@ void QSJsonListModel::sync()
     if (patches.size() > 0) {
         runner.patch(this, patches);
     }
+}
+
+void QSJsonListModel::syncStorageToSource()
+{
+    // don't call setSource as this invokes a unneccessary sync
+    m_source = storage();
+    emit sourceChanged();
 }
